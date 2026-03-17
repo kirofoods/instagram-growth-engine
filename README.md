@@ -1,4 +1,4 @@
-# Instagram Growth Engine - PWA
+# KiroGram - PWA
 
 A Progressive Web Application (PWA) for managing and tracking Instagram growth. Built with React, Vite, and Firebase.
 

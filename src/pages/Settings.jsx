@@ -440,7 +440,7 @@ export default function Settings() {
           </div>
           <div className="mt-6 pt-6 border-t border-gray-700">
             <p className="text-gray-400 text-sm">
-              Instagram Growth Engine helps creators optimize their strategy, manage ads, track monetization, and grow their audience with AI-powered insights.
+              KiroGram helps creators optimize their strategy, manage ads, track monetization, and grow their audience with AI-powered insights.
             </p>
           </div>
         </section>

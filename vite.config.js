@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'InstaGrowth Engine - 0 to 100K',
-        short_name: 'InstaGrowth',
+        name: 'KiroGram - 0 to 100K',
+        short_name: 'KiroGram',
         description: 'AI-powered Instagram growth engine to take you from 0 to 100K followers',
         theme_color: '#E1306C',
         background_color: '#0a0a0a',

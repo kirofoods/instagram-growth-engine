@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import PinLogin from './components/PinLogin';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import Dashboard from './pages/Dashboard';
@@ -24,6 +25,23 @@ import './App.css';
 
 const App = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user was previously authenticated
+    if (sessionStorage.getItem('kirogram_auth') === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true);
+    sessionStorage.setItem('kirogram_auth', 'true');
+  };
+
+  if (!isAuthenticated) {
+    return <PinLogin onSuccess={handleAuthSuccess} />;
+  }
 
   return (
     <div className="app-container">

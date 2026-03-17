@@ -1,4 +1,4 @@
-# Instagram Growth Engine PWA - Setup Guide
+# KiroGram PWA - Setup Guide
 
 ## Core Files Created
 
@@ -64,7 +64,7 @@
 - Smooth transitions and hover effects
 
 ### 8. **src/components/TopBar.jsx** (Top Navigation Bar)
-- InstaGrowth Engine branding with gradient text
+- KiroGram branding with gradient text
 - Integrated search bar with icon
 - Notification bell with badge (shows count)
 - Settings button

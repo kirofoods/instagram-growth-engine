@@ -16,7 +16,7 @@ const TopBar = ({ onSettingsClick }) => {
     <div className="topbar">
       <div className="topbar-left">
         <h1 className="topbar-title">
-          <span className="gradient-text">InstaGrowth Engine</span>
+          <span className="gradient-text">KiroGram</span>
         </h1>
       </div>
 

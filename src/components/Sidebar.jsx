@@ -85,8 +85,8 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         <div className="logo">
           {!isCollapsed && (
             <div className="logo-content">
-              <div className="logo-icon">IG</div>
-              <span className="logo-text">InstaGrowth</span>
+              <div className="logo-icon">KG</div>
+              <span className="logo-text">KiroGram</span>
             </div>
           )}
         </div>
