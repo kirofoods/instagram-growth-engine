@@ -37,90 +37,195 @@ export default function AutoAds() {
   const [campaignDuration, setCampaignDuration] = useState(30);
   const [campaignActive, setCampaignActive] = useState(false);
   const [campaignMetrics, setCampaignMetrics] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
+  const [manualProduct, setManualProduct] = useState({
+    name: '',
+    category: '',
+    price: '',
+    features: '',
+    targetDemographic: '',
+  });
 
-  // Simulate product analysis
+  // Smart product analysis — parses URL or uses manual input
   const analyzeProduct = () => {
-    if (!productUrl.trim()) return;
+    if (!manualMode && !productUrl.trim()) return;
+    if (manualMode && !manualProduct.name.trim()) return;
 
-    const simulated = {
-      name: 'Premium Wireless Headphones',
-      category: 'Electronics - Audio',
-      price: 4999,
-      features: ['Noise Cancellation', 'Wireless', '48-hour Battery', 'Premium Build'],
-      targetDemographic: '18-45 years, Tech Enthusiasts',
-      description: 'High-quality wireless headphones with advanced features',
-    };
+    setAnalyzing(true);
 
-    setProductAnalyzed(simulated);
+    // Simulate AI analysis delay
+    setTimeout(() => {
+      if (manualMode) {
+        // Use manual input directly
+        setProductAnalyzed({
+          name: manualProduct.name,
+          category: manualProduct.category || 'General',
+          price: parseInt(manualProduct.price) || 999,
+          features: manualProduct.features
+            ? manualProduct.features.split(',').map((f) => f.trim()).filter(Boolean)
+            : ['Quality Product'],
+          targetDemographic: manualProduct.targetDemographic || '18-45 years',
+          description: `${manualProduct.name} — ${manualProduct.category || 'product'}`,
+        });
+      } else {
+        // Parse URL to extract product context
+        const url = productUrl.toLowerCase();
+        const parsed = parseProductUrl(url);
+        setProductAnalyzed(parsed);
+      }
+      setAnalyzing(false);
+    }, 2000);
   };
 
-  // Auto-generated audience segments
-  const audiences = [
-    {
-      id: 'core',
-      name: 'Core Audience',
-      description: 'Interest-based targeting',
-      ageRange: '18-45',
-      genderSplit: '65% Male, 35% Female',
-      interests: 'Tech Gadgets, Electronics, Audio Equipment',
-      estimatedReach: 245000,
-      estimatedCPM: 85,
-    },
-    {
-      id: 'lookalike',
-      name: 'Lookalike Audience',
-      description: 'Similar to existing customers',
-      ageRange: '20-50',
-      genderSplit: '60% Male, 40% Female',
-      interests: 'Premium Products, Tech Enthusiasts, Online Shopping',
-      estimatedReach: 180000,
-      estimatedCPM: 95,
-    },
-    {
-      id: 'retargeting',
-      name: 'Retargeting Audience',
-      description: 'Website visitors & cart abandoners',
-      ageRange: '18-55',
-      genderSplit: '70% Male, 30% Female',
-      interests: 'Previous Visitors, Cart Abandoners',
-      estimatedReach: 45000,
-      estimatedCPM: 45,
-    },
-  ];
+  // Extract product info from URL patterns
+  const parseProductUrl = (url) => {
+    // Detect platform
+    let platform = 'website';
+    if (url.includes('amazon')) platform = 'Amazon';
+    else if (url.includes('flipkart')) platform = 'Flipkart';
+    else if (url.includes('myntra')) platform = 'Myntra';
+    else if (url.includes('meesho')) platform = 'Meesho';
+    else if (url.includes('ajio')) platform = 'AJIO';
+    else if (url.includes('nykaa')) platform = 'Nykaa';
+    else if (url.includes('shopify') || url.includes('myshopify')) platform = 'Shopify Store';
 
-  // Auto-generated creatives
-  const creatives = [
-    {
-      id: 'single',
-      type: 'Single Image Ad',
-      headline: 'Premium Sound, Ultimate Freedom',
-      primaryText: 'Experience crystal-clear audio with our latest wireless headphones',
-      description: '48-hour battery life | Noise cancellation | Free shipping',
-      cta: 'Shop Now',
-      preview: '📱 Ad Preview',
-    },
-    {
-      id: 'carousel',
-      type: 'Carousel Ad',
-      slides: [
-        { headline: 'Ultimate Wireless Experience', slide: 'Slide 1/4' },
-        { headline: '48-Hour Battery Guaranteed', slide: 'Slide 2/4' },
-        { headline: 'Active Noise Cancellation', slide: 'Slide 3/4' },
-        { headline: 'Limited Time Offer', slide: 'Slide 4/4' },
-      ],
-      cta: 'Explore Now',
-      preview: '📸 Carousel Preview',
-    },
-    {
-      id: 'video',
-      type: 'Video/Reel Ad',
-      hook: 'Ever wondered what premium sound feels like?',
-      body: 'Introducing the latest wireless headphones with advanced noise cancellation. Feel the difference.',
-      cta: 'Get Yours Today',
-      duration: '15-30 seconds',
-      preview: '🎬 Video Preview',
-    },
-  ];
+    // Extract product slug from URL path
+    let slug = '';
+    try {
+      const urlObj = new URL(url.startsWith('http') ? url : 'https://' + url);
+      const pathParts = urlObj.pathname.split('/').filter(Boolean);
+      // Take the longest path segment as product slug
+      slug = pathParts.reduce((a, b) => (b.length > a.length ? b : a), '');
+    } catch {
+      slug = url.replace(/https?:\/\//, '').split('/').pop() || '';
+    }
+
+    // Clean slug into readable name
+    const productName = slug
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .replace(/\d{6,}/g, '') // Remove long number IDs
+      .trim() || 'Your Product';
+
+    // Detect category from URL keywords
+    const categoryMap = {
+      electronics: 'Electronics & Gadgets',
+      fashion: 'Fashion & Apparel',
+      beauty: 'Beauty & Personal Care',
+      food: 'Food & Beverages',
+      fitness: 'Health & Fitness',
+      home: 'Home & Living',
+      books: 'Books & Education',
+      toys: 'Toys & Games',
+      sports: 'Sports & Outdoors',
+      phone: 'Mobile & Accessories',
+      laptop: 'Computers & Tech',
+      shoe: 'Footwear',
+      watch: 'Watches & Accessories',
+      skin: 'Skincare',
+      hair: 'Hair Care',
+    };
+
+    let category = 'General';
+    for (const [keyword, cat] of Object.entries(categoryMap)) {
+      if (url.includes(keyword)) {
+        category = cat;
+        break;
+      }
+    }
+
+    return {
+      name: productName,
+      category: category,
+      price: 0, // User will set this
+      features: [],
+      targetDemographic: '18-45 years',
+      description: `Product from ${platform}`,
+      platform: platform,
+      sourceUrl: url,
+      needsDetails: true, // Flag to prompt user for price & features
+    };
+  };
+
+  // Build audiences dynamically from analyzed product
+  const getAudiences = () => {
+    if (!productAnalyzed) return [];
+    const p = productAnalyzed;
+    return [
+      {
+        id: 'core',
+        name: 'Core Audience',
+        description: `Interest-based targeting for ${p.category}`,
+        ageRange: p.targetDemographic || '18-45',
+        genderSplit: '55% Female, 45% Male',
+        interests: `${p.category}, ${p.name}, Online Shopping India`,
+        estimatedReach: 180000 + Math.floor(Math.random() * 120000),
+        estimatedCPM: 70 + Math.floor(Math.random() * 40),
+      },
+      {
+        id: 'lookalike',
+        name: 'Lookalike Audience',
+        description: 'Similar to your best customers',
+        ageRange: '20-50',
+        genderSplit: '50% Female, 50% Male',
+        interests: `${p.category} Buyers, Premium Shoppers, D2C Brands`,
+        estimatedReach: 120000 + Math.floor(Math.random() * 100000),
+        estimatedCPM: 80 + Math.floor(Math.random() * 30),
+      },
+      {
+        id: 'retargeting',
+        name: 'Retargeting Audience',
+        description: 'Website visitors & cart abandoners',
+        ageRange: '18-55',
+        genderSplit: '60% Female, 40% Male',
+        interests: 'Previous Visitors, Cart Abandoners, Page Viewers',
+        estimatedReach: 25000 + Math.floor(Math.random() * 30000),
+        estimatedCPM: 35 + Math.floor(Math.random() * 20),
+      },
+    ];
+  };
+
+  // Build creatives dynamically from analyzed product
+  const getCreatives = () => {
+    if (!productAnalyzed) return [];
+    const p = productAnalyzed;
+    const price = p.price ? `₹${p.price.toLocaleString()}` : '';
+    const featureList = p.features.length > 0 ? p.features.join(' | ') : 'Premium Quality | Fast Delivery';
+
+    return [
+      {
+        id: 'single',
+        type: 'Single Image Ad',
+        headline: `${p.name} — ${p.features[0] || 'Now Available'}`,
+        primaryText: `Discover ${p.name}. ${p.features.length > 1 ? p.features.slice(0, 2).join('. ') + '.' : 'Built for you.'} ${price ? 'Starting at ' + price + '.' : ''} Order now with free shipping.`,
+        description: featureList,
+        cta: 'Shop Now',
+      },
+      {
+        id: 'carousel',
+        type: 'Carousel Ad',
+        slides: [
+          { headline: `Introducing ${p.name}`, slide: 'Slide 1/4' },
+          { headline: p.features[0] || 'Premium Quality', slide: 'Slide 2/4' },
+          { headline: p.features[1] || 'Made for You', slide: 'Slide 3/4' },
+          { headline: price ? `Just ${price}` : 'Limited Time Offer', slide: 'Slide 4/4' },
+        ],
+        cta: 'Explore Now',
+      },
+      {
+        id: 'video',
+        type: 'Video/Reel Ad',
+        hook: `Still looking for the perfect ${p.category.toLowerCase().split(' ')[0]} product?`,
+        body: `Meet ${p.name}. ${p.features.length > 0 ? p.features.join('. ') + '.' : ''} Thousands of happy customers. ${price ? price + ' only.' : 'Check the price — you won\'t believe it.'}`,
+        cta: 'Get Yours Today',
+        duration: '15-30 seconds',
+      },
+    ];
+  };
+
+  const audiences = getAudiences();
+  const creatives = getCreatives();
 
   // Calculate campaign metrics — 3x ROAS is the floor, AI optimizes upward over time
   useEffect(() => {
@@ -209,10 +314,11 @@ export default function AutoAds() {
 
   // Helper function to calculate reach
   const getTotalReach = () => {
+    if (audiences.length === 0) return 0;
     let reach = 0;
-    if (selectedAudiences.core) reach += audiences[0].estimatedReach;
-    if (selectedAudiences.lookalike) reach += audiences[1].estimatedReach;
-    if (selectedAudiences.retargeting) reach += audiences[2].estimatedReach;
+    if (selectedAudiences.core && audiences[0]) reach += audiences[0].estimatedReach;
+    if (selectedAudiences.lookalike && audiences[1]) reach += audiences[1].estimatedReach;
+    if (selectedAudiences.retargeting && audiences[2]) reach += audiences[2].estimatedReach;
     return reach;
   };
 
@@ -263,68 +369,170 @@ export default function AutoAds() {
       {currentStep === 1 && (
         <div className="section">
           <div className="section-title">Step 1: Product Analysis</div>
+
+          {/* Input mode toggle */}
           <div className="card card-gradient">
-            <div className="form-group">
-              <label>Product Link</label>
-              <input
-                type="url"
-                placeholder="https://example.com/product/headphones"
-                value={productUrl}
-                onChange={(e) => setProductUrl(e.target.value)}
-                className="form-input"
-              />
-              <p className="form-hint">Paste your product link and we'll analyze it automatically</p>
+            <div className="flex-between items-center" style={{ marginBottom: '1.5rem' }}>
+              <p className="text-secondary">
+                {manualMode ? 'Enter your product details manually' : 'Paste your product link and we\'ll extract everything'}
+              </p>
+              <button className="btn btn-ghost btn-small" onClick={() => { setManualMode(!manualMode); setProductAnalyzed(null); }}>
+                {manualMode ? 'Switch to URL Mode' : 'Enter Manually Instead'}
+              </button>
             </div>
+
+            {!manualMode ? (
+              <div className="form-group">
+                <label>Product Link</label>
+                <input
+                  type="url"
+                  placeholder="Paste Amazon, Flipkart, Shopify, or any product URL..."
+                  value={productUrl}
+                  onChange={(e) => setProductUrl(e.target.value)}
+                  className="form-input"
+                />
+                <p className="form-hint">Supports Amazon, Flipkart, Myntra, Meesho, Nykaa, Shopify, and any product page</p>
+              </div>
+            ) : (
+              <div className="flex-col gap-md">
+                <div className="form-group">
+                  <label>Product Name *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Kiro Ready-to-Cook Dal Makhani"
+                    value={manualProduct.name}
+                    onChange={(e) => setManualProduct({ ...manualProduct, name: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+                <div className="grid grid-2 gap-md">
+                  <div className="form-group">
+                    <label>Category</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Food & Beverages"
+                      value={manualProduct.category}
+                      onChange={(e) => setManualProduct({ ...manualProduct, category: e.target.value })}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Price (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="e.g., 199"
+                      value={manualProduct.price}
+                      onChange={(e) => setManualProduct({ ...manualProduct, price: e.target.value })}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Key Features (comma-separated)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Clean Label, No Preservatives, Ready in 10 Min, 100% Natural"
+                    value={manualProduct.features}
+                    onChange={(e) => setManualProduct({ ...manualProduct, features: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Target Demographic</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 22-40 years, Urban Health-Conscious Women"
+                    value={manualProduct.targetDemographic}
+                    onChange={(e) => setManualProduct({ ...manualProduct, targetDemographic: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+            )}
 
             <button
               className="btn btn-primary"
               onClick={analyzeProduct}
-              disabled={!productUrl.trim()}
+              disabled={analyzing || (!manualMode && !productUrl.trim()) || (manualMode && !manualProduct.name.trim())}
+              style={{ marginTop: '1rem' }}
             >
-              <Zap size={18} />
-              Analyze Product
+              {analyzing ? (
+                <>
+                  <span className="spinner" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Zap size={18} />
+                  {manualMode ? 'Build Campaign' : 'Analyze Product'}
+                </>
+              )}
             </button>
           </div>
 
+          {/* Analyzed product — editable fields */}
           {productAnalyzed && (
-            <div className="grid grid-2 gap-md">
-              <div className="card">
-                <div className="card-header">
-                  <h3>Extracted Information</h3>
+            <div className="card" style={{ marginTop: '1.25rem' }}>
+              <div className="card-header">
+                <h3>Product Details {productAnalyzed.needsDetails && <span className="badge badge-warning">Complete details below</span>}</h3>
+              </div>
+              <div className="grid grid-2 gap-md">
+                <div className="form-group">
+                  <label className="info-label">Product Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={productAnalyzed.name}
+                    onChange={(e) => setProductAnalyzed({ ...productAnalyzed, name: e.target.value })}
+                  />
                 </div>
-                <div className="product-info">
-                  <div className="info-row">
-                    <span className="info-label">Product Name</span>
-                    <span className="info-value">{productAnalyzed.name}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Category</span>
-                    <span className="info-value">{productAnalyzed.category}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Price</span>
-                    <span className="info-value">₹{productAnalyzed.price.toLocaleString()}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Target Demographic</span>
-                    <span className="info-value">{productAnalyzed.targetDemographic}</span>
-                  </div>
+                <div className="form-group">
+                  <label className="info-label">Category</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={productAnalyzed.category}
+                    onChange={(e) => setProductAnalyzed({ ...productAnalyzed, category: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="info-label">Price (₹) {productAnalyzed.needsDetails && !productAnalyzed.price && <span className="text-negative">*required</span>}</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    placeholder="Enter product price"
+                    value={productAnalyzed.price || ''}
+                    onChange={(e) => setProductAnalyzed({ ...productAnalyzed, price: parseInt(e.target.value) || 0 })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="info-label">Target Demographic</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={productAnalyzed.targetDemographic}
+                    onChange={(e) => setProductAnalyzed({ ...productAnalyzed, targetDemographic: e.target.value })}
+                  />
                 </div>
               </div>
-
-              <div className="card">
-                <div className="card-header">
-                  <h3>Key Features</h3>
-                </div>
-                <div className="features-list">
-                  {productAnalyzed.features.map((feature, idx) => (
-                    <div key={idx} className="feature-item">
-                      <div className="feature-dot" />
-                      {feature}
-                    </div>
-                  ))}
-                </div>
+              <div className="form-group" style={{ marginTop: '1rem' }}>
+                <label className="info-label">Key Features (comma-separated) {productAnalyzed.needsDetails && productAnalyzed.features.length === 0 && <span className="text-negative">*add at least one</span>}</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g., Feature 1, Feature 2, Feature 3"
+                  value={productAnalyzed.features.join(', ')}
+                  onChange={(e) => setProductAnalyzed({
+                    ...productAnalyzed,
+                    features: e.target.value.split(',').map((f) => f.trim()).filter(Boolean),
+                  })}
+                />
               </div>
+              {productAnalyzed.platform && (
+                <p className="text-muted" style={{ marginTop: '0.75rem', fontSize: '0.75rem' }}>
+                  Detected platform: {productAnalyzed.platform} · {productAnalyzed.sourceUrl}
+                </p>
+              )}
             </div>
           )}
         </div>
