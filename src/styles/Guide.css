@@ -1,0 +1,428 @@
+/* ============================================
+   GUIDE PAGE STYLES
+   ============================================ */
+
+.guide-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+/* ============================================
+   FEATURE SUMMARY SECTION
+   ============================================ */
+
+.guide-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+.feature-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.category-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.feature-card:hover {
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+}
+
+.feature-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+  border-radius: 0.5rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.feature-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.feature-description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.feature-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  transition: all var(--transition-base);
+}
+
+.feature-card:hover .feature-arrow {
+  color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+/* ============================================
+   STEPS SECTION
+   ============================================ */
+
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.step-card {
+  cursor: pointer;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.step-card:hover {
+  border-color: var(--border-secondary);
+}
+
+.step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.step-number-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+  border-radius: 50%;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.step-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.step-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.step-chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+  margin-top: 0.125rem;
+}
+
+.step-card.expanded .step-chevron {
+  transform: rotate(180deg);
+}
+
+.step-details {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-primary);
+  animation: slideDown var(--transition-base);
+}
+
+.step-details p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* ============================================
+   PRO TIPS SECTION
+   ============================================ */
+
+.tip-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.tip-card:hover {
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.tip-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.tip-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.tip-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   KEYBOARD SHORTCUTS SECTION
+   ============================================ */
+
+.shortcuts-table {
+  overflow-x: auto;
+}
+
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 1.75rem;
+  padding: 0 var(--spacing-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 0.375rem;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* ============================================
+   FAQ SECTION
+   ============================================ */
+
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.faq-card {
+  cursor: pointer;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.faq-card:hover {
+  border-color: var(--border-secondary);
+}
+
+.faq-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.faq-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.faq-question {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.faq-chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+}
+
+.faq-card.expanded .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-primary);
+  animation: slideDown var(--transition-base);
+}
+
+.faq-answer p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .guide-features .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .feature-content {
+    align-items: center;
+  }
+
+  .feature-arrow {
+    display: none;
+  }
+
+  .guide-page {
+    gap: var(--spacing-xl);
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .step-title-section {
+    align-items: center;
+  }
+
+  .step-chevron {
+    display: none;
+  }
+
+  .faq-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .faq-icon {
+    display: none;
+  }
+
+  .faq-chevron {
+    position: absolute;
+    right: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .guide-page {
+    gap: var(--spacing-lg);
+  }
+
+  .section {
+    margin-top: var(--spacing-lg);
+  }
+
+  .grid {
+    gap: var(--spacing-md);
+  }
+
+  .feature-card {
+    padding: var(--spacing-md);
+  }
+
+  .step-card {
+    padding: var(--spacing-lg);
+  }
+
+  .tip-card {
+    padding: var(--spacing-lg);
+  }
+
+  .shortcut-key {
+    min-width: 1.75rem;
+    height: 1.5rem;
+    font-size: 0.7rem;
+  }
+
+  .data-table {
+    font-size: 0.8125rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem;
+  }
+}

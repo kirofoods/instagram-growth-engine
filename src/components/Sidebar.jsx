@@ -16,6 +16,7 @@ import {
   Heart,
   ShieldCheck,
   Megaphone,
+  Rocket,
   DollarSign,
   BookOpen,
   Settings,
@@ -66,12 +67,14 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
       title: 'MONETIZE',
       items: [
         { path: '/ads', label: 'Ads', icon: Megaphone },
+        { path: '/auto-ads', label: 'Auto Ads Engine', icon: Rocket },
         { path: '/monetization', label: 'Monetization', icon: DollarSign },
       ],
     },
     {
       title: 'LEARN',
       items: [
+        { path: '/guide', label: 'Guide', icon: BookOpen },
         { path: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
       ],
     },

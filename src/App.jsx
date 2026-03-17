@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import PinLogin from './components/PinLogin';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
+import ChatBot from './components/ChatBot';
 import Dashboard from './pages/Dashboard';
 import GrowthMilestones from './pages/GrowthMilestones';
 import ContentStudio from './pages/ContentStudio';
@@ -16,11 +17,13 @@ import DmFunnels from './pages/DmFunnels';
 import Engagement from './pages/Engagement';
 import AccountHealth from './pages/AccountHealth';
 import Ads from './pages/Ads';
+import AutoAds from './pages/AutoAds';
 import Monetization from './pages/Monetization';
 import Strategy from './pages/Strategy';
 import DailyActions from './pages/DailyActions';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Settings from './pages/Settings';
+import Guide from './pages/Guide';
 import './App.css';
 
 const App = () => {
@@ -66,15 +69,19 @@ const App = () => {
             <Route path="/engagement" element={<Engagement />} />
             <Route path="/account-health" element={<AccountHealth />} />
             <Route path="/ads" element={<Ads />} />
+            <Route path="/auto-ads" element={<AutoAds />} />
             <Route path="/monetization" element={<Monetization />} />
             <Route path="/strategy" element={<Strategy />} />
             <Route path="/daily-actions" element={<DailyActions />} />
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/guide" element={<Guide />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </main>
       </div>
+
+      {isAuthenticated && <ChatBot />}
     </div>
   );
 };
