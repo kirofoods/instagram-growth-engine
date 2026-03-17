@@ -609,6 +609,14 @@
   gap: var(--spacing-md);
 }
 
+.roas-sub {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+  font-size: 0.8125rem;
+}
+
 /* ============================================
    SUGGESTIONS
    ============================================ */
