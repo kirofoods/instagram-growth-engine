@@ -7,6 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from 'recharts';
 import {
   Users,
@@ -17,6 +19,8 @@ import {
   Calendar,
   Lightbulb,
   Clock,
+  Flame,
+  Target,
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -93,6 +97,9 @@ export default function Dashboard() {
   const completedCount = useMemo(() => {
     return mockTasks.filter((t) => completedTasks[t.id]).length;
   }, [completedTasks]);
+  const taskCompletionPercentage = useMemo(() => {
+    return (completedCount / mockTasks.length) * 100;
+  }, [completedCount]);
 
   const toggleTask = (taskId) => {
     setCompletedTasks((prev) => ({
@@ -105,6 +112,10 @@ export default function Dashboard() {
     setInsightIndex((prev) => (prev + 1) % mockInsights.length);
   };
 
+  const handleInsightDotClick = (idx) => {
+    setInsightIndex(idx);
+  };
+
   // Calculate metrics
   const currentFollowers = growthData[growthData.length - 1]?.followers || 733;
   const previousFollowers = growthData[0]?.followers || 462;
@@ -115,87 +126,126 @@ export default function Dashboard() {
   const postsTarget = 7;
   const growthVelocity = (followerChange / chartDays).toFixed(1);
 
+  // Get current date
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
     <div className="page">
+      {/* Hero Welcome Section */}
       <div className="page-header">
-        <div className="flex justify-between items-center">
+        <div className="header-content">
           <div>
-            <h1>Dashboard</h1>
-            <p className="text-secondary text-sm" style={{ marginTop: '0.5rem' }}>
-              Growth velocity: +{growthVelocity} followers/day
-            </p>
+            <h1>Welcome back, Shreyansh</h1>
+            <div className="welcome-meta">
+              <span className="current-date">{currentDate}</span>
+            </div>
           </div>
-          <span className="badge">Phase 1: 0 → 1K</span>
+          <div className="hero-velocity-badge">
+            <div className="flex flex-col items-end gap-xs">
+              <span className="hero-velocity-label">Growth Velocity</span>
+              <span className="hero-velocity-value">+{growthVelocity}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Metric Cards - 4 Column Grid */}
-      <div className="grid-4">
+      {/* Premium Metric Cards - 6 Column Grid with unique accents */}
+      <div className="grid-6">
         {/* Followers Card */}
-        <div className="card metric-card">
+        <div className="card metric-card accent-primary">
           <div className="metric-label">Followers</div>
           <div className="num-lg">{currentFollowers.toLocaleString()}</div>
-          <div className="flex items-center gap-sm text-positive">
+          <div className="metric-trend positive">
             <TrendingUp size={14} />
             <span>+{followerChange.toLocaleString()}</span>
           </div>
-          <div className="metric-icon">
-            <Users size={20} />
+          <div className="metric-icon-circle">
+            <Users size={24} />
           </div>
         </div>
 
         {/* Engagement Card */}
-        <div className="card metric-card">
-          <div className="metric-label">Engagement</div>
+        <div className="card metric-card accent-success">
+          <div className="metric-label">Engagement Rate</div>
           <div className="num-lg">{engagementRate}%</div>
-          <div className="flex items-center gap-sm text-positive">
+          <div className="metric-trend positive">
             <TrendingUp size={14} />
             <span>+{engagementChange}%</span>
           </div>
-          <div className="metric-icon">
-            <MessageSquare size={20} />
+          <div className="metric-icon-circle">
+            <MessageSquare size={24} />
           </div>
         </div>
 
         {/* Posts This Week Card */}
-        <div className="card metric-card">
+        <div className="card metric-card accent-warning">
           <div className="metric-label">Posts This Week</div>
           <div className="num-lg">{postsThisWeek}/{postsTarget}</div>
-          <div className="flex items-center gap-sm" style={{ color: 'var(--status-warning)' }}>
+          <div className="metric-trend warning">
             <Image size={14} />
             <span>{postsTarget - postsThisWeek} to goal</span>
           </div>
-          <div className="metric-icon">
-            <Image size={20} />
+          <div className="metric-icon-circle">
+            <Image size={24} />
           </div>
         </div>
 
-        {/* Growth Velocity Card */}
-        <div className="card metric-card">
-          <div className="metric-label">Growth Velocity</div>
-          <div className="num-lg">+{growthVelocity}</div>
-          <div className="flex items-center gap-sm text-positive">
+        {/* Best Post Performance Card */}
+        <div className="card metric-card accent-info">
+          <div className="metric-label">Best Post</div>
+          <div className="num-lg">12.4K</div>
+          <div className="metric-trend positive">
             <TrendingUp size={14} />
-            <span>/day avg</span>
+            <span>Impressions</span>
           </div>
-          <div className="metric-icon">
-            <TrendingUp size={20} />
+          <div className="metric-icon-circle">
+            <CheckCircle2 size={24} />
+          </div>
+        </div>
+
+        {/* Engagement Streak Card */}
+        <div className="card metric-card accent-success">
+          <div className="metric-label">Engagement Streak</div>
+          <div className="num-lg">14</div>
+          <div className="metric-trend positive">
+            <Flame size={14} />
+            <span>Days active</span>
+          </div>
+          <div className="metric-icon-circle">
+            <Flame size={24} />
+          </div>
+        </div>
+
+        {/* To Next Milestone Card */}
+        <div className="card metric-card accent-primary">
+          <div className="metric-label">To 1K Milestone</div>
+          <div className="num-lg">{(1000 - currentFollowers).toLocaleString()}</div>
+          <div className="metric-trend">
+            <TrendingUp size={14} />
+            <span>followers</span>
+          </div>
+          <div className="metric-icon-circle">
+            <Target size={24} />
           </div>
         </div>
       </div>
 
       {/* Growth Chart Section */}
-      <div className="card">
+      <div className="card growth-chart-card">
         <div className="card-header">
-          <h3>Growth Chart</h3>
-          <div className="tab-group">
+          <h3>Follower Growth</h3>
+          <div className="period-selector">
             {[30, 60, 90].map((days) => (
               <button
                 key={days}
-                className={`tab-btn ${chartDays === days ? 'tab-active' : ''}`}
+                className={`period-pill ${chartDays === days ? 'active' : ''}`}
                 onClick={() => setChartDays(days)}
               >
-                {days} Days
+                {days}D
               </button>
             ))}
           </div>
@@ -206,10 +256,10 @@ export default function Dashboard() {
               <defs>
                 <linearGradient id="colorFollowers" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="rgba(225, 48, 108, 0.3)" />
-                  <stop offset="95%" stopColor="rgba(225, 48, 108, 0)" />
+                  <stop offset="95%" stopColor="rgba(225, 48, 108, 0.02)" />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" vertical={false} />
               <XAxis dataKey="date" stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
               <YAxis stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
               <Tooltip
@@ -218,9 +268,10 @@ export default function Dashboard() {
                   border: '1px solid var(--border-primary)',
                   borderRadius: 'var(--radius-lg)',
                   color: 'var(--text-primary)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
                 }}
-                cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1 }}
-                formatter={(value) => value.toLocaleString()}
+                cursor={{ stroke: 'var(--color-primary)', strokeWidth: 2 }}
+                formatter={(value) => [value.toLocaleString(), 'Followers']}
               />
               <Area
                 type="monotone"
@@ -228,7 +279,7 @@ export default function Dashboard() {
                 stroke="var(--color-primary)"
                 fillOpacity={1}
                 fill="url(#colorFollowers)"
-                strokeWidth={2}
+                strokeWidth={2.5}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -239,27 +290,28 @@ export default function Dashboard() {
       <div className="grid-2">
         {/* Today's Tasks */}
         <div className="card">
-          <div className="card-header">
+          <div className="task-section-header">
             <h3>Today's Tasks</h3>
-            <span className="badge">{completedCount}/{mockTasks.length} done</span>
+            <span className="badge">{completedCount}/{mockTasks.length}</span>
           </div>
+
+          <div className="task-progress-bar">
+            <div className="task-progress-fill" style={{ width: `${taskCompletionPercentage}%` }} />
+          </div>
+          <p className="task-progress-text">{Math.round(taskCompletionPercentage)}% Complete</p>
+
           <div className="task-list">
             {mockTasks.map((task) => (
-              <label key={task.id} className="task-item">
+              <label key={task.id} className={`task-item ${completedTasks[task.id] ? 'task-completed' : ''}`}>
                 <input
                   type="checkbox"
                   checked={completedTasks[task.id]}
                   onChange={() => toggleTask(task.id)}
                   className="task-checkbox"
                 />
-                <span className={completedTasks[task.id] ? 'task-completed' : ''}>
-                  {task.title}
-                </span>
+                <span className="task-label">{task.title}</span>
               </label>
             ))}
-          </div>
-          <div className="task-progress">
-            {completedCount}/{mockTasks.length} completed
           </div>
         </div>
 
@@ -267,69 +319,50 @@ export default function Dashboard() {
         <div className="card">
           <div className="card-header">
             <h3>Upcoming Posts</h3>
-            <span className="badge">{mockUpcomingPosts.length} scheduled</span>
+            <span className="badge">{mockUpcomingPosts.length}</span>
           </div>
           <div className="post-list">
-            {mockUpcomingPosts.map((post) => (
-              <div key={post.id} className="post-item">
-                <span className="post-type-badge">{post.type}</span>
-                <div className="post-details">
-                  <p className="post-caption">{post.caption}</p>
-                  <div className="flex items-center gap-xs text-tertiary">
-                    <Clock size={12} />
-                    <span className="text-sm">{post.date}</span>
+            {mockUpcomingPosts.map((post) => {
+              const postType = post.type.toLowerCase();
+              return (
+                <div key={post.id} className={`post-item type-${postType}`}>
+                  <span className="post-type-badge">{post.type}</span>
+                  <div className="post-details">
+                    <p className="post-caption">{post.caption}</p>
+                    <div className="post-meta">
+                      <Clock size={12} />
+                      <span>{post.date}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Quick Stats - 4 Column Grid */}
-      <div className="grid-4">
-        <div className="card">
-          <div className="stat-label">Best Post</div>
-          <div className="stat-value">Carousel</div>
-          <p className="text-positive text-sm">12.4K impressions</p>
-        </div>
-
-        <div className="card">
-          <div className="stat-label">Top Hashtag</div>
-          <div className="stat-value">#growth</div>
-          <p className="text-positive text-sm">847K reach</p>
-        </div>
-
-        <div className="card">
-          <div className="stat-label">Engagement Streak</div>
-          <div className="stat-value">14</div>
-          <p className="text-positive text-sm">days 🔥</p>
-        </div>
-
-        <div className="card">
-          <div className="stat-label">To Next Milestone</div>
-          <div className="stat-value">{(1000 - currentFollowers).toLocaleString()}</div>
-          <p className="text-muted text-sm">followers to 1K</p>
-        </div>
-      </div>
-
-      {/* AI Insight Card */}
+      {/* AI Insight Card - Most Visually Distinct */}
       <div className="card insight-card">
-        <div className="insight-header">
-          <Lightbulb size={20} />
-          <span>Daily AI Insight</span>
-          <button className="btn btn-ghost btn-sm" onClick={handleNextInsight}>
-            Next →
-          </button>
-        </div>
-        <p className="insight-text">{mockInsights[insightIndex]}</p>
-        <div className="insight-dots">
-          {mockInsights.map((_, idx) => (
-            <div
-              key={idx}
-              className={`dot ${idx === insightIndex ? 'dot-active' : ''}`}
-            />
-          ))}
+        <div className="insight-content">
+          <div className="insight-header">
+            <div className="insight-icon-glow">
+              <Lightbulb size={24} />
+            </div>
+            <h3>Daily AI Insight</h3>
+            <button className="insight-nav-btn" onClick={handleNextInsight}>
+              Next →
+            </button>
+          </div>
+          <p className="insight-text">{mockInsights[insightIndex]}</p>
+          <div className="insight-dots">
+            {mockInsights.map((_, idx) => (
+              <div
+                key={idx}
+                className={`dot ${idx === insightIndex ? 'dot-active' : ''}`}
+                onClick={() => handleInsightDotClick(idx)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
