@@ -9,9 +9,7 @@ const TopBar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery);
-    }
+    // Search functionality — will integrate with page navigation
   };
 
   const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
@@ -42,7 +40,7 @@ const TopBar = () => {
       </div>
 
       <div className="topbar-right">
-        <button className="topbar-btn notification-btn" title="Notifications">
+        <button className="topbar-btn notification-btn" title="Notifications" aria-label="View notifications">
           <Bell size={18} />
           <span className="notification-badge"></span>
         </button>
@@ -50,6 +48,7 @@ const TopBar = () => {
         <button
           className="topbar-btn settings-btn"
           title="Settings"
+          aria-label="Open settings"
         >
           <Settings size={18} />
         </button>

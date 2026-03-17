@@ -16,10 +16,13 @@ export const useCollection = (collectionName, constraints = []) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Stabilize constraints reference to prevent infinite re-subscriptions
+  const constraintsKey = JSON.stringify(constraints.map(c => c.toString()));
 
   useEffect(() => {
+    setLoading(true);
     try {
-      const q = constraints.length > 0 
+      const q = constraints.length > 0
         ? query(collection(db, collectionName), ...constraints)
         : collection(db, collectionName);
 
@@ -34,6 +37,7 @@ export const useCollection = (collectionName, constraints = []) => {
           setLoading(false);
         },
         (err) => {
+          console.error(`Firestore collection "${collectionName}" error:`, err);
           setError(err);
           setLoading(false);
         }
@@ -41,10 +45,12 @@ export const useCollection = (collectionName, constraints = []) => {
 
       return () => unsubscribe();
     } catch (err) {
+      console.error(`Firestore setup error for "${collectionName}":`, err);
       setError(err);
       setLoading(false);
     }
-  }, [db, collectionName, constraints]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db, collectionName, constraintsKey]);
 
   return { data, loading, error };
 };

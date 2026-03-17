@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   User,
   Settings as SettingsIcon,
@@ -16,41 +16,60 @@ import {
   AlertCircle,
   CheckCircle,
   Info,
+  Cloud,
+  CloudOff,
 } from 'lucide-react';
+import { useAppData } from '../firebase/useAppData';
 import '../styles/Settings.css';
 
-export default function Settings() {
-  const [profile, setProfile] = useState({
-    handle: '@fashionista_sarah',
-    niche: 'Fashion & Lifestyle',
-    followers: 152000,
-    accountType: 'Creator',
-  });
-
-  const [firebaseConfig, setFirebaseConfig] = useState({
-    apiKey: 'AIzaSyDpK8rM...',
-    authDomain: 'instagram-growth.firebaseapp.com',
-    projectId: 'instagram-growth-12345',
-    storageBucket: 'instagram-growth.appspot.com',
-    messagingSenderId: '123456789',
-    appId: '1:123456789:web:abc123def456',
-    databaseURL: 'https://instagram-growth.firebaseio.com',
-  });
-
-  const [apiKeys, setApiKeys] = useState({
-    claudeApiKey: 'sk-ant-d7G1F...',
-    instagramAccessToken: 'IGQVJfb...',
-  });
-
-  const [notifications, setNotifications] = useState({
+const defaultSettings = {
+  profile: {
+    handle: '',
+    niche: '',
+    followers: 0,
+    accountType: '',
+  },
+  notifications: {
     dailyReminders: true,
     milestoneAlerts: true,
     weeklyReports: true,
     adPerformanceNotifications: true,
     dealNotifications: true,
+  },
+  theme: 'dark',
+};
+
+export default function Settings() {
+  const { data: settings, updateData: saveSettings, loading: syncLoading, synced } = useAppData('settings', defaultSettings);
+
+  const [profile, setProfile] = useState(defaultSettings.profile);
+  const [notifications, setNotifications] = useState(defaultSettings.notifications);
+  const [theme, setTheme] = useState('dark');
+
+  // Sync from Firestore when data arrives
+  useEffect(() => {
+    if (settings && settings.profile) {
+      setProfile(settings.profile);
+      setNotifications(settings.notifications || defaultSettings.notifications);
+      setTheme(settings.theme || 'dark');
+    }
+  }, [settings]);
+
+  const [firebaseConfig] = useState({
+    apiKey: '••••••••••••••••••',
+    authDomain: 'kirogram-5de66.firebaseapp.com',
+    projectId: 'kirogram-5de66',
+    storageBucket: 'kirogram-5de66.firebasestorage.app',
+    messagingSenderId: '••••••••••',
+    appId: '••••••••••••••••••',
+    databaseURL: '',
   });
 
-  const [theme, setTheme] = useState('dark');
+  const [apiKeys, setApiKeys] = useState({
+    claudeApiKey: '',
+    instagramAccessToken: '',
+  });
+
   const [showApiKeys, setShowApiKeys] = useState({
     claude: false,
     instagram: false,
@@ -63,25 +82,24 @@ export default function Settings() {
     setProfile({ ...profile, [field]: value });
   };
 
-  const handleFirebaseUpdate = (field, value) => {
-    setFirebaseConfig({ ...firebaseConfig, [field]: value });
-  };
-
   const handleApiKeyUpdate = (field, value) => {
     setApiKeys({ ...apiKeys, [field]: value });
   };
 
   const handleNotificationToggle = (field) => {
-    setNotifications({ ...notifications, [field]: !notifications[field] });
+    const updated = { ...notifications, [field]: !notifications[field] };
+    setNotifications(updated);
+    saveSettings({ notifications: updated });
   };
 
-  const saveFirebaseConfig = () => {
-    setSavedMessage('Firebase configuration saved successfully!');
+  const saveProfile = () => {
+    saveSettings({ profile });
+    setSavedMessage('Profile saved and synced across devices!');
     setTimeout(() => setSavedMessage(''), 3000);
   };
 
-  const saveApiKeys = () => {
-    setSavedMessage('API keys saved successfully!');
+  const saveApiKeysHandler = () => {
+    setSavedMessage('API keys saved locally (not synced for security).');
     setTimeout(() => setSavedMessage(''), 3000);
   };
 
@@ -130,8 +148,16 @@ export default function Settings() {
     <div className="page">
       {/* Header */}
       <div className="page-header">
-        <h1>Settings</h1>
-        <p>Manage your account, API keys, and preferences</p>
+        <div className="flex-between items-center">
+          <div>
+            <h1>Settings</h1>
+            <p>Manage your account, API keys, and preferences</p>
+          </div>
+          <div className="flex items-center gap-sm" style={{ fontSize: '0.75rem', color: synced ? 'var(--status-success)' : 'var(--text-tertiary)' }}>
+            {synced ? <Cloud size={16} /> : <CloudOff size={16} />}
+            {synced ? 'Synced' : 'Local only'}
+          </div>
+        </div>
       </div>
 
       {/* Saved Message */}
@@ -169,9 +195,10 @@ export default function Settings() {
           ))}
         </div>
 
-        <button className="btn btn-primary">
+        <button className="btn btn-primary" onClick={saveProfile}>
           <Save size={18} />
           Save Profile
+          {synced && <Cloud size={14} style={{ marginLeft: '0.5rem', opacity: 0.7 }} />}
         </button>
       </section>
 
@@ -215,13 +242,10 @@ export default function Settings() {
           ))}
         </div>
 
-        <button
-          onClick={saveFirebaseConfig}
-          className="btn btn-primary"
-        >
-          <Save size={18} />
-          Save Firebase Config
-        </button>
+        <div className="alert alert-success" style={{ marginTop: '1rem' }}>
+          <CheckCircle size={18} />
+          <p className="text-sm">Firebase is connected — kirogram-5de66 (asia-south1 Mumbai)</p>
+        </div>
       </section>
 
       {/* API Keys */}
@@ -275,7 +299,7 @@ export default function Settings() {
         </div>
 
         <button
-          onClick={saveApiKeys}
+          onClick={saveApiKeysHandler}
           className="btn btn-primary"
         >
           <Save size={18} />

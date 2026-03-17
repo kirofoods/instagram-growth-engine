@@ -104,8 +104,6 @@ export default function Calendar() {
   const [viewMode, setViewMode] = useState('month');
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-
   const [newContent, setNewContent] = useState({
     title: '',
     type: 'reel',
@@ -161,7 +159,7 @@ export default function Calendar() {
 
   const handleAddContent = () => {
     if (!selectedDate || !newContent.title.trim()) return;
-    console.log('Adding content:', newContent);
+    // TODO: Save to Firestore when data sync is wired up
     setShowModal(false);
     setNewContent({ title: '', type: 'reel', caption: '', hashtags: '', status: 'draft', scheduledTime: '' });
   };

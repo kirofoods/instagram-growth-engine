@@ -1,10 +1,9 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
-// Replace these with your Firebase project credentials
-// In Vite, use import.meta.env.VITE_* for environment variables
+// Firebase configuration — uses env vars in CI, fallback for local dev
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBJVSQD02S_2VnGh-veAL5GULdORE1oL0g',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'kirogram-5de66.firebaseapp.com',
@@ -17,15 +16,16 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with persistence
-const db = getFirestore(app);
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code === 'failed-precondition') {
-    console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-  } else if (err.code === 'unimplemented') {
-    console.warn('The current browser does not support Firestore persistence.');
-  }
-});
+// Initialize Firestore with multi-tab offline persistence
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  });
+} catch {
+  // Already initialized or unsupported — use default instance
+  db = getFirestore(app);
+}
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
