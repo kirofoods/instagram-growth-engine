@@ -16,7 +16,8 @@ import {
   MoreVertical,
   Download,
 } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import '../styles/Monetization.css';
 
 export default function Monetization() {
   const [deals, setDeals] = useState([
@@ -57,12 +58,6 @@ export default function Monetization() {
     { month: 'Jun', deals: 18500, affiliate: 1450, products: 2100, total: 22050 },
   ];
 
-  const revenueBySource = [
-    { name: 'Brand Deals', value: 65, color: '#E1306C' },
-    { name: 'Affiliate', value: 20, color: '#833AB4' },
-    { name: 'Products', value: 15, color: '#FD1D1D' },
-  ];
-
   const nicheBenchmarks = {
     'Fashion & Lifestyle': 500,
     'Tech & Gadgets': 650,
@@ -89,16 +84,6 @@ export default function Monetization() {
     affiliateLinks.reduce((sum, a) => sum + a.commission, 0) +
     products.reduce((sum, p) => sum + (p.status === 'launched' ? p.projectedRevenue * 0.3 : 0), 0);
 
-  const getDealStatus = (status) => {
-    const styles = {
-      pitched: 'bg-yellow-900/30 text-yellow-300 border border-yellow-700',
-      negotiating: 'bg-blue-900/30 text-blue-300 border border-blue-700',
-      active: 'bg-green-900/30 text-green-300 border border-green-700',
-      completed: 'bg-gray-900/30 text-gray-300 border border-gray-700',
-    };
-    return styles[status] || styles.pitched;
-  };
-
   const getDealBoard = (status) => {
     return deals.filter((d) => d.status === status);
   };
@@ -116,116 +101,112 @@ export default function Monetization() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a' }}>
-      <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Monetization Pipeline</h1>
-          <p className="text-gray-400">Track revenue streams and maximize earnings</p>
-        </div>
+    <div className="page">
+      <div className="page-header">
+        <h1>Monetization Pipeline</h1>
+        <p>Track revenue streams and maximize earnings</p>
+      </div>
 
-        {/* Revenue Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: '#E1306C' },
-            { label: 'Active Deals', value: deals.filter((d) => d.status === 'active').length, icon: Briefcase, color: '#833AB4' },
-            { label: 'Affiliate Revenue', value: `$${affiliateLinks.reduce((s, a) => s + a.commission, 0).toFixed(2)}`, icon: Link2, color: '#FD1D1D' },
-            { label: 'Monthly Target', value: `$${incomeTarget.toLocaleString()}`, icon: Target, color: '#F77737' },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-gray-400 text-sm font-medium mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-white">{stat.value}</p>
-                </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: `${stat.color}20` }}>
-                  <stat.icon size={24} style={{ color: stat.color }} />
-                </div>
+      {/* Revenue Dashboard */}
+      <div className="grid grid-4 section">
+        {[
+          { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'var(--color-primary)' },
+          { label: 'Active Deals', value: deals.filter((d) => d.status === 'active').length, icon: Briefcase, color: 'var(--color-secondary)' },
+          { label: 'Affiliate Revenue', value: `$${affiliateLinks.reduce((s, a) => s + a.commission, 0).toFixed(2)}`, icon: Link2, color: '#ef4444' },
+          { label: 'Monthly Target', value: `$${incomeTarget.toLocaleString()}`, icon: Target, color: '#f59e0b' },
+        ].map((stat, idx) => (
+          <div key={idx} className="card metric-card">
+            <div className="flex-between items-start">
+              <div className="flex-col gap-sm">
+                <span className="stat-label">{stat.label}</span>
+                <p className="stat-value">{stat.value}</p>
+              </div>
+              <div className="metric-card-icon" style={{ color: stat.color }}>
+                <stat.icon size={32} />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Revenue Trend Chart */}
-        <h2 className="text-2xl font-bold text-white mb-4">Revenue Trends</h2>
-        <div className="p-6 rounded-xl border border-gray-800 mb-8" style={{ backgroundColor: '#1a1a2e' }}>
+      {/* Revenue Trend Chart */}
+      <div className="section">
+        <h2 className="section-title">Revenue Trends</h2>
+        <div className="card">
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={monthlyRevenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="month" stroke="#666" />
-              <YAxis stroke="#666" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+              <XAxis dataKey="month" stroke="var(--text-muted)" />
+              <YAxis stroke="var(--text-muted)" />
               <Tooltip
-                contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333' }}
-                labelStyle={{ color: '#fff' }}
+                contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
+                labelStyle={{ color: 'var(--text-primary)' }}
               />
               <Legend />
-              <Bar dataKey="deals" fill="#E1306C" />
-              <Bar dataKey="affiliate" fill="#833AB4" />
-              <Bar dataKey="products" fill="#FD1D1D" />
+              <Bar dataKey="deals" fill="var(--color-primary)" />
+              <Bar dataKey="affiliate" fill="var(--color-secondary)" />
+              <Bar dataKey="products" fill="#ef4444" />
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
 
-        {/* Income Goal Tracker */}
-        <h2 className="text-2xl font-bold text-white mb-4">Monthly Income Goal</h2>
-        <div className="p-6 rounded-xl border border-gray-800 mb-8" style={{ backgroundColor: '#1a1a2e' }}>
-          <div className="flex justify-between items-center mb-4">
+      {/* Income Goal Tracker */}
+      <div className="section">
+        <h2 className="section-title">Monthly Income Goal</h2>
+        <div className="card">
+          <div className="flex-between gap-lg mb-4">
             <div>
-              <p className="text-gray-400 text-sm mb-1">Progress</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-sm text-muted mb-1">Progress</p>
+              <p className="stat-value">
                 ${incomeActual.toLocaleString()} / ${incomeTarget.toLocaleString()}
               </p>
             </div>
-            <p className="text-3xl font-bold" style={{ color: '#E1306C' }}>
+            <p className="stat-value" style={{ color: 'var(--color-primary)' }}>
               {Math.round((incomeActual / incomeTarget) * 100)}%
             </p>
           </div>
-          <div className="w-full bg-gray-800 rounded-full h-4">
+          <div className="progress-bar">
             <div
-              className="h-4 rounded-full transition-all"
+              className="progress-fill"
               style={{
                 width: `${Math.min((incomeActual / incomeTarget) * 100, 100)}%`,
-                background: 'linear-gradient(90deg, #E1306C, #833AB4)',
               }}
             />
           </div>
         </div>
+      </div>
 
-        {/* Sponsorship Rate Calculator */}
-        <h2 className="text-2xl font-bold text-white mb-4">Sponsorship Rate Calculator</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      {/* Sponsorship Rate Calculator */}
+      <div className="section">
+        <h2 className="section-title">Sponsorship Rate Calculator</h2>
+        <div className="grid grid-2 gap-lg">
           {/* Input Section */}
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <div className="space-y-4">
+          <div className="card">
+            <div className="gap-md flex-col">
               {[
                 { key: 'followers', label: 'Followers', icon: Target },
                 { key: 'engagementRate', label: 'Engagement Rate (%)', icon: TrendingUp },
               ].map((field) => (
                 <div key={field.key}>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">{field.label}</label>
-                  <div className="flex items-center gap-3">
-                    <field.icon size={18} className="text-gray-400" />
+                  <label className="text-sm text-secondary font-medium mb-2">{field.label}</label>
+                  <div className="flex gap-sm items-center">
+                    <field.icon size={18} style={{ color: 'var(--text-muted)' }} />
                     <input
                       type="number"
                       value={affiliateInputs[field.key]}
                       onChange={(e) =>
                         setAffiliateInputs({ ...affiliateInputs, [field.key]: parseFloat(e.target.value) || 0 })
                       }
-                      className="flex-1 px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-[#E1306C]"
                     />
                   </div>
                 </div>
               ))}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Niche</label>
+                <label className="text-sm text-secondary font-medium mb-2">Niche</label>
                 <select
                   value={affiliateInputs.niche}
                   onChange={(e) => setAffiliateInputs({ ...affiliateInputs, niche: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-[#E1306C]"
                 >
                   {Object.keys(nicheBenchmarks).map((niche) => (
                     <option key={niche} value={niche}>
@@ -238,66 +219,58 @@ export default function Monetization() {
           </div>
 
           {/* Results Section */}
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <h3 className="text-lg font-bold text-white mb-4">Suggested Rates</h3>
-            <div className="space-y-4">
+          <div className="card">
+            <h3 className="text-lg font-semibold mb-4">Suggested Rates</h3>
+            <div className="gap-md flex-col">
               {[
-                { label: 'Cost Per Post', value: `$${sponsorshipRates.costPerPost}`, color: '#E1306C' },
-                { label: 'Cost Per Story', value: `$${sponsorshipRates.costPerStory}`, color: '#833AB4' },
-                { label: 'Cost Per Reel', value: `$${sponsorshipRates.costPerReel}`, color: '#FD1D1D' },
+                { label: 'Cost Per Post', value: `$${sponsorshipRates.costPerPost}`, color: 'var(--color-primary)' },
+                { label: 'Cost Per Story', value: `$${sponsorshipRates.costPerStory}`, color: 'var(--color-secondary)' },
+                { label: 'Cost Per Reel', value: `$${sponsorshipRates.costPerReel}`, color: '#ef4444' },
               ].map((rate, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-lg"
-                  style={{ backgroundColor: '#0a0a0a' }}
-                >
-                  <p className="text-gray-400 text-sm mb-1">{rate.label}</p>
-                  <p className="text-2xl font-bold text-white">{rate.value}</p>
+                <div key={idx} className="rate-item">
+                  <p className="text-sm text-muted">{rate.label}</p>
+                  <p className="stat-value">{rate.value}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Brand Deal CRM - Kanban Board */}
-        <h2 className="text-2xl font-bold text-white mb-4">Brand Deal Pipeline</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Brand Deal CRM - Kanban Board */}
+      <div className="section">
+        <h2 className="section-title">Brand Deal Pipeline</h2>
+        <div className="kanban-board">
           {['pitched', 'negotiating', 'active', 'completed'].map((status) => (
-            <div key={status} className="space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-white capitalize">{status}</h3>
-                <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
-                  {getDealBoard(status).length}
-                </span>
+            <div key={status} className="kanban-column">
+              <div className="flex-between gap-sm mb-4">
+                <h3 className="text-sm font-semibold capitalize">{status}</h3>
+                <span className="badge badge-info text-sm">{getDealBoard(status).length}</span>
               </div>
-              <div className="space-y-3 min-h-[200px]">
+              <div className="kanban-cards">
                 {getDealBoard(status).map((deal) => (
-                  <div
-                    key={deal.id}
-                    className="p-4 rounded-lg border border-gray-700 cursor-move hover:border-gray-600 transition-colors group"
-                    style={{ backgroundColor: '#1a1a2e' }}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="font-semibold text-white text-sm">{deal.brand}</h4>
+                  <div key={deal.id} className="deal-card">
+                    <div className="flex-between gap-sm mb-3">
+                      <h4 className="text-sm font-semibold">{deal.brand}</h4>
                       <button
                         onClick={() => deleteDeal(deal.id)}
-                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 transition-all"
+                        className="btn-ghost btn-small text-muted hover:text-negative"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
-                    <p className="text-sm text-gray-400 mb-3">{deal.description}</p>
-                    <div className="space-y-2 mb-3">
-                      <p className="text-lg font-bold text-white">${deal.amount}</p>
-                      <p className="text-xs text-gray-500">{deal.deliverables}</p>
+                    <p className="text-sm text-muted mb-3">{deal.description}</p>
+                    <div className="gap-sm flex-col mb-3">
+                      <p className="stat-value">${deal.amount}</p>
+                      <p className="text-xs text-muted">{deal.deliverables}</p>
                     </div>
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-sm flex-wrap">
                       {status !== 'completed' && (
                         <>
                           {status === 'pitched' && (
                             <button
                               onClick={() => moveDeal(deal.id, 'negotiating')}
-                              className="text-xs px-2 py-1 rounded bg-blue-900/30 text-blue-300 hover:bg-blue-900/50 transition-colors"
+                              className="btn-small badge badge-info"
                             >
                               Negotiate
                             </button>
@@ -305,7 +278,7 @@ export default function Monetization() {
                           {status === 'negotiating' && (
                             <button
                               onClick={() => moveDeal(deal.id, 'active')}
-                              className="text-xs px-2 py-1 rounded bg-green-900/30 text-green-300 hover:bg-green-900/50 transition-colors"
+                              className="btn-small badge badge-success"
                             >
                               Activate
                             </button>
@@ -313,7 +286,7 @@ export default function Monetization() {
                           {status === 'active' && (
                             <button
                               onClick={() => moveDeal(deal.id, 'completed')}
-                              className="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"
+                              className="btn-small badge"
                             >
                               Complete
                             </button>
@@ -327,89 +300,83 @@ export default function Monetization() {
             </div>
           ))}
         </div>
+      </div>
 
-        {/* Media Kit Preview */}
-        <h2 className="text-2xl font-bold text-white mb-4">Media Kit Preview</h2>
-        <div className="p-8 rounded-xl border border-gray-800 mb-8" style={{ backgroundColor: '#1a1a2e' }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Media Kit Preview */}
+      <div className="section">
+        <h2 className="section-title">Media Kit Preview</h2>
+        <div className="card">
+          <div className="grid grid-2 gap-lg">
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2">@your_handle</h3>
-              <p className="text-gray-400 mb-6">Fashion & Lifestyle Influencer</p>
-              <div className="space-y-3">
+              <h3 className="text-xl font-semibold mb-2">@your_handle</h3>
+              <p className="text-muted mb-6">Fashion & Lifestyle Influencer</p>
+              <div className="gap-md flex-col">
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Followers</p>
-                  <p className="text-2xl font-bold text-white">{affiliateInputs.followers.toLocaleString()}</p>
+                  <p className="text-xs text-muted mb-1">Followers</p>
+                  <p className="stat-value">{affiliateInputs.followers.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Engagement Rate</p>
-                  <p className="text-2xl font-bold text-white">{affiliateInputs.engagementRate}%</p>
+                  <p className="text-xs text-muted mb-1">Engagement Rate</p>
+                  <p className="stat-value">{affiliateInputs.engagementRate}%</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm mb-1">Content Type</p>
-                  <p className="text-white">Posts • Reels • Stories</p>
+                  <p className="text-xs text-muted mb-1">Content Type</p>
+                  <p className="text-primary">Posts • Reels • Stories</p>
                 </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-gray-900">
-                <p className="text-gray-400 text-sm mb-1">Avg Monthly Reach</p>
-                <p className="text-2xl font-bold text-white">2.4M</p>
+            <div className="gap-md flex-col">
+              <div className="rate-item">
+                <p className="text-xs text-muted mb-1">Avg Monthly Reach</p>
+                <p className="stat-value">2.4M</p>
               </div>
-              <div className="p-4 rounded-lg bg-gray-900">
-                <p className="text-gray-400 text-sm mb-1">Top Content Type</p>
-                <p className="text-white font-semibold">Lifestyle Reels (8.5% avg engagement)</p>
+              <div className="rate-item">
+                <p className="text-xs text-muted mb-1">Top Content Type</p>
+                <p className="text-primary font-semibold">Lifestyle Reels (8.5% avg engagement)</p>
               </div>
-              <button className="w-full py-2 rounded-lg bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white font-semibold hover:shadow-lg transition-shadow">
-                <Download size={18} className="inline mr-2" />
+              <button className="btn btn-primary gap-sm">
+                <Download size={18} />
                 Download Media Kit
               </button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Affiliate Links Manager */}
-        <h2 className="text-2xl font-bold text-white mb-4">Affiliate Link Manager</h2>
-        <div className="overflow-x-auto mb-8">
-          <table className="w-full text-sm">
+      {/* Affiliate Links Manager */}
+      <div className="section">
+        <h2 className="section-title">Affiliate Link Manager</h2>
+        <div className="card overflow-auto">
+          <table className="data-table">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Program</th>
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Clicks</th>
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Conversions</th>
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Commission</th>
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Status</th>
-                <th className="px-4 py-3 text-left text-gray-300 font-semibold">Action</th>
+              <tr>
+                <th>Program</th>
+                <th>Clicks</th>
+                <th>Conversions</th>
+                <th>Commission</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {affiliateLinks.map((link) => (
-                <tr
-                  key={link.id}
-                  className="border-b border-gray-800 hover:bg-gray-900/20 transition-colors"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <td className="px-4 py-4">
-                    <p className="font-semibold text-white">{link.program}</p>
-                    <p className="text-xs text-gray-500">{link.url}</p>
+                <tr key={link.id}>
+                  <td>
+                    <p className="font-semibold">{link.program}</p>
+                    <p className="text-xs text-muted">{link.url}</p>
                   </td>
-                  <td className="px-4 py-4 text-white">{link.clicks.toLocaleString()}</td>
-                  <td className="px-4 py-4 text-white">{link.conversions}</td>
-                  <td className="px-4 py-4 font-bold text-white">${link.commission.toFixed(2)}</td>
-                  <td className="px-4 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        link.status === 'active'
-                          ? 'bg-green-900/30 text-green-300 border border-green-700'
-                          : 'bg-red-900/30 text-red-300 border border-red-700'
-                      }`}
-                    >
+                  <td>{link.clicks.toLocaleString()}</td>
+                  <td>{link.conversions}</td>
+                  <td className="font-semibold">${link.commission.toFixed(2)}</td>
+                  <td>
+                    <span className={`badge ${link.status === 'active' ? 'badge-success' : 'badge-danger'}`}>
                       {link.status.charAt(0).toUpperCase() + link.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-4 py-4">
+                  <td>
                     <button
                       onClick={() => deleteAffiliateLink(link.id)}
-                      className="text-gray-400 hover:text-red-400 transition-colors"
+                      className="btn-ghost text-muted hover:text-negative"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -419,43 +386,35 @@ export default function Monetization() {
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* Digital Products */}
-        <h2 className="text-2xl font-bold text-white mb-4">Digital Product Launchpad</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Digital Products */}
+      <div className="section">
+        <h2 className="section-title">Digital Product Launchpad</h2>
+        <div className="grid grid-3 gap-lg">
           {products.map((product) => (
-            <div
-              key={product.id}
-              className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-bold text-white flex-1">{product.name}</h3>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    product.status === 'launched'
-                      ? 'bg-green-900/30 text-green-300'
-                      : 'bg-yellow-900/30 text-yellow-300'
-                  }`}
-                >
+            <div key={product.id} className="card card-gradient">
+              <div className="flex-between gap-sm mb-4">
+                <h3 className="text-lg font-semibold">{product.name}</h3>
+                <span className={`badge ${product.status === 'launched' ? 'badge-success' : 'badge-warning'}`}>
                   {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                 </span>
               </div>
-              <div className="space-y-3 mb-4">
+              <div className="gap-md flex-col mb-4">
                 <div>
-                  <p className="text-gray-400 text-sm">Price</p>
-                  <p className="text-2xl font-bold text-white">${product.price}</p>
+                  <p className="text-xs text-muted">Price</p>
+                  <p className="stat-value">${product.price}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Projected Revenue</p>
-                  <p className="text-xl font-bold text-white">${product.projectedRevenue.toLocaleString()}</p>
+                  <p className="text-xs text-muted">Projected Revenue</p>
+                  <p className="text-lg font-semibold">${product.projectedRevenue.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Launch Date</p>
-                  <p className="text-white">{new Date(product.launchDate).toLocaleDateString()}</p>
+                  <p className="text-xs text-muted">Launch Date</p>
+                  <p className="text-primary">{new Date(product.launchDate).toLocaleDateString()}</p>
                 </div>
               </div>
-              <button className="w-full py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold transition-colors">
+              <button className="btn btn-secondary w-full">
                 {product.status === 'launched' ? 'View Analytics' : 'Create Checklist'}
               </button>
             </div>

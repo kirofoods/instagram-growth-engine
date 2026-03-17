@@ -1,12 +1,12 @@
 .topbar {
-  height: 70px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
+  height: 56px;
+  background: #09090b;
+  border-bottom: 1px solid #27272a;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-xl);
-  gap: var(--spacing-lg);
+  padding: 0 20px;
+  gap: 16px;
   flex-shrink: 0;
 }
 
@@ -14,19 +14,28 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .topbar-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 0.9375rem;
+  font-weight: 600;
   margin: 0;
+  white-space: nowrap;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .topbar-center {
   flex: 1;
   display: flex;
   justify-content: center;
-  max-width: 400px;
+  max-width: 360px;
 }
 
 .search-form {
@@ -37,35 +46,39 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 0 var(--spacing-md);
-  transition: all var(--transition-fast);
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 36px;
+  transition: all 150ms ease-out;
 }
 
 .search-input-wrapper:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.1);
+  border-color: #404040;
+  background: #1e1e23;
 }
 
 .search-icon {
-  color: var(--text-tertiary);
-  margin-right: var(--spacing-sm);
+  color: #71717a;
+  margin-right: 8px;
   flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 
 .search-input {
   background: transparent;
   border: none;
-  color: var(--text-primary);
-  padding: var(--spacing-sm) 0;
+  color: #f4f4f5;
+  padding: 0;
   width: 100%;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
 }
 
 .search-input::placeholder {
-  color: var(--text-tertiary);
+  color: #71717a;
 }
 
 .search-input:focus {
@@ -76,63 +89,66 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: 8px;
 }
 
 .topbar-btn {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: #a1a1a6;
   cursor: pointer;
-  padding: var(--spacing-sm);
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  border-radius: 6px;
+  transition: all 150ms ease-out;
   position: relative;
+  width: 32px;
+  height: 32px;
 }
 
 .topbar-btn:hover {
-  color: var(--text-primary);
-  background: rgba(225, 48, 108, 0.1);
+  color: #f4f4f5;
+  background: #18181b;
 }
 
 .notification-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
   background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
-  color: white;
-  font-size: 0.625rem;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
+  border-radius: 50%;
+  display: none;
+}
+
+.notification-badge.has-notifications {
+  display: block;
 }
 
 .user-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #27272a;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 150ms ease-out;
+  flex-shrink: 0;
 }
 
 .user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(225, 48, 108, 0.3);
+  background: #404040;
 }
 
 .avatar-placeholder {
-  color: white;
-  font-weight: 700;
-  font-size: 1rem;
+  color: #f4f4f5;
+  font-weight: 600;
+  font-size: 0.75rem;
 }
 
 @media (max-width: 768px) {

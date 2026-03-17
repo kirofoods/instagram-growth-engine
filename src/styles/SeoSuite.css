@@ -1,0 +1,231 @@
+/* ============================================
+   SEO SUITE STYLES
+   ============================================ */
+
+/* SEO Score Card */
+.seo-score-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seo-score-circle {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  flex-shrink: 0;
+}
+
+.seo-score-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.seo-score-bg {
+  fill: none;
+  stroke: var(--border-secondary);
+  stroke-width: 8;
+}
+
+.seo-score-progress {
+  fill: none;
+  stroke: url(#seoGradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray var(--transition-base);
+}
+
+.seo-score-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* SEO Stats */
+.seo-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+  transition: all var(--transition-fast);
+}
+
+.seo-stat:hover {
+  border-color: var(--border-secondary);
+}
+
+.seo-stat-highlight {
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.1), rgba(131, 58, 180, 0.1));
+  border-color: rgba(225, 48, 108, 0.3);
+}
+
+/* Suggestions Container */
+.seo-suggestions {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.seo-suggestion-item {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.seo-suggestion-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.seo-suggestion-item p {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+/* Alt Text Output */
+.alt-text-output {
+  min-height: 5rem;
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Keyword Item */
+.keyword-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.keyword-item:hover {
+  border-color: var(--border-secondary);
+  background: var(--bg-secondary);
+}
+
+/* Checklist Styles */
+.checklist-progress {
+  width: 100%;
+  height: 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.checklist-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  border-radius: var(--radius-lg);
+  transition: width var(--transition-base);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid var(--border-primary);
+}
+
+.checklist-item:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-secondary);
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.checklist-item span {
+  font-size: 0.875rem;
+  transition: color var(--transition-fast);
+}
+
+/* Input fields */
+textarea,
+input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 0.625rem 0.875rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: var(--text-muted);
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .seo-score-card {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-score-circle {
+    width: 8rem;
+    height: 8rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .seo-suggestions {
+    max-height: 10rem;
+  }
+
+  .checklist-item {
+    padding: var(--spacing-sm);
+  }
+}

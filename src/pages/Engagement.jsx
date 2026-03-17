@@ -13,13 +13,9 @@ import {
   Eye,
   MoreVertical,
   Check,
-  X,
-  Search,
   BarChart3,
 } from 'lucide-react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -28,10 +24,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
+import '../styles/Engagement.css';
 
 export default function Engagement() {
   const [activeTab, setActiveTab] = useState('targets');
@@ -247,491 +241,402 @@ export default function Engagement() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a' }}>
-      <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Heart className="w-8 h-8" style={{ color: '#E1306C' }} />
-            <h1 className="text-4xl font-bold text-white">Engagement & Community</h1>
-          </div>
-          <p className="text-gray-400">Master engagement to build a loyal, engaged community</p>
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
+        <div className="flex items-center gap-3">
+          <Heart className="w-8 h-8" style={{ color: 'var(--color-primary)' }} />
+          <h1>Engagement & Community</h1>
         </div>
+        <p className="text-secondary">Master engagement to build a loyal, engaged community</p>
+      </div>
 
-        {/* Daily Targets */}
-        <div
-          className="p-6 rounded-xl border border-gray-800 mb-8"
-          style={{ backgroundColor: '#1a1a2e' }}
-        >
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <Target className="w-6 h-6" style={{ color: '#E1306C' }} />
-            Daily Engagement Targets
-          </h2>
+      {/* Daily Targets */}
+      <div className="card mb-8">
+        <h2 className="flex items-center gap-2 mb-6">
+          <Target className="w-6 h-6" style={{ color: 'var(--color-primary)' }} />
+          <span className="text-lg font-semibold">Daily Engagement Targets</span>
+        </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(engagementTargets).map(([key, value]) => {
-              const percentage = (value.current / value.target) * 100;
-              const labels = {
-                comments: { label: 'Comments Given', icon: MessageCircle },
-                dms: { label: 'DMs Sent', icon: Share2 },
-                stories: { label: 'Stories Replied', icon: Eye },
-                accountsEngaged: { label: 'Accounts Engaged', icon: Users },
-              };
+        <div className="grid grid-2 gap-6">
+          {Object.entries(engagementTargets).map(([key, value]) => {
+            const percentage = (value.current / value.target) * 100;
+            const labels = {
+              comments: { label: 'Comments Given', icon: MessageCircle },
+              dms: { label: 'DMs Sent', icon: Share2 },
+              stories: { label: 'Stories Replied', icon: Eye },
+              accountsEngaged: { label: 'Accounts Engaged', icon: Users },
+            };
 
-              const Icon = labels[key].icon;
+            const Icon = labels[key].icon;
 
-              return (
-                <div key={key}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon className="w-5 h-5" style={{ color: '#E1306C' }} />
-                    <span className="text-white font-semibold">{labels[key].label}</span>
+            return (
+              <div key={key}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+                  <span className="font-medium text-primary">{labels[key].label}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <div className="eng-progress-bar">
+                      <div
+                        className="eng-progress-fill"
+                        style={{
+                          width: `${Math.min(percentage, 100)}%`,
+                          background: percentage >= 100
+                            ? 'linear-gradient(90deg, var(--status-success) 0%, #34D399 100%)'
+                            : 'linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end))',
+                        }}
+                      />
+                    </div>
+                    <div className="text-secondary text-sm mt-2">
+                      {value.current}/{value.target}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <div className="w-full h-4 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
-                        <div
-                          className="h-4 rounded-full transition-all duration-500"
-                          style={{
-                            width: `${Math.min(percentage, 100)}%`,
-                            background:
-                              percentage >= 100
-                                ? 'linear-gradient(90deg, #10B981 0%, #34D399 100%)'
-                                : 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
-                          }}
-                        />
-                      </div>
-                      <div className="text-gray-400 text-sm mt-2">
-                        {value.current}/{value.target}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-white">{percentage.toFixed(0)}%</div>
-                      {percentage < 100 && (
-                        <div className="text-gray-400 text-xs mt-1">{value.target - value.current} left</div>
-                      )}
-                      {percentage >= 100 && (
-                        <div className="text-green-400 text-xs mt-1">Complete!</div>
-                      )}
-                    </div>
+                  <div className="text-right">
+                    <div className="stat-value">{percentage.toFixed(0)}%</div>
+                    {percentage < 100 && (
+                      <div className="stat-label mt-1">{value.target - value.current} left</div>
+                    )}
+                    {percentage >= 100 && (
+                      <div className="stat-change text-positive mt-1">Complete!</div>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {['targets', 'strategies', 'templates', 'community', 'collabs', 'report'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
-                activeTab === tab
-                  ? 'bg-gradient-to-r text-white'
-                  : 'text-gray-400 hover:text-gray-300'
-              }`}
-              style={{
-                background:
-                  activeTab === tab ? 'linear-gradient(135deg, #E1306C 0%, #833AB4 100%)' : 'transparent',
-              }}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
+      {/* Tab Navigation */}
+      <div className="eng-tabs mb-8">
+        {['targets', 'strategies', 'templates', 'community', 'collabs', 'report'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Strategies Tab */}
+      {activeTab === 'strategies' && (
+        <div className="section">
+          <h2 className="section-title">Engagement Strategies</h2>
+
+          {strategies.map((strategy) => (
+            <div key={strategy.id} className="eng-strategy-card">
+              <button
+                onClick={() =>
+                  setExpandedStrategy(expandedStrategy === strategy.id ? null : strategy.id)
+                }
+                className="w-full p-6 flex items-center justify-between"
+              >
+                <div className="text-left flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: strategy.color }}
+                    />
+                    <h3 className="text-lg font-semibold text-primary">{strategy.name}</h3>
+                  </div>
+                  <p className="text-secondary text-sm">{strategy.description}</p>
+                </div>
+                <div className="text-right ml-4">
+                  <div className="text-xs text-secondary mb-2">{strategy.frequency}</div>
+                  <span className="badge" style={{
+                    backgroundColor: strategy.color + '20',
+                    color: strategy.color,
+                  }}>
+                    {strategy.impact}
+                  </span>
+                </div>
+              </button>
+
+              {expandedStrategy === strategy.id && (
+                <div className="px-6 pb-6 pt-4" style={{ borderTopColor: 'var(--border-primary)', borderTopWidth: '1px' }}>
+                  <div className="space-y-3">
+                    {strategy.details.map((detail, idx) => (
+                      <div key={idx} className="flex gap-3">
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{ backgroundColor: strategy.color + '30' }}
+                        >
+                          <Check className="w-3 h-3" style={{ color: strategy.color }} />
+                        </div>
+                        <p className="text-secondary text-sm">{detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </div>
+      )}
 
-        {/* Strategies Tab */}
-        {activeTab === 'strategies' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Engagement Strategies</h2>
+      {/* Templates Tab */}
+      {activeTab === 'templates' && (
+        <div className="section">
+          <h2 className="section-title">Comment Templates</h2>
 
-            {strategies.map((strategy) => (
-              <div
-                key={strategy.id}
-                className="border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <button
-                  onClick={() =>
-                    setExpandedStrategy(expandedStrategy === strategy.id ? null : strategy.id)
-                  }
-                  className="w-full p-6 flex items-center justify-between hover:opacity-90 transition"
-                >
-                  <div className="text-left flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: strategy.color }}
+          {Object.entries(commentTemplates).map(([category, templateList]) => (
+            <div key={category} className="mb-8">
+              <h3 className="text-lg font-semibold text-primary mb-4 capitalize">
+                {category === 'valueAdd' ? 'Value-Add' : category}
+              </h3>
+              <div className="space-y-3">
+                {templateList.map((template, idx) => (
+                  <div key={idx} className="card-sm">
+                    <div className="flex justify-between items-start gap-4">
+                      <p className="text-secondary text-sm flex-1 whitespace-pre-wrap">{template}</p>
+                      <Copy
+                        className="w-5 h-5 cursor-pointer transition flex-shrink-0 hover:text-primary"
+                        style={{ color: 'var(--text-muted)' }}
+                        onClick={() => handleCopyTemplate(template)}
                       />
-                      <h3 className="text-lg font-bold text-white">{strategy.name}</h3>
-                    </div>
-                    <p className="text-gray-400 text-sm">{strategy.description}</p>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="text-xs text-gray-400 mb-2">{strategy.frequency}</div>
-                    <div
-                      className="px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{
-                        backgroundColor: strategy.color + '20',
-                        color: strategy.color,
-                      }}
-                    >
-                      {strategy.impact}
-                    </div>
-                  </div>
-                </button>
-
-                {expandedStrategy === strategy.id && (
-                  <div className="px-6 pb-6 border-t border-gray-700">
-                    <div className="space-y-3 mt-4">
-                      {strategy.details.map((detail, idx) => (
-                        <div key={idx} className="flex gap-3">
-                          <div
-                            className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                            style={{ backgroundColor: strategy.color + '30' }}
-                          >
-                            <Check className="w-3 h-3" style={{ color: strategy.color }} />
-                          </div>
-                          <p className="text-gray-300 text-sm">{detail}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Templates Tab */}
-        {activeTab === 'templates' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Comment Templates</h2>
-
-            {Object.entries(commentTemplates).map(([category, templateList]) => (
-              <div key={category}>
-                <h3 className="text-lg font-bold text-white mb-4 capitalize">
-                  {category === 'valueAdd' ? 'Value-Add' : category}
-                </h3>
-                <div className="space-y-3 mb-8">
-                  {templateList.map((template, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition"
-                      style={{ backgroundColor: '#1a1a2e' }}
-                    >
-                      <div className="flex justify-between items-start gap-4">
-                        <p className="text-gray-300 text-sm flex-1 whitespace-pre-wrap">{template}</p>
-                        <Copy
-                          className="w-5 h-5 text-gray-500 hover:text-white cursor-pointer transition flex-shrink-0"
-                          onClick={() => handleCopyTemplate(template)}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Community Tab */}
-        {activeTab === 'community' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Community Tracking</h2>
-
-            {/* Milestone Display */}
-            <div className="space-y-4">
-              {milestoneData.map((milestone, idx) => (
-                <div
-                  key={idx}
-                  className="p-6 rounded-xl border border-gray-800"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-bold text-white">{milestone.name}</h3>
-                    <span className="text-2xl font-bold text-white">{milestone.achieved}</span>
-                  </div>
-                  <div className="w-full h-4 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
-                    <div
-                      className="h-4 rounded-full transition-all duration-500"
-                      style={{
-                        width: milestone.achieved,
-                        background: 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
-                      }}
-                    />
-                  </div>
-                  <div className="text-gray-400 text-sm mt-3">
-                    {milestone.value.toLocaleString()} of {milestone.total.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Superfans */}
-            <div
-              className="p-6 rounded-xl border border-gray-800"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Award className="w-6 h-6" style={{ color: '#FFB533' }} />
-                Your Superfans
-              </h3>
-              <div className="space-y-3">
-                {superfans.map((fan) => (
-                  <div
-                    key={fan.id}
-                    className="flex items-center justify-between p-4 rounded-lg"
-                    style={{ backgroundColor: '#0f0f1e' }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{fan.avatar}</span>
-                      <div>
-                        <p className="text-white font-semibold">{fan.username}</p>
-                        <p className="text-gray-400 text-sm">{fan.followers} followers</p>
-                        <p className="text-gray-500 text-xs mt-1">{fan.engagement}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-white">{fan.points}</div>
-                      <div className="text-gray-400 text-xs">engagement points</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+          ))}
+        </div>
+      )}
 
-            {/* Engagement Pod Tracker */}
-            <div
-              className="p-6 rounded-xl border border-gray-800"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Users className="w-6 h-6" style={{ color: '#833AB4' }} />
-                Engagement Pod Status
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { name: 'Growth Hackers Pod', members: 12, status: 'active' },
-                  { name: 'Content Creators Circle', members: 15, status: 'active' },
-                  { name: 'Niche Leaders', members: 8, status: 'active' },
-                ].map((pod, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-4 rounded-lg"
-                    style={{ backgroundColor: '#0f0f1e' }}
-                  >
-                    <div>
-                      <p className="text-white font-semibold">{pod.name}</p>
-                      <p className="text-gray-400 text-sm">{pod.members} members</p>
-                    </div>
-                    <span
-                      className="px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{
-                        backgroundColor: '#10B98120',
-                        color: '#10B981',
-                      }}
-                    >
-                      {pod.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+      {/* Community Tab */}
+      {activeTab === 'community' && (
+        <div className="section">
+          <h2 className="section-title">Community Tracking</h2>
 
-        {/* Collaboration Tab */}
-        {activeTab === 'collabs' && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">Collaboration Finder</h2>
-              <button
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition hover:opacity-80"
-                style={{
-                  background: 'linear-gradient(135deg, #E1306C 0%, #833AB4 100%)',
-                  color: 'white',
-                }}
-              >
-                <Plus className="w-5 h-5" />
-                New Collab Idea
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {collaborators.map((collab) => (
-                <div
-                  key={collab.id}
-                  className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start gap-4">
-                      <span className="text-4xl">{collab.avatar}</span>
-                      <div>
-                        <h3 className="text-lg font-bold text-white">{collab.name}</h3>
-                        <p className="text-gray-400 text-sm">{collab.handle}</p>
-                        <p className="text-gray-500 text-xs mt-1">📌 {collab.niche}</p>
-                      </div>
-                    </div>
-                    <button
-                      className="p-2 rounded-lg transition hover:opacity-80"
-                      style={{ backgroundColor: '#252545' }}
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-400" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: '#0f0f1e' }}
-                    >
-                      <div className="text-gray-400 text-xs mb-2">Followers</div>
-                      <div className="text-lg font-bold text-white">{collab.followers}</div>
-                    </div>
-                    <div
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: '#0f0f1e' }}
-                    >
-                      <div className="text-gray-400 text-xs mb-2">Engagement Rate</div>
-                      <div className="text-lg font-bold text-white">{collab.engagementRate.toFixed(1)}%</div>
-                    </div>
-                    <div
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: '#0f0f1e' }}
-                    >
-                      <div className="text-gray-400 text-xs mb-2">Match Score</div>
-                      <div
-                        className="text-lg font-bold"
-                        style={{
-                          color:
-                            collab.matchScore >= 90
-                              ? '#10B981'
-                              : collab.matchScore >= 80
-                                ? '#FFB533'
-                                : '#F87171',
-                        }}
-                      >
-                        {collab.matchScore}%
-                      </div>
-                    </div>
-                  </div>
+          {/* Milestone Display */}
+          <div className="space-y-4 mb-8">
+            {milestoneData.map((milestone, idx) => (
+              <div key={idx} className="card">
+                <div className="flex-between mb-4">
+                  <h3 className="text-lg font-semibold text-primary">{milestone.name}</h3>
+                  <span className="stat-value">{milestone.achieved}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Report Tab */}
-        {activeTab === 'report' && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <BarChart3 className="w-6 h-6" style={{ color: '#E1306C' }} />
-              Weekly Engagement Report
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div
-                className="p-6 rounded-xl border border-gray-800"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <div className="text-gray-400 text-sm mb-2">Total Given</div>
-                <div className="text-4xl font-bold text-white">344</div>
-                <div className="text-green-400 text-sm mt-2">Engagement actions</div>
-              </div>
-
-              <div
-                className="p-6 rounded-xl border border-gray-800"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <div className="text-gray-400 text-sm mb-2">Total Received</div>
-                <div className="text-4xl font-bold text-white">470</div>
-                <div className="text-green-400 text-sm mt-2">+36.6% ratio</div>
-              </div>
-
-              <div
-                className="p-6 rounded-xl border border-gray-800"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <div className="text-gray-400 text-sm mb-2">Engagement ROI</div>
-                <div className="text-4xl font-bold text-white">1.37x</div>
-                <div className="text-green-400 text-sm mt-2">You're winning!</div>
-              </div>
-            </div>
-
-            <div
-              className="p-6 rounded-xl border border-gray-800"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <h3 className="text-lg font-bold text-white mb-4">Engagement Given vs Received</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={engagementReportData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="day" stroke="#666" />
-                  <YAxis stroke="#666" />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#252545', border: '1px solid #444' }}
-                    labelStyle={{ color: '#999' }}
+                <div className="eng-progress-bar mb-3">
+                  <div
+                    className="eng-progress-fill"
+                    style={{
+                      width: milestone.achieved,
+                    }}
                   />
-                  <Legend />
-                  <Bar dataKey="given" fill="#E1306C" name="Given" />
-                  <Bar dataKey="received" fill="#10B981" name="Received" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                </div>
+                <div className="text-secondary text-sm">
+                  {milestone.value.toLocaleString()} of {milestone.total.toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div
-                className="p-6 rounded-xl border border-gray-800"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <h3 className="text-lg font-bold text-white mb-4">Insights</h3>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <TrendingUp className="w-5 h-5 text-green-400 flex-shrink-0" />
+          {/* Superfans */}
+          <div className="card mb-6">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+              <Award className="w-6 h-6" style={{ color: '#FFB533' }} />
+              Your Superfans
+            </h3>
+            <div className="space-y-3">
+              {superfans.map((fan) => (
+                <div key={fan.id} className="eng-list-item">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{fan.avatar}</span>
                     <div>
-                      <p className="text-white font-semibold text-sm">Engagement momentum</p>
-                      <p className="text-gray-400 text-xs">Thursday was your best day with +29 interactions</p>
+                      <p className="font-semibold text-primary">{fan.username}</p>
+                      <p className="text-secondary text-sm">{fan.followers} followers</p>
+                      <p className="text-tertiary text-xs mt-1">{fan.engagement}</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <MessageCircle className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  <div className="text-right">
+                    <div className="stat-value">{fan.points}</div>
+                    <div className="stat-label">engagement points</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Engagement Pod Tracker */}
+          <div className="card">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+              <Users className="w-6 h-6" style={{ color: 'var(--color-secondary)' }} />
+              Engagement Pod Status
+            </h3>
+            <div className="space-y-3">
+              {[
+                { name: 'Growth Hackers Pod', members: 12, status: 'active' },
+                { name: 'Content Creators Circle', members: 15, status: 'active' },
+                { name: 'Niche Leaders', members: 8, status: 'active' },
+              ].map((pod, idx) => (
+                <div key={idx} className="eng-list-item">
+                  <div>
+                    <p className="font-semibold text-primary">{pod.name}</p>
+                    <p className="text-secondary text-sm">{pod.members} members</p>
+                  </div>
+                  <span className="badge badge-success">
+                    {pod.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Collaboration Tab */}
+      {activeTab === 'collabs' && (
+        <div className="section">
+          <div className="flex-between mb-6">
+            <h2 className="section-title">Collaboration Finder</h2>
+            <button className="btn btn-primary">
+              <Plus className="w-5 h-5" />
+              New Collab Idea
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {collaborators.map((collab) => (
+              <div key={collab.id} className="card">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start gap-4">
+                    <span className="text-4xl">{collab.avatar}</span>
                     <div>
-                      <p className="text-white font-semibold text-sm">Comment engagement wins</p>
-                      <p className="text-gray-400 text-xs">Your comments get 3.2x more replies than average</p>
+                      <h3 className="text-lg font-semibold text-primary">{collab.name}</h3>
+                      <p className="text-secondary text-sm">{collab.handle}</p>
+                      <p className="text-tertiary text-xs mt-1">📌 {collab.niche}</p>
+                    </div>
+                  </div>
+                  <button className="btn btn-ghost">
+                    <MoreVertical className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                  </button>
+                </div>
+
+                <div className="grid grid-3 gap-4">
+                  <div className="eng-metric-box">
+                    <div className="stat-label">Followers</div>
+                    <div className="text-lg font-semibold text-primary">{collab.followers}</div>
+                  </div>
+                  <div className="eng-metric-box">
+                    <div className="stat-label">Engagement Rate</div>
+                    <div className="text-lg font-semibold text-primary">{collab.engagementRate.toFixed(1)}%</div>
+                  </div>
+                  <div className="eng-metric-box">
+                    <div className="stat-label">Match Score</div>
+                    <div
+                      className="text-lg font-semibold"
+                      style={{
+                        color:
+                          collab.matchScore >= 90
+                            ? 'var(--status-success)'
+                            : collab.matchScore >= 80
+                              ? 'var(--status-warning)'
+                              : 'var(--status-error)',
+                      }}
+                    >
+                      {collab.matchScore}%
                     </div>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-              <div
-                className="p-6 rounded-xl border border-gray-800"
-                style={{ backgroundColor: '#1a1a2e' }}
-              >
-                <h3 className="text-lg font-bold text-white mb-4">Next Steps</h3>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <Zap className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                    <div>
-                      <p className="text-white font-semibold text-sm">Power hour optimization</p>
-                      <p className="text-gray-400 text-xs">Try 8-9 PM slot for 50% better response rates</p>
-                    </div>
+      {/* Report Tab */}
+      {activeTab === 'report' && (
+        <div className="section">
+          <h2 className="flex items-center gap-2 mb-6">
+            <BarChart3 className="w-6 h-6" style={{ color: 'var(--color-primary)' }} />
+            <span className="text-lg font-semibold">Weekly Engagement Report</span>
+          </h2>
+
+          <div className="grid grid-3 gap-4 mb-6">
+            <div className="card">
+              <div className="stat-label">Total Given</div>
+              <div className="stat-value">344</div>
+              <div className="stat-change text-positive mt-2">Engagement actions</div>
+            </div>
+
+            <div className="card">
+              <div className="stat-label">Total Received</div>
+              <div className="stat-value">470</div>
+              <div className="stat-change text-positive mt-2">+36.6% ratio</div>
+            </div>
+
+            <div className="card">
+              <div className="stat-label">Engagement ROI</div>
+              <div className="stat-value">1.37x</div>
+              <div className="stat-change text-positive mt-2">You're winning!</div>
+            </div>
+          </div>
+
+          <div className="card mb-6">
+            <h3 className="text-lg font-semibold text-primary mb-4">Engagement Given vs Received</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={engagementReportData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-secondary)" />
+                <XAxis dataKey="day" stroke="var(--text-muted)" />
+                <YAxis stroke="var(--text-muted)" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-secondary)' }}
+                  labelStyle={{ color: 'var(--text-secondary)' }}
+                />
+                <Legend />
+                <Bar dataKey="given" fill="var(--color-primary)" name="Given" />
+                <Bar dataKey="received" fill="var(--status-success)" name="Received" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="grid grid-2 gap-6">
+            <div className="card">
+              <h3 className="text-lg font-semibold text-primary mb-4">Insights</h3>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <TrendingUp className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--status-success)' }} />
+                  <div>
+                    <p className="font-medium text-primary text-sm">Engagement momentum</p>
+                    <p className="text-secondary text-xs">Thursday was your best day with +29 interactions</p>
                   </div>
-                  <div className="flex gap-3">
-                    <Users className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                    <div>
-                      <p className="text-white font-semibold text-sm">Expand engagement list</p>
-                      <p className="text-gray-400 text-xs">Add 15 more accounts to your target list</p>
-                    </div>
+                </div>
+                <div className="flex gap-3">
+                  <MessageCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--status-info)' }} />
+                  <div>
+                    <p className="font-medium text-primary text-sm">Comment engagement wins</p>
+                    <p className="text-secondary text-xs">Your comments get 3.2x more replies than average</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <h3 className="text-lg font-semibold text-primary mb-4">Next Steps</h3>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <Zap className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--status-warning)' }} />
+                  <div>
+                    <p className="font-medium text-primary text-sm">Power hour optimization</p>
+                    <p className="text-secondary text-xs">Try 8-9 PM slot for 50% better response rates</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Users className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-secondary)' }} />
+                  <div>
+                    <p className="font-medium text-primary text-sm">Expand engagement list</p>
+                    <p className="text-secondary text-xs">Add 15 more accounts to your target list</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

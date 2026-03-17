@@ -21,8 +21,6 @@ import {
   Share2,
 } from 'lucide-react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -32,6 +30,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import '../styles/DailyActions.css';
 
 export default function DailyActions() {
   const [tasks, setTasks] = useState({
@@ -311,421 +310,358 @@ export default function DailyActions() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a' }}>
-      <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Zap className="w-8 h-8" style={{ color: '#E1306C' }} />
-            <h1 className="text-4xl font-bold text-white">Daily Growth Actions</h1>
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
+        <div className="flex items-center gap-3">
+          <Zap className="w-8 h-8" style={{ color: 'var(--color-primary)' }} />
+          <h1>Daily Growth Actions</h1>
+        </div>
+        <p>Complete daily tasks to unlock rewards and level up</p>
+      </div>
+
+      {/* Growth Score & Level */}
+      <div className="grid grid-3 section">
+        {/* Daily Growth Score */}
+        <div className="card card-gradient">
+          <div className="stat-label">Daily Growth Score</div>
+          <div className="stat-value">{growthScore}</div>
+          <div className="text-secondary text-sm">
+            {growthScore >= 80
+              ? 'Exceptional!'
+              : growthScore >= 60
+                ? 'Great progress'
+                : 'Keep pushing'}
           </div>
-          <p className="text-gray-400">Complete daily tasks to unlock rewards and level up</p>
+          <div className="daily-score-footer">
+            <div className="flex-between text-sm">
+              <span className="text-secondary">Daily target</span>
+              <span className="text-primary font-semibold">80/100</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill gradient-bg" style={{ width: '80%' }} />
+            </div>
+          </div>
         </div>
 
-        {/* Growth Score & Level */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Daily Growth Score */}
-          <div
-            className="p-6 rounded-xl border border-gray-800"
-            style={{ backgroundColor: '#1a1a2e' }}
-          >
-            <div className="text-gray-400 text-sm mb-4">Daily Growth Score</div>
-            <div className="text-5xl font-bold text-white mb-2">{growthScore}</div>
-            <div className="text-gray-400 text-sm">
-              {growthScore >= 80
-                ? '🔥 Exceptional!'
-                : growthScore >= 60
-                  ? '✓ Great progress'
-                  : '⚡ Keep pushing'}
+        {/* Level & XP */}
+        <div className="card card-gradient">
+          <div className="stat-label">Current Level</div>
+          <div className="flex items-center gap-4">
+            <div className="level-badge gradient-bg">
+              <span>{level}</span>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Daily target</span>
-                <span className="text-white font-semibold">80/100</span>
-              </div>
-              <div className="w-full h-2 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
-                <div
-                  className="h-2 rounded-full"
-                  style={{
-                    width: '80%',
-                    background: 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
-                  }}
-                />
-              </div>
+            <div>
+              <div className="text-sm text-secondary">Level {level}</div>
+              <div className="text-lg font-bold text-primary">{totalPoints.toLocaleString()} XP</div>
             </div>
           </div>
+          <div className="progress-bar">
+            <div className="progress-fill gradient-bg" style={{ width: `${levelProgress}%` }} />
+          </div>
+          <div className="text-sm text-muted">
+            {Math.round(levelProgress)}% to Level {level + 1}
+          </div>
+        </div>
 
-          {/* Level & XP */}
-          <div
-            className="p-6 rounded-xl border border-gray-800"
-            style={{ backgroundColor: '#1a1a2e' }}
-          >
-            <div className="text-gray-400 text-sm mb-4">Current Level</div>
-            <div className="flex items-center gap-4 mb-4">
+        {/* Streak */}
+        <div className="card card-gradient">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5" style={{ color: 'var(--status-warning)' }} />
+            <div className="stat-label">Current Streak</div>
+          </div>
+          <div className="stat-value" style={{ color: 'var(--status-warning)' }}>{streak.current}</div>
+          <div className="text-secondary text-sm">days in a row</div>
+          <div className="streak-footer">
+            <div className="flex-between text-sm">
+              <span className="text-secondary">Longest streak</span>
+              <span className="text-primary font-semibold">{streak.longest} days</span>
+            </div>
+            <div className="flex-between text-sm">
+              <span className="text-secondary">Last activity</span>
+              <span className="text-primary font-semibold">{streak.lastActivity}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Weekly Comparison */}
+      <div className="card section">
+        <h2 className="section-title">Your Growth This Week vs Target</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={weeklyGrowthData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+            <XAxis dataKey="day" stroke="var(--text-muted)" />
+            <YAxis stroke="var(--text-muted)" />
+            <Tooltip
+              contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+              labelStyle={{ color: 'var(--text-secondary)' }}
+            />
+            <Legend />
+            <Bar dataKey="growth" fill="var(--color-primary)" name="Actual Growth" />
+            <Bar dataKey="target" fill="var(--status-info)" name="Target" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Today's Tasks */}
+      <div className="section">
+        <h2 className="section-title">Today's Tasks</h2>
+
+        {/* Content Tasks */}
+        <div className="task-section">
+          <h3 className="task-category-title flex items-center gap-2">
+            <Camera className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+            Content ({tasks.content.filter((t) => t.completed).length}/{tasks.content.length})
+          </h3>
+          <div className="task-list">
+            {tasks.content.map((task) => (
               <div
-                className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #E1306C 0%, #833AB4 100%)',
-                }}
+                key={task.id}
+                className="task-item"
+                onClick={() => toggleTask('content', task.id)}
               >
-                <span className="text-3xl font-bold text-white">{level}</span>
+                <button className="focus:outline-none">
+                  {task.completed ? (
+                    <CheckCircle2 className="w-6 h-6 text-positive" />
+                  ) : (
+                    <Circle className="w-6 h-6 text-muted" />
+                  )}
+                </button>
+                <div className="flex-1">
+                  <p className={task.completed ? 'text-muted line-through font-medium' : 'text-primary font-medium'}>
+                    {task.title}
+                  </p>
+                  <p className="text-secondary text-sm">{task.description}</p>
+                </div>
+                <div className="task-points">
+                  <div className="font-bold text-primary">+{task.points}</div>
+                  <div className="text-muted text-xs">points</div>
+                </div>
               </div>
-              <div>
-                <div className="text-sm text-gray-400">Level {level}</div>
-                <div className="text-lg font-bold text-white">{totalPoints.toLocaleString()} XP</div>
-              </div>
-            </div>
-            <div className="w-full h-3 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
+            ))}
+          </div>
+        </div>
+
+        {/* Engagement Tasks */}
+        <div className="task-section">
+          <h3 className="task-category-title flex items-center gap-2">
+            <MessageCircle className="w-5 h-5" style={{ color: 'var(--color-secondary)' }} />
+            Engagement ({tasks.engagement.filter((t) => t.completed).length}/{tasks.engagement.length})
+          </h3>
+          <div className="task-list">
+            {tasks.engagement.map((task) => (
               <div
-                className="h-3 rounded-full transition-all duration-500"
-                style={{
-                  width: `${levelProgress}%`,
-                  background: 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
-                }}
-              />
-            </div>
-            <div className="text-xs text-gray-400 mt-2">
-              {Math.round(levelProgress)}% to Level {level + 1}
-            </div>
-          </div>
-
-          {/* Streak */}
-          <div
-            className="p-6 rounded-xl border border-gray-800"
-            style={{ backgroundColor: '#1a1a2e' }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Flame className="w-5 h-5 text-orange-400" />
-              <div className="text-gray-400 text-sm">Current Streak</div>
-            </div>
-            <div className="text-5xl font-bold text-orange-400 mb-2">{streak.current}</div>
-            <div className="text-gray-400 text-sm mb-4">days in a row</div>
-            <div className="pt-4 border-t border-gray-700 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Longest streak</span>
-                <span className="text-white font-semibold">{streak.longest} days</span>
+                key={task.id}
+                className="task-item"
+                onClick={() => toggleTask('engagement', task.id)}
+              >
+                <button className="focus:outline-none">
+                  {task.completed ? (
+                    <CheckCircle2 className="w-6 h-6 text-positive" />
+                  ) : (
+                    <Circle className="w-6 h-6 text-muted" />
+                  )}
+                </button>
+                <div className="flex-1">
+                  <p className={task.completed ? 'text-muted line-through font-medium' : 'text-primary font-medium'}>
+                    {task.title}
+                  </p>
+                  <p className="text-secondary text-sm">{task.description}</p>
+                </div>
+                <div className="task-points">
+                  <div className="font-bold text-primary">+{task.points}</div>
+                  <div className="text-muted text-xs">points</div>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Last activity</span>
-                <span className="text-white font-semibold">{streak.lastActivity}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Growth Tasks */}
+        <div className="task-section">
+          <h3 className="task-category-title flex items-center gap-2">
+            <Users className="w-5 h-5" style={{ color: 'var(--status-info)' }} />
+            Growth ({tasks.growth.filter((t) => t.completed).length}/{tasks.growth.length})
+          </h3>
+          <div className="task-list">
+            {tasks.growth.map((task) => (
+              <div
+                key={task.id}
+                className="task-item"
+                onClick={() => toggleTask('growth', task.id)}
+              >
+                <button className="focus:outline-none">
+                  {task.completed ? (
+                    <CheckCircle2 className="w-6 h-6 text-positive" />
+                  ) : (
+                    <Circle className="w-6 h-6 text-muted" />
+                  )}
+                </button>
+                <div className="flex-1">
+                  <p className={task.completed ? 'text-muted line-through font-medium' : 'text-primary font-medium'}>
+                    {task.title}
+                  </p>
+                  <p className="text-secondary text-sm">{task.description}</p>
+                </div>
+                <div className="task-points">
+                  <div className="font-bold text-primary">+{task.points}</div>
+                  <div className="text-muted text-xs">points</div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Weekly Comparison */}
-        <div
-          className="p-6 rounded-xl border border-gray-800 mb-8"
-          style={{ backgroundColor: '#1a1a2e' }}
-        >
-          <h2 className="text-lg font-bold text-white mb-4">Your Growth This Week vs Target</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={weeklyGrowthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="day" stroke="#666" />
-              <YAxis stroke="#666" />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#252545', border: '1px solid #444' }}
-                labelStyle={{ color: '#999' }}
-              />
-              <Legend />
-              <Bar dataKey="growth" fill="#E1306C" name="Actual Growth" />
-              <Bar dataKey="target" fill="#5ed8f8" name="Target" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Today's Tasks */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Today's Tasks</h2>
-
-          {/* Content Tasks */}
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Camera className="w-5 h-5" style={{ color: '#E1306C' }} />
-              Content ({tasks.content.filter((t) => t.completed).length}/{tasks.content.length})
-            </h3>
-            <div className="space-y-3">
-              {tasks.content.map((task) => (
-                <div
-                  key={task.id}
-                  className="p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition cursor-pointer"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                  onClick={() => toggleTask('content', task.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <button className="focus:outline-none">
-                      {task.completed ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-400" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-gray-600" />
-                      )}
-                    </button>
-                    <div className="flex-1">
-                      <p
-                        className={`font-semibold ${
-                          task.completed ? 'text-gray-400 line-through' : 'text-white'
-                        }`}
-                      >
-                        {task.title}
-                      </p>
-                      <p className="text-gray-500 text-sm">{task.description}</p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-lg font-bold text-white">+{task.points}</div>
-                      <div className="text-gray-400 text-xs">points</div>
-                    </div>
-                  </div>
+      {/* Challenges Section */}
+      <div className="grid grid-2 section">
+        {/* Active Challenges */}
+        <div>
+          <h2 className="section-title flex items-center gap-2">
+            <Target className="w-6 h-6" style={{ color: 'var(--color-primary)' }} />
+            Active Challenges
+          </h2>
+          <div className="challenges-list">
+            {challenges.map((challenge) => (
+              <div
+                key={challenge.id}
+                className="card"
+              >
+                <div className="flex-between items-start gap-2 mb-3">
+                  <h3 className="text-primary font-bold">{challenge.title}</h3>
+                  <span className="badge badge-warning">
+                    {challenge.daysLeft}d left
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
+                <p className="text-secondary text-sm mb-4">{challenge.description}</p>
 
-          {/* Engagement Tasks */}
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" style={{ color: '#833AB4' }} />
-              Engagement ({tasks.engagement.filter((t) => t.completed).length}/{tasks.engagement.length})
-            </h3>
-            <div className="space-y-3">
-              {tasks.engagement.map((task) => (
-                <div
-                  key={task.id}
-                  className="p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition cursor-pointer"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                  onClick={() => toggleTask('engagement', task.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <button className="focus:outline-none">
-                      {task.completed ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-400" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-gray-600" />
-                      )}
-                    </button>
-                    <div className="flex-1">
-                      <p
-                        className={`font-semibold ${
-                          task.completed ? 'text-gray-400 line-through' : 'text-white'
-                        }`}
-                      >
-                        {task.title}
-                      </p>
-                      <p className="text-gray-500 text-sm">{task.description}</p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-lg font-bold text-white">+{task.points}</div>
-                      <div className="text-gray-400 text-xs">points</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Growth Tasks */}
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5" style={{ color: '#5ed8f8' }} />
-              Growth ({tasks.growth.filter((t) => t.completed).length}/{tasks.growth.length})
-            </h3>
-            <div className="space-y-3">
-              {tasks.growth.map((task) => (
-                <div
-                  key={task.id}
-                  className="p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition cursor-pointer"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                  onClick={() => toggleTask('growth', task.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <button className="focus:outline-none">
-                      {task.completed ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-400" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-gray-600" />
-                      )}
-                    </button>
-                    <div className="flex-1">
-                      <p
-                        className={`font-semibold ${
-                          task.completed ? 'text-gray-400 line-through' : 'text-white'
-                        }`}
-                      >
-                        {task.title}
-                      </p>
-                      <p className="text-gray-500 text-sm">{task.description}</p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-lg font-bold text-white">+{task.points}</div>
-                      <div className="text-gray-400 text-xs">points</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Challenges Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Active Challenges */}
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <Target className="w-6 h-6" style={{ color: '#E1306C' }} />
-              Active Challenges
-            </h2>
-            <div className="space-y-4">
-              {challenges.map((challenge) => (
-                <div
-                  key={challenge.id}
-                  className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-white font-bold">{challenge.title}</h3>
-                    <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: '#FFB5331F', color: '#FFB533' }}>
-                      {challenge.daysLeft}d left
+                <div className="mb-3">
+                  <div className="flex-between text-sm mb-2">
+                    <span className="text-secondary">Progress</span>
+                    <span className="text-primary font-semibold">
+                      {challenge.progress}/{challenge.total}
                     </span>
                   </div>
-                  <p className="text-gray-400 text-sm mb-4">{challenge.description}</p>
-
-                  <div className="mb-3">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-400">Progress</span>
-                      <span className="text-white font-semibold">
-                        {challenge.progress}/{challenge.total}
-                      </span>
-                    </div>
-                    <div className="w-full h-2 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
-                      <div
-                        className="h-2 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${(challenge.progress / challenge.total) * 100}%`,
-                          background: 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-gray-700 flex justify-between items-center">
-                    <span className="text-gray-400 text-sm">Reward: {challenge.reward}</span>
-                    <button
-                      className="text-sm px-3 py-1 rounded transition hover:opacity-80"
-                      style={{
-                        backgroundColor: '#252545',
-                        color: '#E1306C',
-                      }}
-                    >
-                      View →
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Challenges */}
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <Gift className="w-6 h-6" style={{ color: '#833AB4' }} />
-              Upcoming Challenges
-            </h2>
-            <div className="space-y-4">
-              {upcomingChallenges.map((challenge) => (
-                <div
-                  key={challenge.id}
-                  className="p-6 rounded-xl border border-gray-700 hover:border-gray-600 transition"
-                  style={{ backgroundColor: '#0f0f1e' }}
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-gray-300 font-bold">{challenge.title}</h3>
-                    <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: '#5ed8f81F', color: '#5ed8f8' }}>
-                      {challenge.startsIn}
-                    </span>
-                  </div>
-                  <p className="text-gray-500 text-sm mb-4">{challenge.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400 text-sm">Reward: {challenge.reward}</span>
-                    <Lock className="w-4 h-4 text-gray-500" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Milestones Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* In Progress Milestones */}
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <Trophy className="w-6 h-6" style={{ color: '#FFB533' }} />
-              Milestones
-            </h2>
-            <div className="space-y-4">
-              {milestones.map((milestone) => (
-                <div
-                  key={milestone.id}
-                  className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <milestone.icon className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold">{milestone.milestone}</h3>
-                      <p className="text-gray-400 text-sm">Reward: {milestone.reward}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-400">Progress</span>
-                    <span className="text-white font-semibold">
-                      {milestone.progress.toLocaleString()}/{milestone.target.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="w-full h-3 rounded-full" style={{ backgroundColor: '#0f0f1e' }}>
+                  <div className="progress-bar">
                     <div
-                      className="h-3 rounded-full transition-all duration-500"
+                      className="progress-fill gradient-bg"
                       style={{
-                        width: `${(milestone.progress / milestone.target) * 100}%`,
-                        background: 'linear-gradient(90deg, #E1306C 0%, #833AB4 100%)',
+                        width: `${(challenge.progress / challenge.total) * 100}%`,
                       }}
                     />
                   </div>
-                  <div className="text-xs text-gray-500 mt-2">
-                    {Math.round((milestone.progress / milestone.target) * 100)}% complete
-                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Unlocked Milestones */}
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <Star className="w-6 h-6" style={{ color: '#FFD700' }} />
-              Unlocked Milestones
-            </h2>
-            <div className="space-y-4">
-              {unlockedMilestones.map((milestone) => (
-                <div
-                  key={milestone.id}
-                  className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition"
-                  style={{ backgroundColor: '#1a1a2e' }}
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold">{milestone.milestone}</h3>
-                      <p className="text-gray-400 text-sm">{milestone.reward}</p>
-                    </div>
-                  </div>
-                  <div className="text-gray-500 text-xs">
-                    🎉 Unlocked on {milestone.unlockedDate}
+                <div className="challenge-footer">
+                  <span className="text-secondary text-sm">Reward: {challenge.reward}</span>
+                  <button className="btn-ghost text-sm">
+                    View
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Upcoming Challenges */}
+        <div>
+          <h2 className="section-title flex items-center gap-2">
+            <Gift className="w-6 h-6" style={{ color: 'var(--color-secondary)' }} />
+            Upcoming Challenges
+          </h2>
+          <div className="challenges-list">
+            {upcomingChallenges.map((challenge) => (
+              <div
+                key={challenge.id}
+                className="card"
+                style={{ backgroundColor: 'var(--bg-tertiary)' }}
+              >
+                <div className="flex-between items-start gap-2 mb-3">
+                  <h3 className="text-secondary font-bold">{challenge.title}</h3>
+                  <span className="badge badge-info">
+                    {challenge.startsIn}
+                  </span>
+                </div>
+                <p className="text-tertiary text-sm mb-4">{challenge.description}</p>
+                <div className="flex-between items-center">
+                  <span className="text-secondary text-sm">Reward: {challenge.reward}</span>
+                  <Lock className="w-4 h-4 text-muted" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Milestones Section */}
+      <div className="grid grid-2 section">
+        {/* In Progress Milestones */}
+        <div>
+          <h2 className="section-title flex items-center gap-2">
+            <Trophy className="w-6 h-6" style={{ color: 'var(--status-warning)' }} />
+            Milestones
+          </h2>
+          <div className="milestones-list">
+            {milestones.map((milestone) => (
+              <div
+                key={milestone.id}
+                className="card"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <milestone.icon className="w-6 h-6 flex-shrink-0 mt-0.5" style={{ color: 'var(--status-warning)' }} />
+                  <div className="flex-1">
+                    <h3 className="text-primary font-bold">{milestone.milestone}</h3>
+                    <p className="text-secondary text-sm">Reward: {milestone.reward}</p>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex-between text-sm mb-2">
+                  <span className="text-secondary">Progress</span>
+                  <span className="text-primary font-semibold">
+                    {milestone.progress.toLocaleString()}/{milestone.target.toLocaleString()}
+                  </span>
+                </div>
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill gradient-bg"
+                    style={{
+                      width: `${(milestone.progress / milestone.target) * 100}%`,
+                    }}
+                  />
+                </div>
+                <div className="text-xs text-muted mt-2">
+                  {Math.round((milestone.progress / milestone.target) * 100)}% complete
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Unlocked Milestones */}
+        <div>
+          <h2 className="section-title flex items-center gap-2">
+            <Star className="w-6 h-6" style={{ color: '#FFD700' }} />
+            Unlocked Milestones
+          </h2>
+          <div className="milestones-list">
+            {unlockedMilestones.map((milestone) => (
+              <div
+                key={milestone.id}
+                className="card"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <CheckCircle2 className="w-6 h-6 flex-shrink-0 mt-0.5 text-positive" />
+                  <div className="flex-1">
+                    <h3 className="text-primary font-bold">{milestone.milestone}</h3>
+                    <p className="text-secondary text-sm">{milestone.reward}</p>
+                  </div>
+                </div>
+                <div className="text-muted text-xs">
+                  Unlocked on {milestone.unlockedDate}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

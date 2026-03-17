@@ -22,8 +22,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
+import '../styles/Analytics.css';
 
 const Analytics = () => {
   const [sortBy, setSortBy] = useState('reach');
@@ -71,7 +71,6 @@ const Analytics = () => {
       likes: 2451,
       comments: 328,
       saves: 892,
-      shares: 145,
       reach: 45200,
     },
     {
@@ -82,7 +81,6 @@ const Analytics = () => {
       likes: 1823,
       comments: 267,
       saves: 621,
-      shares: 98,
       reach: 38500,
     },
     {
@@ -93,7 +91,6 @@ const Analytics = () => {
       likes: 1456,
       comments: 189,
       saves: 445,
-      shares: 67,
       reach: 32100,
     },
     {
@@ -104,7 +101,6 @@ const Analytics = () => {
       likes: 3124,
       comments: 421,
       saves: 1023,
-      shares: 201,
       reach: 62300,
     },
     {
@@ -115,55 +111,74 @@ const Analytics = () => {
       likes: 892,
       comments: 156,
       saves: 234,
-      shares: 42,
       reach: 18900,
+    },
+    {
+      id: 6,
+      type: 'Carousel',
+      caption: 'Complete guide to composition',
+      date: '2024-03-02',
+      likes: 2145,
+      comments: 312,
+      saves: 789,
+      reach: 41200,
+    },
+    {
+      id: 7,
+      type: 'Story',
+      caption: 'Live Q&A session recap',
+      date: '2024-02-28',
+      likes: 567,
+      comments: 89,
+      saves: 0,
+      reach: 12400,
+    },
+    {
+      id: 8,
+      type: 'Reel',
+      caption: 'Trending audio + photography',
+      date: '2024-02-25',
+      likes: 3456,
+      comments: 534,
+      saves: 1267,
+      reach: 71800,
     },
   ];
 
-  // Content type comparison
+  // Content type comparison data
   const contentComparison = [
-    { type: 'Reels', avgLikes: 2787.5, avgComments: 374.5, avgSaves: 957.5, avgReach: 53750 },
-    { type: 'Carousels', avgLikes: 1823, avgComments: 267, avgSaves: 621, avgReach: 38500 },
-    { type: 'Singles', avgLikes: 1174, avgComments: 172.5, avgSaves: 339.5, avgReach: 25500 },
-    { type: 'Stories', avgLikes: 345, avgComments: 45, avgSaves: 0, avgReach: 8900 },
+    { type: 'Reels', avgReach: 53750, avgLikes: 2787.5, avgComments: 374.5 },
+    { type: 'Carousels', avgReach: 38500, avgLikes: 1823, avgComments: 267 },
+    { type: 'Singles', avgReach: 25500, avgLikes: 1174, avgComments: 172.5 },
+    { type: 'Stories', avgReach: 8900, avgLikes: 345, avgComments: 45 },
   ];
 
-  // Engagement heatmap data (simplified)
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-  // Best time data
-  const bestTimeData = days.map((day, dayIdx) => {
-    const obj = { day };
-    hours.forEach(hour => {
-      const intensity = Math.sin(hour / 24 * Math.PI) * Math.sin(dayIdx / 7 * Math.PI);
-      obj[`h${hour}`] = Math.max(10, Math.round(intensity * 50 + 50));
-    });
-    return obj;
-  });
-
-  // Follower growth predictor
-  const followerData = [
-    { date: 'Week 1', actual: 2400, predicted: 2400 },
-    { date: 'Week 2', actual: 2810, predicted: 2810 },
-    { date: 'Week 3', actual: 3200, predicted: 3200 },
-    { date: 'Week 4', actual: 3800, predicted: 3800 },
-    { date: 'Week 5', actual: 4200, predicted: 4200 },
-    { date: 'Week 6', actual: 4890, predicted: 4890 },
-    { date: 'Week 7', actual: 5420, predicted: 5850 },
-    { date: 'Week 8', actual: null, predicted: 6400 },
-    { date: 'Week 9', actual: null, predicted: 7100 },
-    { date: 'Week 10', actual: null, predicted: 7850 },
-  ];
-
-  // Engagement trend
+  // Engagement trend data (12 weeks)
   const engagementTrend = [
-    { week: 'Week 1', engagement: 4.2, benchmark: 3.8 },
-    { week: 'Week 2', engagement: 5.1, benchmark: 3.8 },
-    { week: 'Week 3', engagement: 6.3, benchmark: 3.8 },
-    { week: 'Week 4', engagement: 5.8, benchmark: 3.8 },
-    { week: 'Week 5', engagement: 7.2, benchmark: 3.8 },
-    { week: 'Week 6', engagement: 8.1, benchmark: 3.8 },
+    { week: 'W1', engagement: 3.2 },
+    { week: 'W2', engagement: 3.8 },
+    { week: 'W3', engagement: 4.5 },
+    { week: 'W4', engagement: 4.1 },
+    { week: 'W5', engagement: 5.2 },
+    { week: 'W6', engagement: 6.1 },
+    { week: 'W7', engagement: 5.7 },
+    { week: 'W8', engagement: 6.8 },
+    { week: 'W9', engagement: 7.3 },
+    { week: 'W10', engagement: 6.9 },
+    { week: 'W11', engagement: 7.6 },
+    { week: 'W12', engagement: 8.2 },
+  ];
+
+  // Best time to post (7 days x 4 time slots)
+  const timeSlots = ['6-9 AM', '10 AM-1 PM', '2-6 PM', '7-11 PM'];
+  const bestTimeData = [
+    { day: 'Monday', '6-9 AM': 35, '10 AM-1 PM': 42, '2-6 PM': 68, '7-11 PM': 75 },
+    { day: 'Tuesday', '6-9 AM': 38, '10 AM-1 PM': 45, '2-6 PM': 70, '7-11 PM': 78 },
+    { day: 'Wednesday', '6-9 AM': 32, '10 AM-1 PM': 48, '2-6 PM': 72, '7-11 PM': 82 },
+    { day: 'Thursday', '6-9 AM': 40, '10 AM-1 PM': 50, '2-6 PM': 75, '7-11 PM': 85 },
+    { day: 'Friday', '6-9 AM': 45, '10 AM-1 PM': 58, '2-6 PM': 80, '7-11 PM': 92 },
+    { day: 'Saturday', '6-9 AM': 55, '10 AM-1 PM': 62, '2-6 PM': 78, '7-11 PM': 88 },
+    { day: 'Sunday', '6-9 AM': 48, '10 AM-1 PM': 55, '2-6 PM': 70, '7-11 PM': 80 },
   ];
 
   // Sort posts
@@ -176,71 +191,91 @@ const Analytics = () => {
     return bVal - aVal;
   });
 
-  const getContentTypeColor = (type) => {
-    const colors = {
-      Reel: '#E1306C',
-      Carousel: '#833AB4',
-      Single: '#F77737',
-      Stories: '#FCAF45',
+  const getTypeBadgeClass = (type) => {
+    const classes = {
+      Reel: 'badge-reel',
+      Carousel: 'badge-carousel',
+      Single: 'badge-single',
+      Story: 'badge-story',
     };
-    return colors[type] || '#E1306C';
+    return classes[type] || 'badge-reel';
+  };
+
+  const getTrendClass = (trend) => {
+    return trend > 0 ? 'text-positive' : 'text-negative';
   };
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: '#0a0a0a' }}>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">Analytics & Insights</h1>
-        <p className="text-gray-400">Track performance, identify trends, and optimize</p>
+    <div className="page">
+      {/* Page Header */}
+      <div className="page-header">
+        <h1>Analytics & Insights</h1>
+        <p>Track performance, identify trends, and optimize</p>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Overview Metrics */}
+      <div className="grid-4 analytics-metrics">
         {metrics.map((metric, idx) => {
           const Icon = metric.icon;
           const isTrendingUp = metric.trend > 0;
 
           return (
-            <div
-              key={idx}
-              className="rounded-lg p-6 border border-gray-800"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <Icon size={24} style={{ color: metric.color }} />
-                <div
-                  className={`flex items-center gap-1 text-sm font-semibold ${
-                    isTrendingUp ? 'text-green-400' : 'text-red-400'
-                  }`}
-                >
+            <div key={idx} className="metric-card">
+              <div className="metric-header">
+                <Icon size={24} className="metric-icon" style={{ color: metric.color }} />
+                <div className={`metric-trend ${getTrendClass(metric.trend)}`}>
                   {isTrendingUp ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
-                  {Math.abs(metric.trend)}%
+                  {Math.abs(metric.trend).toFixed(1)}%
                 </div>
               </div>
-              <div className="text-2xl font-bold text-white mb-1">
-                {metric.value.toLocaleString()}
-              </div>
-              <div className="text-sm text-gray-400">{metric.label}</div>
+              <div className="num-lg">{metric.value.toLocaleString()}</div>
+              <div className="text-muted">{metric.label}</div>
             </div>
           );
         })}
       </div>
 
+      {/* Engagement Trend Chart */}
+      <div className="card analytics-chart">
+        <div className="card-header">
+          <h2>Engagement Trend</h2>
+          <p className="text-muted">Last 12 weeks</p>
+        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={engagementTrend}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+            <XAxis dataKey="week" stroke="var(--text-tertiary)" />
+            <YAxis stroke="var(--text-tertiary)" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-primary)',
+                borderRadius: '0.5rem',
+                color: 'var(--text-primary)',
+              }}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="engagement"
+              stroke="var(--color-primary)"
+              strokeWidth={3}
+              dot={{ fill: 'var(--color-primary)', r: 4 }}
+              name="Engagement Rate (%)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
       {/* Post Performance Table */}
-      <div
-        className="rounded-lg p-6 border border-gray-800 mb-8"
-        style={{ backgroundColor: '#1a1a2e' }}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <Heart size={24} className="text-pink-500" />
-            Post Performance
-          </h2>
-          <div className="flex gap-2">
+      <div className="card analytics-table">
+        <div className="card-header">
+          <h2>Post Performance</h2>
+          <div className="table-controls">
             <select
               value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              className="bg-gray-900 border border-gray-700 rounded px-3 py-1 text-white text-sm focus:outline-none"
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
             >
               <option value="reach">Sort by Reach</option>
               <option value="likes">Sort by Likes</option>
@@ -248,295 +283,148 @@ const Analytics = () => {
               <option value="saves">Sort by Saves</option>
             </select>
             <button
-              onClick={() =>
-                setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
-              }
-              className="bg-gray-900 border border-gray-700 rounded px-3 py-1 text-gray-300 text-sm hover:bg-gray-800 transition"
+              onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+              className="sort-button"
+              title={`Sort ${sortOrder === 'desc' ? 'ascending' : 'descending'}`}
             >
               {sortOrder === 'desc' ? '↓' : '↑'}
             </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-400">Type</th>
-                <th className="text-left py-3 px-4 text-gray-400">Caption</th>
-                <th className="text-center py-3 px-4 text-gray-400">Date</th>
-                <th className="text-center py-3 px-4 text-gray-400">
-                  <Heart size={16} className="inline" />
-                </th>
-                <th className="text-center py-3 px-4 text-gray-400">
-                  <MessageCircle size={16} className="inline" />
-                </th>
-                <th className="text-center py-3 px-4 text-gray-400">Saves</th>
-                <th className="text-center py-3 px-4 text-gray-400">Reach</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedPosts.map((post, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b border-gray-800 hover:bg-gray-900/50 transition"
-                >
-                  <td className="py-3 px-4">
-                    <span
-                      className="px-3 py-1 rounded text-xs font-medium text-white"
-                      style={{ backgroundColor: getContentTypeColor(post.type) + '40' }}
-                    >
-                      {post.type}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-gray-300 max-w-md truncate">
-                    {post.caption}
-                  </td>
-                  <td className="py-3 px-4 text-center text-gray-400 text-xs">
-                    {new Date(post.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </td>
-                  <td className="py-3 px-4 text-center text-white font-semibold">
-                    {post.likes.toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4 text-center text-white font-semibold">
-                    {post.comments}
-                  </td>
-                  <td className="py-3 px-4 text-center text-white font-semibold">
-                    {post.saves.toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4 text-center text-pink-400 font-semibold">
-                    {post.reach.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Content Type Comparison */}
-      <div
-        className="rounded-lg p-6 border border-gray-800 mb-8"
-        style={{ backgroundColor: '#1a1a2e' }}
-      >
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-          <TrendingUp size={24} className="text-blue-400" />
-          Content Type Performance
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={contentComparison}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-            <XAxis dataKey="type" stroke="#666" />
-            <YAxis stroke="#666" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#1a1a2e',
-                border: '1px solid #444',
-                borderRadius: '8px',
-                color: '#fff',
-              }}
-            />
-            <Legend />
-            <Bar dataKey="avgReach" fill="#E1306C" name="Avg Reach" />
-            <Bar dataKey="avgLikes" fill="#833AB4" name="Avg Likes" />
-            <Bar dataKey="avgComments" fill="#F77737" name="Avg Comments" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Best Time to Post Heatmap */}
-      <div
-        className="rounded-lg p-6 border border-gray-800 mb-8"
-        style={{ backgroundColor: '#1a1a2e' }}
-      >
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-          <Activity size={24} className="text-green-400" />
-          Best Time to Post
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr>
-                <th className="py-2 px-2 text-gray-400">Day</th>
-                {hours.map(hour => (
-                  <th
-                    key={hour}
-                    className="py-2 px-1 text-gray-500 text-center"
-                  >
-                    {hour}h
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {bestTimeData.map((row, idx) => (
-                <tr key={idx}>
-                  <td className="py-2 px-2 font-medium text-gray-300">
-                    {row.day}
-                  </td>
-                  {hours.map(hour => {
-                    const intensity = row[`h${hour}`];
-                    const color = `rgba(225, 48, 108, ${intensity / 100})`;
-                    return (
-                      <td
-                        key={`${idx}-${hour}`}
-                        className="py-1 px-1 text-center"
-                        style={{
-                          backgroundColor: color,
-                          borderRadius: '4px',
-                          fontSize: '10px',
-                          color: intensity > 50 ? '#fff' : '#666',
-                        }}
-                      >
-                        {intensity}
-                      </td>
-                    );
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Caption</th>
+              <th>Date</th>
+              <th>Likes</th>
+              <th>Comments</th>
+              <th>Saves</th>
+              <th>Reach</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedPosts.map((post) => (
+              <tr key={post.id}>
+                <td>
+                  <span className={`badge ${getTypeBadgeClass(post.type)}`}>
+                    {post.type}
+                  </span>
+                </td>
+                <td className="caption-cell">{post.caption}</td>
+                <td className="date-cell">
+                  {new Date(post.date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
                   })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </td>
+                <td className="num">{post.likes.toLocaleString()}</td>
+                <td className="num">{post.comments.toLocaleString()}</td>
+                <td className="num">{post.saves.toLocaleString()}</td>
+                <td className="num text-positive">{post.reach.toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Follower Growth Predictor */}
-        <div
-          className="rounded-lg p-6 border border-gray-800"
-          style={{ backgroundColor: '#1a1a2e' }}
-        >
-          <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-            <TrendingUp size={24} className="text-purple-400" />
-            Follower Growth Predictor
-          </h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={followerData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis
-                dataKey="date"
-                stroke="#666"
-                style={{ fontSize: '12px' }}
-              />
-              <YAxis stroke="#666" />
+      {/* Content Type Breakdown */}
+      <div className="grid-2 analytics-breakdown">
+        {/* Bar Chart */}
+        <div className="card">
+          <div className="card-header">
+            <h2>Content Type Performance</h2>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={contentComparison}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+              <XAxis dataKey="type" stroke="var(--text-tertiary)" />
+              <YAxis stroke="var(--text-tertiary)" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#1a1a2e',
-                  border: '1px solid #444',
-                  borderRadius: '8px',
-                  color: '#fff',
+                  backgroundColor: 'var(--bg-card)',
+                  border: '1px solid var(--border-primary)',
+                  borderRadius: '0.5rem',
+                  color: 'var(--text-primary)',
                 }}
               />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="actual"
-                stroke="#833AB4"
-                strokeWidth={2}
-                name="Actual"
-                connectNulls
-              />
-              <Line
-                type="monotone"
-                dataKey="predicted"
-                stroke="#F77737"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                name="Predicted"
-              />
-            </LineChart>
+              <Bar dataKey="avgReach" fill="var(--color-primary)" name="Avg Reach" />
+            </BarChart>
           </ResponsiveContainer>
-          <p className="text-xs text-gray-500 mt-4 text-center">
-            📊 On track to reach 7,850 followers in 10 weeks
-          </p>
         </div>
 
-        {/* Engagement Rate Trend */}
-        <div
-          className="rounded-lg p-6 border border-gray-800"
-          style={{ backgroundColor: '#1a1a2e' }}
-        >
-          <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-            <Zap size={24} className="text-yellow-400" />
-            Engagement Rate Trend
-          </h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={engagementTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="week" stroke="#666" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#666" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1a1a2e',
-                  border: '1px solid #444',
-                  borderRadius: '8px',
-                  color: '#fff',
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="engagement"
-                stroke="#E1306C"
-                strokeWidth={3}
-                name="Your Engagement"
-                dot={{ fill: '#E1306C' }}
-              />
-              <Line
-                type="monotone"
-                dataKey="benchmark"
-                stroke="#666"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                name="Niche Benchmark"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-          <p className="text-xs text-green-400 mt-4 text-center">
-            ✓ 113% above niche benchmark
-          </p>
+        {/* Best Time to Post Grid */}
+        <div className="card">
+          <div className="card-header">
+            <h2>Best Time to Post</h2>
+          </div>
+          <div className="time-grid">
+            <div className="time-header">
+              <div className="time-label"></div>
+              {timeSlots.map((slot) => (
+                <div key={slot} className="time-slot-header">
+                  {slot}
+                </div>
+              ))}
+            </div>
+            {bestTimeData.map((row) => (
+              <div key={row.day} className="time-row">
+                <div className="day-label">{row.day}</div>
+                {timeSlots.map((slot) => {
+                  const intensity = row[slot];
+                  const opacity = intensity / 100;
+                  return (
+                    <div
+                      key={`${row.day}-${slot}`}
+                      className="time-cell"
+                      style={{
+                        backgroundColor: `rgba(225, 48, 108, ${opacity})`,
+                        color: intensity > 50 ? 'white' : 'var(--text-muted)',
+                      }}
+                    >
+                      {intensity}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Weekly AI Report */}
-      <div
-        className="rounded-lg p-6 border border-gray-800"
-        style={{ backgroundColor: 'linear-gradient(135deg, rgba(225, 48, 108, 0.1), rgba(131, 58, 180, 0.1))' }}
-      >
-        <div className="border border-gray-800 rounded-lg p-6" style={{ backgroundColor: '#1a1a2e' }}>
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Zap size={24} className="text-yellow-400" />
-            Weekly AI Report
-          </h2>
+      <div className="card analytics-report">
+        <div className="card-header">
+          <h2>Weekly AI Report</h2>
+        </div>
 
-          <div className="space-y-4">
-            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-              <h3 className="font-semibold text-green-400 mb-2">What Worked ✓</h3>
-              <ul className="text-sm text-gray-300 space-y-1">
-                <li>• Reels with editing tutorials averaged 53.7K reach</li>
-                <li>• Posts at 6 PM got 2.3x more engagement</li>
-                <li>• #photography hashtags drove 34% of new followers</li>
-              </ul>
-            </div>
+        <div className="report-sections">
+          <div className="report-section report-success">
+            <h3>What Worked</h3>
+            <ul>
+              <li>Reels with editing tutorials averaged 53.7K reach</li>
+              <li>Posts at 6 PM got 2.3x more engagement</li>
+              <li>#photography hashtags drove 34% of new followers</li>
+            </ul>
+          </div>
 
-            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <h3 className="font-semibold text-red-400 mb-2">What Didn't Work ✗</h3>
-              <ul className="text-sm text-gray-300 space-y-1">
-                <li>• Single posts underperformed (avg 25.5K reach)</li>
-                <li>• Morning posts (8-10 AM) got 60% less engagement</li>
-                <li>• Captions over 150 words had lower comment rates</li>
-              </ul>
-            </div>
+          <div className="report-section report-warning">
+            <h3>What Didn't Work</h3>
+            <ul>
+              <li>Single posts underperformed (avg 25.5K reach)</li>
+              <li>Morning posts (8-10 AM) got 60% less engagement</li>
+              <li>Captions over 150 words had lower comment rates</li>
+            </ul>
+          </div>
 
-            <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-              <h3 className="font-semibold text-blue-400 mb-2">Top Recommendation 🎯</h3>
-              <p className="text-sm text-gray-300">
-                Post Reels at 6-9 PM on Fridays. Your audience is most active then,
-                and Reels are your strongest content type. Add trending audio to boost reach further.
-              </p>
-            </div>
+          <div className="report-section report-info">
+            <h3>Top Recommendation</h3>
+            <p>
+              Post Reels at 6-9 PM on Fridays. Your audience is most active then, and
+              Reels are your strongest content type. Add trending audio to boost reach further.
+            </p>
           </div>
         </div>
       </div>

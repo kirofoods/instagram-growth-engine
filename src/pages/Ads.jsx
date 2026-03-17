@@ -18,7 +18,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import '../styles/Ads.css';
 
 export default function Ads() {
   const [campaigns, setCampaigns] = useState([
@@ -88,7 +89,7 @@ export default function Ads() {
     },
   ]);
 
-  const [abTestVariants, setAbTestVariants] = useState([
+  const [abTestVariants] = useState([
     {
       id: 1,
       name: 'Variant A: Lifestyle',
@@ -113,7 +114,6 @@ export default function Ads() {
 
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [showROICalculator, setShowROICalculator] = useState(false);
   const [budgetAllocations, setBudgetAllocations] = useState({
     1: 60,
     2: 25,
@@ -162,7 +162,6 @@ export default function Ads() {
   const roiResults = calculateROI();
   const totalBudget = campaigns.reduce((sum, c) => sum + c.budget, 0);
   const totalSpend = campaigns.reduce((sum, c) => sum + c.spend, 0);
-  const totalResults = campaigns.reduce((sum, c) => sum + c.results, 0);
 
   const toggleCampaignStatus = (id) => {
     setCampaigns(
@@ -182,375 +181,376 @@ export default function Ads() {
   };
 
   const getStatusBadge = (status) => {
-    const styles = {
-      active: 'bg-green-900/30 text-green-300 border border-green-700',
-      paused: 'bg-yellow-900/30 text-yellow-300 border border-yellow-700',
-      completed: 'bg-blue-900/30 text-blue-300 border border-blue-700',
-    };
-    return styles[status] || styles.active;
+    switch (status) {
+      case 'active':
+        return 'badge-success';
+      case 'paused':
+        return 'badge-warning';
+      case 'completed':
+        return 'badge-info';
+      default:
+        return 'badge-success';
+    }
   };
 
   const getObjectiveColor = (objective) => {
-    const colors = {
-      Conversions: '#E1306C',
-      Reach: '#833AB4',
-      Engagement: '#FD1D1D',
-      Traffic: '#F77737',
-    };
-    return colors[objective] || '#E1306C';
+    switch (objective) {
+      case 'Conversions':
+        return 'var(--color-primary)';
+      case 'Reach':
+        return 'var(--color-secondary)';
+      case 'Engagement':
+        return 'var(--status-error)';
+      case 'Traffic':
+        return 'var(--status-warning)';
+      default:
+        return 'var(--color-primary)';
+    }
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a' }}>
-      <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Ad Manager</h1>
-            <p className="text-gray-400">Manage campaigns, track ROI, and optimize spend</p>
-          </div>
-          <button
-            onClick={() => setShowCampaignForm(!showCampaignForm)}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white font-semibold hover:shadow-lg transition-shadow"
-          >
-            <Plus size={20} />
-            New Campaign
-          </button>
+    <div className="page">
+      {/* Header */}
+      <div className="page-header flex-between">
+        <div>
+          <h1>Ad Manager</h1>
+          <p>Manage campaigns, track ROI, and optimize spend</p>
         </div>
+        <button
+          onClick={() => setShowCampaignForm(!showCampaignForm)}
+          className="btn btn-primary"
+        >
+          <Plus size={20} />
+          New Campaign
+        </button>
+      </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Budget', value: `$${totalBudget.toLocaleString()}`, icon: DollarSign, color: '#E1306C' },
-            { label: 'Total Spend', value: `$${totalSpend.toLocaleString()}`, icon: TrendingUp, color: '#833AB4' },
-            { label: 'Avg ROAS', value: '3.15x', icon: Zap, color: '#FD1D1D' },
-            { label: 'Active Campaigns', value: campaigns.filter((c) => c.status === 'active').length, icon: Target, color: '#F77737' },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-gray-400 text-sm font-medium mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-white">{stat.value}</p>
-                </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: `${stat.color}20` }}>
-                  <stat.icon size={24} style={{ color: stat.color }} />
-                </div>
+      {/* Quick Stats */}
+      <div className="grid grid-4 mb-8">
+        {[
+          { label: 'Total Budget', value: `$${totalBudget.toLocaleString()}`, icon: DollarSign, color: 'var(--color-primary)' },
+          { label: 'Total Spend', value: `$${totalSpend.toLocaleString()}`, icon: TrendingUp, color: 'var(--color-secondary)' },
+          { label: 'Avg ROAS', value: '3.15x', icon: Zap, color: 'var(--status-error)' },
+          { label: 'Active Campaigns', value: campaigns.filter((c) => c.status === 'active').length, icon: Target, color: 'var(--status-warning)' },
+        ].map((stat, idx) => (
+          <div key={idx} className="card stat-card">
+            <div className="stat-header">
+              <div>
+                <p className="stat-label">{stat.label}</p>
+                <p className="stat-value">{stat.value}</p>
+              </div>
+              <div className="stat-icon" style={{ backgroundColor: `${stat.color}20` }}>
+                <stat.icon size={24} style={{ color: stat.color }} />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Campaign Creator Form */}
-        {showCampaignForm && (
-          <div className="mb-8 p-8 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Create New Campaign</h2>
-              <button
-                onClick={() => setShowCampaignForm(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
+      {/* Campaign Creator Form */}
+      {showCampaignForm && (
+        <div className="card card-gradient mb-8">
+          <div className="form-header">
+            <h2>Create New Campaign</h2>
+            <button
+              onClick={() => setShowCampaignForm(false)}
+              className="btn btn-ghost"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="grid grid-2 gap-md">
+            {[
+              { label: 'Campaign Name', placeholder: 'Enter campaign name' },
+              { label: 'Objective', placeholder: 'Select objective' },
+              { label: 'Daily Budget', placeholder: '$100' },
+              { label: 'Target Audience', placeholder: 'Select audience' },
+            ].map((field, idx) => (
+              <div key={idx}>
+                <label className="form-label">{field.label}</label>
+                <input
+                  type="text"
+                  placeholder={field.placeholder}
+                  className="input"
+                />
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-primary w-full mt-6">
+            Create Campaign
+          </button>
+        </div>
+      )}
+
+      {/* Campaigns Section */}
+      <h2 className="section-title">Active Campaigns</h2>
+      <div className="grid grid-2 gap-md mb-8">
+        {campaigns.map((campaign) => (
+          <div
+            key={campaign.id}
+            className="card campaign-card"
+            onClick={() => setSelectedCampaign(selectedCampaign === campaign.id ? null : campaign.id)}
+          >
+            <div className="campaign-header">
+              <div>
+                <h3 className="text-primary font-semibold mb-2">{campaign.name}</h3>
+                <div className="campaign-meta">
+                  <span className={`badge ${getStatusBadge(campaign.status)}`}>
+                    {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                  </span>
+                  <span className="text-secondary text-xs">{campaign.objective}</span>
+                </div>
+              </div>
+              <div className="campaign-actions">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleCampaignStatus(campaign.id);
+                  }}
+                  className="btn btn-secondary btn-small"
+                >
+                  {campaign.status === 'active' ? <Pause size={18} /> : <Play size={18} />}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteCampaign(campaign.id);
+                  }}
+                  className="btn btn-secondary btn-small"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Quick Stats */}
+            <div className="campaign-stats">
               {[
-                { label: 'Campaign Name', placeholder: 'Enter campaign name' },
-                { label: 'Objective', placeholder: 'Select objective' },
-                { label: 'Daily Budget', placeholder: '$100' },
-                { label: 'Target Audience', placeholder: 'Select audience' },
-              ].map((field, idx) => (
-                <div key={idx}>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">{field.label}</label>
-                  <input
-                    type="text"
-                    placeholder={field.placeholder}
-                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#E1306C] transition-colors"
-                  />
+                { label: 'Budget', value: `$${campaign.budget}`, icon: DollarSign },
+                { label: 'Spend', value: `$${campaign.spend}`, icon: TrendingUp },
+                { label: 'CPC', value: `$${campaign.cpc || 'N/A'}`, icon: MousePointer },
+                { label: 'ROAS', value: `${campaign.roas}x`, icon: Award },
+              ].map((stat, idx) => (
+                <div key={idx} className="stat-box">
+                  <div className="stat-box-label">
+                    <stat.icon size={14} style={{ color: getObjectiveColor(campaign.objective) }} />
+                    <p className="text-secondary text-xs">{stat.label}</p>
+                  </div>
+                  <p className="text-primary font-semibold">{stat.value}</p>
                 </div>
               ))}
             </div>
-            <button className="mt-6 w-full py-3 rounded-lg bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white font-semibold hover:shadow-lg transition-shadow">
-              Create Campaign
-            </button>
-          </div>
-        )}
 
-        {/* Campaigns Section */}
-        <h2 className="text-2xl font-bold text-white mb-4">Active Campaigns</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {campaigns.map((campaign) => (
-            <div
-              key={campaign.id}
-              className="p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-all cursor-pointer group"
-              style={{ backgroundColor: '#1a1a2e' }}
-              onClick={() => setSelectedCampaign(selectedCampaign === campaign.id ? null : campaign.id)}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-1">{campaign.name}</h3>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(campaign.status)}`}>
-                      {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                    </span>
-                    <span className="text-gray-500 text-xs">{campaign.objective}</span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleCampaignStatus(campaign.id);
-                    }}
-                    className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
-                  >
-                    {campaign.status === 'active' ? <Pause size={18} /> : <Play size={18} />}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteCampaign(campaign.id);
-                    }}
-                    className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {[
-                  { label: 'Budget', value: `$${campaign.budget}`, icon: DollarSign },
-                  { label: 'Spend', value: `$${campaign.spend}`, icon: TrendingUp },
-                  { label: 'CPC', value: `$${campaign.cpc || 'N/A'}`, icon: MousePointer },
-                  { label: 'ROAS', value: `${campaign.roas}x`, icon: Award },
-                ].map((stat, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 rounded-lg"
-                    style={{ backgroundColor: '#0a0a0a' }}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <stat.icon size={14} style={{ color: getObjectiveColor(campaign.objective) }} />
-                      <p className="text-xs text-gray-400">{stat.label}</p>
+            {/* Expandable Details */}
+            {selectedCampaign === campaign.id && (
+              <div className="campaign-details">
+                <div className="details-grid">
+                  {[
+                    { label: 'Impressions', value: campaign.impressions.toLocaleString() },
+                    { label: 'Clicks', value: campaign.clicks },
+                    { label: 'Conversions', value: campaign.conversions },
+                    { label: 'CPM', value: `$${campaign.cpm}` },
+                  ].map((item, idx) => (
+                    <div key={idx}>
+                      <p className="text-muted text-xs mb-1">{item.label}</p>
+                      <p className="text-primary font-semibold">{item.value}</p>
                     </div>
-                    <p className="text-sm font-bold text-white">{stat.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Expandable Details */}
-              {selectedCampaign === campaign.id && (
-                <div className="mt-4 pt-4 border-t border-gray-700">
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { label: 'Impressions', value: campaign.impressions.toLocaleString() },
-                      { label: 'Clicks', value: campaign.clicks },
-                      { label: 'Conversions', value: campaign.conversions },
-                      { label: 'CPM', value: `$${campaign.cpm}` },
-                    ].map((item, idx) => (
-                      <div key={idx}>
-                        <p className="text-xs text-gray-500 mb-1">{item.label}</p>
-                        <p className="text-lg font-bold text-white">{item.value}</p>
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              <div className="mt-4 w-full bg-gray-800 rounded-full h-2">
+            <div className="campaign-progress">
+              <div className="metric-bar">
                 <div
-                  className="h-2 rounded-full transition-all"
+                  className="metric-fill gradient-bg"
                   style={{
                     width: `${(campaign.spend / campaign.budget) * 100}%`,
-                    background: 'linear-gradient(90deg, #E1306C, #833AB4)',
                   }}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-muted text-xs mt-2">
                 ${campaign.spend} / ${campaign.budget} ({Math.round((campaign.spend / campaign.budget) * 100)}%)
               </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* A/B Testing Section */}
-        <h2 className="text-2xl font-bold text-white mb-4">A/B Test Results</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {abTestVariants.map((variant) => (
-            <div
-              key={variant.id}
-              className="p-6 rounded-xl border border-gray-800 relative overflow-hidden"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              {variant.winner && (
-                <div className="absolute top-0 right-0 px-4 py-1 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white text-xs font-bold rounded-bl-lg">
-                  WINNER
+      {/* A/B Testing Section */}
+      <h2 className="section-title">A/B Test Results</h2>
+      <div className="grid grid-2 gap-md mb-8">
+        {abTestVariants.map((variant) => (
+          <div key={variant.id} className="card ab-test-card">
+            {variant.winner && (
+              <div className="winner-badge">WINNER</div>
+            )}
+            <h3 className="text-primary font-semibold mb-4">{variant.name}</h3>
+            <div className="variant-stats">
+              {[
+                { label: 'Impressions', value: variant.impressions.toLocaleString() },
+                { label: 'Clicks', value: variant.clicks },
+                { label: 'CTR', value: `${variant.ctr}%` },
+                { label: 'Conversions', value: variant.conversions },
+                { label: 'CPC', value: `$${variant.cpc}` },
+              ].map((stat, idx) => (
+                <div key={idx} className="variant-stat-row">
+                  <p className="text-secondary text-sm">{stat.label}</p>
+                  <p className="text-primary font-semibold">{stat.value}</p>
                 </div>
-              )}
-              <h3 className="text-lg font-bold text-white mb-4">{variant.name}</h3>
-              <div className="space-y-3">
-                {[
-                  { label: 'Impressions', value: variant.impressions.toLocaleString() },
-                  { label: 'Clicks', value: variant.clicks },
-                  { label: 'CTR', value: `${variant.ctr}%` },
-                  { label: 'Conversions', value: variant.conversions },
-                  { label: 'CPC', value: `$${variant.cpc}` },
-                ].map((stat, idx) => (
-                  <div key={idx} className="flex justify-between items-center">
-                    <p className="text-gray-400 text-sm">{stat.label}</p>
-                    <p className="text-white font-semibold">{stat.value}</p>
-                  </div>
-                ))}
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Budget Allocator */}
+      <h2 className="section-title">Budget Allocation</h2>
+      <div className="card card-gradient mb-8">
+        <div className="allocator-list">
+          {campaigns.map((campaign) => (
+            <div key={campaign.id} className="allocator-item">
+              <div className="allocator-header">
+                <p className="text-primary font-medium">{campaign.name}</p>
+                <p className="text-secondary text-sm">{budgetAllocations[campaign.id]}%</p>
               </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={budgetAllocations[campaign.id]}
+                onChange={(e) =>
+                  setBudgetAllocations({
+                    ...budgetAllocations,
+                    [campaign.id]: parseInt(e.target.value),
+                  })
+                }
+                className="allocator-slider"
+              />
             </div>
           ))}
         </div>
+      </div>
 
-        {/* Budget Allocator */}
-        <h2 className="text-2xl font-bold text-white mb-4">Budget Allocation</h2>
-        <div className="p-6 rounded-xl border border-gray-800 mb-8" style={{ backgroundColor: '#1a1a2e' }}>
-          <div className="space-y-4">
-            {campaigns.map((campaign) => (
-              <div key={campaign.id}>
-                <div className="flex justify-between items-center mb-2">
-                  <p className="text-white font-medium">{campaign.name}</p>
-                  <p className="text-gray-400 text-sm">{budgetAllocations[campaign.id]}%</p>
+      {/* ROI Calculator */}
+      <h2 className="section-title">ROI Calculator</h2>
+      <div className="grid grid-2 gap-md mb-8">
+        <div className="card">
+          <div className="calculator-inputs">
+            {[
+              { key: 'adSpend', label: 'Ad Spend ($)', icon: DollarSign },
+              { key: 'clicks', label: 'Clicks', icon: MousePointer },
+              { key: 'conversions', label: 'Conversions', icon: ShoppingCart },
+              { key: 'revenue', label: 'Revenue ($)', icon: TrendingUp },
+            ].map((field) => (
+              <div key={field.key}>
+                <label className="form-label">{field.label}</label>
+                <div className="input-with-icon">
+                  <field.icon size={18} className="text-secondary" />
+                  <input
+                    type="number"
+                    value={roiInputs[field.key]}
+                    onChange={(e) =>
+                      setRoiInputs({ ...roiInputs, [field.key]: parseFloat(e.target.value) || 0 })
+                    }
+                    className="input"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={budgetAllocations[campaign.id]}
-                  onChange={(e) =>
-                    setBudgetAllocations({
-                      ...budgetAllocations,
-                      [campaign.id]: parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full h-2 rounded-full appearance-none bg-gray-700 cursor-pointer accent-[#E1306C]"
-                />
               </div>
             ))}
           </div>
         </div>
 
-        {/* ROI Calculator */}
-        <h2 className="text-2xl font-bold text-white mb-4">ROI Calculator</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <div className="space-y-4">
-              {[
-                { key: 'adSpend', label: 'Ad Spend ($)', icon: DollarSign },
-                { key: 'clicks', label: 'Clicks', icon: MousePointer },
-                { key: 'conversions', label: 'Conversions', icon: ShoppingCart },
-                { key: 'revenue', label: 'Revenue ($)', icon: TrendingUp },
-              ].map((field) => (
-                <div key={field.key}>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">{field.label}</label>
-                  <div className="flex items-center gap-3">
-                    <field.icon size={18} className="text-gray-400" />
-                    <input
-                      type="number"
-                      value={roiInputs[field.key]}
-                      onChange={(e) =>
-                        setRoiInputs({ ...roiInputs, [field.key]: parseFloat(e.target.value) || 0 })
-                      }
-                      className="flex-1 px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-[#E1306C] transition-colors"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <h3 className="text-lg font-bold text-white mb-4">Results</h3>
-            <div className="space-y-4">
-              {[
-                { label: 'ROI', value: `${roiResults.roi}%`, color: '#E1306C' },
-                { label: 'ROAS', value: `${roiResults.roas}x`, color: '#833AB4' },
-                { label: 'CPA', value: `$${roiResults.cpa}`, color: '#FD1D1D' },
-                { label: 'Profit', value: `$${roiResults.profit}`, color: '#F77737' },
-              ].map((result, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-lg"
-                  style={{ backgroundColor: '#0a0a0a' }}
-                >
-                  <p className="text-gray-400 text-sm mb-1">{result.label}</p>
-                  <p className="text-2xl font-bold text-white">{result.value}</p>
-                </div>
-              ))}
-            </div>
+        <div className="card">
+          <h3 className="text-primary font-semibold mb-4">Results</h3>
+          <div className="results-grid">
+            {[
+              { label: 'ROI', value: `${roiResults.roi}%`, color: 'var(--color-primary)' },
+              { label: 'ROAS', value: `${roiResults.roas}x`, color: 'var(--color-secondary)' },
+              { label: 'CPA', value: `$${roiResults.cpa}`, color: 'var(--status-error)' },
+              { label: 'Profit', value: `$${roiResults.profit}`, color: 'var(--status-warning)' },
+            ].map((result, idx) => (
+              <div key={idx} className="result-box">
+                <p className="text-secondary text-sm mb-1">{result.label}</p>
+                <p className="text-primary font-semibold" style={{ color: result.color }}>{result.value}</p>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Performance Charts */}
-        <h2 className="text-2xl font-bold text-white mb-4">Performance Trends</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Spend vs Results Chart */}
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <h3 className="text-lg font-bold text-white mb-4">Spend vs Results</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={spendTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                <XAxis dataKey="date" stroke="#666" />
-                <YAxis stroke="#666" />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333' }}
-                  labelStyle={{ color: '#fff' }}
-                />
-                <Legend />
-                <Bar dataKey="spend" fill="#E1306C" />
-                <Bar dataKey="results" fill="#833AB4" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* CPC Trend Chart */}
-          <div className="p-6 rounded-xl border border-gray-800" style={{ backgroundColor: '#1a1a2e' }}>
-            <h3 className="text-lg font-bold text-white mb-4">CPC Trend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={cpcTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                <XAxis dataKey="date" stroke="#666" />
-                <YAxis stroke="#666" />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333' }}
-                  labelStyle={{ color: '#fff' }}
-                />
-                <Line type="monotone" dataKey="cpc" stroke="#E1306C" strokeWidth={2} dot={{ fill: '#E1306C' }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+      {/* Performance Charts */}
+      <h2 className="section-title">Performance Trends</h2>
+      <div className="grid grid-2 gap-md mb-8">
+        {/* Spend vs Results Chart */}
+        <div className="card chart-card">
+          <h3 className="text-primary font-semibold mb-4">Spend vs Results</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={spendTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+              <XAxis dataKey="date" stroke="var(--text-secondary)" />
+              <YAxis stroke="var(--text-secondary)" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-primary)',
+                  borderRadius: 'var(--radius-md)',
+                  color: 'var(--text-primary)',
+                }}
+                labelStyle={{ color: 'var(--text-primary)' }}
+              />
+              <Legend />
+              <Bar dataKey="spend" fill="var(--color-primary)" />
+              <Bar dataKey="results" fill="var(--color-secondary)" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Quick Tips */}
-        <h2 className="text-2xl font-bold text-white mb-4">Instagram Ads Best Practices</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { title: 'Use Carousel Ads', description: 'Carousel ads have 2.5x higher click-through rates than single image ads' },
-            { title: 'Test Video Ads', description: 'Video ads achieve 30% lower CPC and 2x higher conversion rates' },
-            { title: 'Optimize Landing Pages', description: 'Ensure 1-second mobile page load times for 50%+ conversion improvement' },
-            { title: 'Segment Audiences', description: 'Custom audiences show 3x better ROAS than broad targeting' },
-            { title: 'A/B Test Creative', description: 'Test headlines, images, and copy to find your winning combination' },
-            { title: 'Use Dynamic Ads', description: 'Dynamic ads automatically show relevant products to interested users' },
-          ].map((tip, idx) => (
-            <div
-              key={idx}
-              className="p-4 rounded-lg border border-gray-800"
-              style={{ backgroundColor: '#1a1a2e' }}
-            >
-              <h3 className="font-semibold text-white mb-2">{tip.title}</h3>
-              <p className="text-sm text-gray-400">{tip.description}</p>
-            </div>
-          ))}
+        {/* CPC Trend Chart */}
+        <div className="card chart-card">
+          <h3 className="text-primary font-semibold mb-4">CPC Trend</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={cpcTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+              <XAxis dataKey="date" stroke="var(--text-secondary)" />
+              <YAxis stroke="var(--text-secondary)" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-primary)',
+                  borderRadius: 'var(--radius-md)',
+                  color: 'var(--text-primary)',
+                }}
+                labelStyle={{ color: 'var(--text-primary)' }}
+              />
+              <Line
+                type="monotone"
+                dataKey="cpc"
+                stroke="var(--color-primary)"
+                strokeWidth={2}
+                dot={{ fill: 'var(--color-primary)' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Quick Tips */}
+      <h2 className="section-title">Instagram Ads Best Practices</h2>
+      <div className="grid grid-3 gap-md">
+        {[
+          { title: 'Use Carousel Ads', description: 'Carousel ads have 2.5x higher click-through rates than single image ads' },
+          { title: 'Test Video Ads', description: 'Video ads achieve 30% lower CPC and 2x higher conversion rates' },
+          { title: 'Optimize Landing Pages', description: 'Ensure 1-second mobile page load times for 50%+ conversion improvement' },
+          { title: 'Segment Audiences', description: 'Custom audiences show 3x better ROAS than broad targeting' },
+          { title: 'A/B Test Creative', description: 'Test headlines, images, and copy to find your winning combination' },
+          { title: 'Use Dynamic Ads', description: 'Dynamic ads automatically show relevant products to interested users' },
+        ].map((tip, idx) => (
+          <div key={idx} className="card tip-card">
+            <h3 className="text-primary font-semibold mb-2">{tip.title}</h3>
+            <p className="text-secondary text-sm">{tip.description}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -2,18 +2,16 @@ import { useState } from 'react';
 import {
   Copy,
   Sparkles,
-  Send,
-  Clock,
-  Filter,
+  Check,
   Trash2,
-  ChevronDown,
+  Hash,
   Play,
   Zap,
-  Hash,
+  ImageIcon,
 } from 'lucide-react';
 import '../styles/ContentStudio.css';
 
-const tones = ['witty', 'professional', 'casual', 'inspirational', 'educational'];
+const tones = ['Witty', 'Professional', 'Casual', 'Inspirational', 'Educational'];
 
 const mockGenerations = {
   captions: [
@@ -112,10 +110,10 @@ const imageIdeas = [
   'Comparison infographic',
 ];
 
-export default function ContentStudio() {
+const ContentStudio = () => {
   const [activeTab, setActiveTab] = useState('captions');
   const [captionTopic, setCaptionTopic] = useState('morning workout motivation');
-  const [captionTone, setCaptionTone] = useState('inspirational');
+  const [captionTone, setCaptionTone] = useState('Inspirational');
   const [captionLength, setCaptionLength] = useState('medium');
   const [includeCTA, setIncludeCTA] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -136,7 +134,6 @@ export default function ContentStudio() {
   const [reelsScript, setReelsScript] = useState(reelsScripts[0]?.structure || []);
 
   const [savedItems, setSavedItems] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
 
   const handleGenerateCaptions = () => {
     setLoading(true);
@@ -185,575 +182,249 @@ export default function ContentStudio() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
   };
 
   const saveToHistory = (item) => {
-    setSavedItems([...savedItems, { ...item, id: Date.now() }]);
+    setSavedItems([{ ...item, id: Date.now(), timestamp: new Date() }, ...savedItems]);
   };
 
   const deleteHistoryItem = (id) => {
     setSavedItems(savedItems.filter(item => item.id !== id));
   };
 
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   return (
-    <div className="content-studio-container">
-      <style>{`
-        .content-studio-container {
-          background: #0a0a0a;
-          color: #e0e0e0;
-          min-height: 100vh;
-          padding: 2rem;
-        }
-
-        .header {
-          text-align: center;
-          margin-bottom: 2rem;
-        }
-
-        .header h1 {
-          color: #fff;
-          margin: 0 0 0.5rem 0;
-          font-size: 2.5rem;
-        }
-
-        .header p {
-          color: #999;
-          font-size: 1.1rem;
-        }
-
-        .main-grid {
-          display: grid;
-          grid-template-columns: 1fr 300px;
-          gap: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-          .main-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .tabs {
-          display: flex;
-          gap: 0.5rem;
-          margin-bottom: 2rem;
-          overflow-x: auto;
-          padding-bottom: 0.5rem;
-        }
-
-        .tab-button {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 0.75rem 1.25rem;
-          color: #999;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          white-space: nowrap;
-          font-size: 0.95rem;
-          font-weight: 500;
-        }
-
-        .tab-button:hover {
-          border-color: #3a3a4e;
-          color: #e0e0e0;
-        }
-
-        .tab-button.active {
-          background: linear-gradient(135deg, #E1306C, #833AB4);
-          border-color: transparent;
-          color: #fff;
-        }
-
-        .tab-content {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 12px;
-          padding: 2rem;
-        }
-
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-          display: block;
-          color: #fff;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-          width: 100%;
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
-          color: #fff;
-          font-family: inherit;
-          font-size: 0.95rem;
-          transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-          outline: none;
-          border-color: #833AB4;
-          box-shadow: 0 0 0 3px rgba(131, 58, 180, 0.1);
-        }
-
-        .form-group textarea {
-          min-height: 80px;
-          resize: vertical;
-        }
-
-        .slider-value {
-          color: #999;
-          font-size: 0.9rem;
-          margin-top: 0.5rem;
-        }
-
-        .checkbox-group {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .checkbox-group input[type='checkbox'] {
-          width: 20px;
-          height: 20px;
-          cursor: pointer;
-        }
-
-        .button-group {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1.5rem;
-        }
-
-        .generate-btn {
-          flex: 1;
-          background: linear-gradient(135deg, #E1306C, #833AB4);
-          border: none;
-          border-radius: 8px;
-          padding: 1rem;
-          color: #fff;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-        }
-
-        .generate-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(131, 58, 180, 0.3);
-        }
-
-        .generate-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .output-section {
-          margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid #2a2a3e;
-        }
-
-        .output-section h3 {
-          color: #fff;
-          margin: 0 0 1rem 0;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .output-card {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-left: 3px solid #833AB4;
-          border-radius: 8px;
-          padding: 1rem;
-          margin-bottom: 1rem;
-          transition: all 0.3s ease;
-        }
-
-        .output-card:hover {
-          border-color: #833AB4;
-          background: #151530;
-        }
-
-        .output-card p {
-          color: #ccc;
-          margin: 0 0 1rem 0;
-          line-height: 1.6;
-        }
-
-        .output-card-buttons {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .icon-button {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.5rem;
-          color: #999;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .icon-button:hover {
-          background: #833AB4;
-          border-color: #833AB4;
-          color: #fff;
-        }
-
-        .sidebar {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 12px;
-          padding: 1.5rem;
-          height: fit-content;
-          position: sticky;
-          top: 2rem;
-        }
-
-        .sidebar h3 {
-          color: #fff;
-          margin: 0 0 1rem 0;
-          font-size: 1rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .history-list {
-          max-height: 400px;
-          overflow-y: auto;
-        }
-
-        .history-item {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.75rem;
-          margin-bottom: 0.75rem;
-          font-size: 0.85rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .history-item-text {
-          flex: 1;
-          color: #999;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .hashtag-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1rem;
-          margin-top: 1rem;
-        }
-
-        .hashtag-category {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 1rem;
-        }
-
-        .hashtag-category h4 {
-          color: #999;
-          margin: 0 0 0.75rem 0;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-        }
-
-        .hashtag-tag {
-          background: #1a1a2e;
-          border-radius: 4px;
-          padding: 0.4rem 0.6rem;
-          margin-bottom: 0.5rem;
-          font-size: 0.85rem;
-          color: #ccc;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .tone-options {
-          display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-          margin-top: 0.5rem;
-        }
-
-        .tone-button {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.4rem 0.8rem;
-          color: #999;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: all 0.3s ease;
-        }
-
-        .tone-button:hover,
-        .tone-button.active {
-          background: #833AB4;
-          border-color: #833AB4;
-          color: #fff;
-        }
-
-        .slide-preview {
-          background: #0a0a0a;
-          border-left: 3px solid #833AB4;
-          border-radius: 6px;
-          padding: 1rem;
-          margin-bottom: 0.75rem;
-          color: #ccc;
-        }
-
-        .slide-number {
-          color: #999;
-          font-size: 0.85rem;
-          margin-bottom: 0.25rem;
-        }
-
-        .empty-state {
-          text-align: center;
-          color: #666;
-          padding: 2rem;
-        }
-      `}</style>
-
-      <div className="header">
-        <h1>✨ AI Content Studio</h1>
-        <p>Generate captions, hashtags, carousels, and more</p>
+    <div className="page">
+      <div className="page-header">
+        <div className="flex-col">
+          <h1><Sparkles size={24} /> AI Content Studio</h1>
+          <p className="text-muted">Generate captions, hashtags, carousels, and more</p>
+        </div>
       </div>
 
-      <div className="main-grid">
-        <div>
-          <div className="tabs">
+      <div className="cs-main-grid">
+        <div className="cs-left-section">
+          <div className="tab-group">
             <button
-              className={`tab-button ${activeTab === 'captions' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'captions' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('captions')}
             >
               Caption Generator
             </button>
             <button
-              className={`tab-button ${activeTab === 'hashtags' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'hashtags' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('hashtags')}
             >
               Hashtag Generator
             </button>
             <button
-              className={`tab-button ${activeTab === 'carousel' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'carousel' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('carousel')}
             >
               Carousel Planner
             </button>
             <button
-              className={`tab-button ${activeTab === 'reels' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'reels' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('reels')}
             >
               Reels Script
             </button>
             <button
-              className={`tab-button ${activeTab === 'stories' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'stories' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('stories')}
             >
               Story Planner
             </button>
             <button
-              className={`tab-button ${activeTab === 'images' ? 'active' : ''}`}
+              className={`tab-item ${activeTab === 'images' ? 'tab-active' : ''}`}
               onClick={() => setActiveTab('images')}
             >
               Image Ideas
             </button>
           </div>
 
-          {/* Caption Generator */}
-          {activeTab === 'captions' && (
-            <div className="tab-content">
-              <div className="form-group">
-                <label>Topic / Subject</label>
+        {activeTab === 'captions' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Generate Captions</h2>
+            </div>
+            <div className="flex-col">
+              <div>
+                <label className="input-label">Topic / Subject</label>
                 <input
+                  className="input"
                   type="text"
                   value={captionTopic}
                   onChange={(e) => setCaptionTopic(e.target.value)}
-                  placeholder="e.g., morning workout, product launch..."
+                  placeholder="e.g., morning workout motivation"
                 />
               </div>
 
-              <div className="form-group">
-                <label>Tone</label>
-                <div className="tone-options">
+              <div>
+                <label className="input-label">Tone</label>
+                <div className="tone-pills">
                   {tones.map((tone) => (
                     <button
                       key={tone}
-                      className={`tone-button ${captionTone === tone ? 'active' : ''}`}
+                      className={`tone-pill ${captionTone === tone ? 'tone-pill-active' : ''}`}
                       onClick={() => setCaptionTone(tone)}
                     >
-                      {tone.charAt(0).toUpperCase() + tone.slice(1)}
+                      {tone}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Length</label>
-                <select value={captionLength} onChange={(e) => setCaptionLength(e.target.value)}>
+              <div>
+                <label className="input-label">Length</label>
+                <select className="select" value={captionLength} onChange={(e) => setCaptionLength(e.target.value)}>
                   <option value="short">Short (100 chars)</option>
                   <option value="medium">Medium (250 chars)</option>
                   <option value="long">Long (500+ chars)</option>
                 </select>
               </div>
 
-              <div className="checkbox-group">
+              <label className="checkbox-label">
                 <input
                   type="checkbox"
-                  id="includeCTA"
                   checked={includeCTA}
                   onChange={(e) => setIncludeCTA(e.target.checked)}
                 />
-                <label htmlFor="includeCTA">Include Call-to-Action</label>
-              </div>
+                Include Call-to-Action
+              </label>
 
-              <button className="generate-btn" onClick={handleGenerateCaptions} disabled={loading}>
+              <button className="btn-primary" onClick={handleGenerateCaptions} disabled={loading}>
                 <Sparkles size={18} />
-                {loading ? 'Generating...' : 'Generate Captions'}
+                {loading ? 'Generating...' : 'Generate'}
               </button>
-
-              {generatedCaptions.length > 0 && (
-                <div className="output-section">
-                  <h3>
-                    <Sparkles size={18} />
-                    Generated Captions
-                  </h3>
-                  {generatedCaptions.map((caption, idx) => (
-                    <div key={idx} className="output-card">
-                      <p>{caption}</p>
-                      <div className="output-card-buttons">
-                        <button
-                          className="icon-button"
-                          onClick={() => copyToClipboard(caption)}
-                          title="Copy"
-                        >
-                          <Copy size={16} />
-                        </button>
-                        <button
-                          className="icon-button"
-                          onClick={() => saveToHistory({ type: 'caption', content: caption })}
-                          title="Save"
-                        >
-                          <Send size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Hashtag Generator */}
-          {activeTab === 'hashtags' && (
-            <div className="tab-content">
-              <div className="form-group">
-                <label>Niche / Industry</label>
+        {activeTab === 'captions' && generatedCaptions.length > 0 && (
+          <div className="card cs-results">
+            <div className="card-header">
+              <h2>Generated Captions</h2>
+            </div>
+            <div className="flex-col">
+              {generatedCaptions.map((caption, idx) => (
+                <div key={idx} className="result-item">
+                  <p>{caption}</p>
+                  <div className="flex-between">
+                    <span />
+                    <div className="flex-gap">
+                      <button
+                        className="btn-ghost"
+                        onClick={() => copyToClipboard(caption)}
+                        title="Copy"
+                      >
+                        <Copy size={16} />
+                      </button>
+                      <button
+                        className="btn-ghost"
+                        onClick={() => saveToHistory({ type: 'caption', content: caption })}
+                        title="Save"
+                      >
+                        <Check size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'hashtags' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Generate Hashtags</h2>
+            </div>
+            <div className="flex-col">
+              <div>
+                <label className="input-label">Niche / Industry</label>
                 <input
+                  className="input"
                   type="text"
                   value={hashtagNiche}
                   onChange={(e) => setHashtagNiche(e.target.value)}
-                  placeholder="e.g., fitness coaching, digital marketing..."
+                  placeholder="e.g., fitness coaching, digital marketing"
                 />
               </div>
 
-              <div className="form-group">
-                <label>Number of Hashtags: {hashtagCount}</label>
+              <div>
+                <label className="input-label">Count: {hashtagCount}</label>
                 <input
                   type="range"
-                  min="15"
+                  min="10"
                   max="30"
                   value={hashtagCount}
                   onChange={(e) => setHashtagCount(parseInt(e.target.value))}
+                  className="input-range"
                 />
-                <div className="slider-value">Range: 15-30 hashtags</div>
+                <p className="text-muted cs-small">Range: 10-30 hashtags</p>
               </div>
 
-              <button className="generate-btn" onClick={handleGenerateHashtags} disabled={loading}>
+              <button className="btn-primary" onClick={handleGenerateHashtags} disabled={loading}>
                 <Hash size={18} />
-                {loading ? 'Generating...' : 'Generate Hashtags'}
+                {loading ? 'Generating...' : 'Generate'}
               </button>
+            </div>
+          </div>
+        )}
 
-              {generatedHashtags && (
-                <div className="output-section">
-                  <h3>
-                    <Hash size={18} />
-                    Categorized Hashtags
-                  </h3>
-                  <div className="hashtag-grid">
-                    {Object.entries(generatedHashtags).map(([category, tags]) => (
-                      <div key={category} className="hashtag-category">
-                        <h4>{category.toUpperCase()} COMPETITION</h4>
-                        {tags.map((tag, idx) => (
-                          <div
-                            key={idx}
-                            className="hashtag-tag"
-                            onClick={() => copyToClipboard(tag)}
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {tag}
-                            <Copy size={12} />
-                          </div>
-                        ))}
-                      </div>
+        {activeTab === 'hashtags' && generatedHashtags && (
+          <div className="card cs-results">
+            <div className="card-header">
+              <h2>Hashtag Groups</h2>
+            </div>
+            <div className="flex-col">
+              {Object.entries(generatedHashtags).map(([category, tags]) => (
+                <div key={category} className="hashtag-group">
+                  <p className="text-muted cs-category">{category.charAt(0).toUpperCase() + category.slice(1)} Competition</p>
+                  <div className="hashtag-pills">
+                    {tags.map((tag, idx) => (
+                      <button
+                        key={idx}
+                        className="badge"
+                        onClick={() => copyToClipboard(tag)}
+                        title="Click to copy"
+                      >
+                        {tag}
+                      </button>
                     ))}
                   </div>
-                  <button
-                    className="generate-btn"
-                    style={{ marginTop: '1rem', background: '#1a1a2e', color: '#ccc' }}
-                    onClick={() => {
-                      const allTags = Object.values(generatedHashtags)
-                        .flat()
-                        .join(' ');
-                      copyToClipboard(allTags);
-                    }}
-                  >
-                    <Copy size={16} />
-                    Copy All
-                  </button>
                 </div>
-              )}
+              ))}
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  const allTags = Object.values(generatedHashtags)
+                    .flat()
+                    .join(' ');
+                  copyToClipboard(allTags);
+                }}
+              >
+                <Copy size={16} />
+                Copy All
+              </button>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Carousel Planner */}
-          {activeTab === 'carousel' && (
-            <div className="tab-content">
-              <div className="form-group">
-                <label>Carousel Topic</label>
+        {activeTab === 'carousel' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Carousel Planner</h2>
+            </div>
+            <div className="flex-col">
+              <div>
+                <label className="input-label">Topic</label>
                 <input
+                  className="input"
                   type="text"
                   value={carouselTopic}
                   onChange={(e) => setCarouselTopic(e.target.value)}
@@ -761,9 +432,9 @@ export default function ContentStudio() {
                 />
               </div>
 
-              <div className="form-group">
-                <label>Template</label>
-                <select value={carouselTemplate} onChange={(e) => setCarouselTemplate(e.target.value)}>
+              <div>
+                <label className="input-label">Template</label>
+                <select className="select" value={carouselTemplate} onChange={(e) => setCarouselTemplate(e.target.value)}>
                   {Object.entries(carouselTemplates).map(([key, template]) => (
                     <option key={key} value={key}>
                       {template.name}
@@ -772,34 +443,39 @@ export default function ContentStudio() {
                 </select>
               </div>
 
-              <button className="generate-btn" onClick={handleGenerateCarousel} disabled={loading}>
+              <button className="btn-primary" onClick={handleGenerateCarousel} disabled={loading}>
                 <Sparkles size={18} />
-                {loading ? 'Generating...' : 'Generate Slides'}
+                {loading ? 'Generating...' : 'Generate'}
               </button>
-
-              {carouselSlides.length > 0 && (
-                <div className="output-section">
-                  <h3>
-                    <Sparkles size={18} />
-                    Slide Outline
-                  </h3>
-                  {carouselSlides.map((slide) => (
-                    <div key={slide.num} className="slide-preview">
-                      <div className="slide-number">Slide {slide.num} of {carouselSlides.length}</div>
-                      <p>{slide.content}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Reels Script */}
-          {activeTab === 'reels' && (
-            <div className="tab-content">
-              <div className="form-group">
-                <label>Hook</label>
-                <select value={reelsHook} onChange={(e) => setReelsHook(e.target.value)}>
+        {activeTab === 'carousel' && carouselSlides.length > 0 && (
+          <div className="card cs-results">
+            <div className="card-header">
+              <h2>Slide Outline</h2>
+            </div>
+            <div className="flex-col">
+              {carouselSlides.map((slide) => (
+                <div key={slide.num} className="slide-card">
+                  <p className="text-muted cs-small">Slide {slide.num} of {carouselSlides.length}</p>
+                  <p>{slide.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'reels' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Reels Script</h2>
+            </div>
+            <div className="flex-col">
+              <div>
+                <label className="input-label">Hook</label>
+                <select className="select" value={reelsHook} onChange={(e) => setReelsHook(e.target.value)}>
                   {reelsScripts.map((script, idx) => (
                     <option key={idx} value={script.hook}>
                       {script.hook}
@@ -808,96 +484,102 @@ export default function ContentStudio() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>Topic (Optional)</label>
+              <div>
+                <label className="input-label">Topic (Optional)</label>
                 <input
+                  className="input"
                   type="text"
                   value={reelsTopic}
                   onChange={(e) => setReelsTopic(e.target.value)}
                   placeholder="What's the Reel about?"
                 />
               </div>
+            </div>
+          </div>
+        )}
 
-              {reelsScript.length > 0 && (
-                <div className="output-section">
-                  <h3>
-                    <Play size={18} />
-                    Reel Script (21 seconds)
-                  </h3>
-                  {reelsScript.map((segment, idx) => (
-                    <div key={idx} className="slide-preview">
-                      <div className="slide-number">{segment.time}</div>
-                      <p>{segment.content}</p>
-                    </div>
-                  ))}
+        {activeTab === 'reels' && reelsScript.length > 0 && (
+          <div className="card cs-results">
+            <div className="card-header">
+              <h2>Script (21 seconds)</h2>
+            </div>
+            <div className="flex-col">
+              {reelsScript.map((segment, idx) => (
+                <div key={idx} className="slide-card">
+                  <p className="text-muted cs-small">{segment.time}</p>
+                  <p>{segment.content}</p>
                 </div>
-              )}
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Story Planner */}
-          {activeTab === 'stories' && (
-            <div className="tab-content">
-              <div className="output-section" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-                <h3>
-                  <Zap size={18} />
-                  Multi-Story Sequence
-                </h3>
-                {storySequences.map((story) => (
-                  <div key={story.order} className="slide-preview">
-                    <div className="slide-number">Story {story.order}</div>
-                    <p>{story.content}</p>
-                  </div>
-                ))}
-              </div>
+        {activeTab === 'stories' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Story Sequence</h2>
             </div>
-          )}
+            <div className="flex-col">
+              {storySequences.map((story) => (
+                <div key={story.order} className="slide-card">
+                  <p className="text-muted cs-small">Story {story.order}</p>
+                  <p>{story.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-          {/* Image Ideas */}
-          {activeTab === 'images' && (
-            <div className="tab-content">
-              <h3 style={{ color: '#fff', margin: '0 0 1rem 0' }}>📸 Visual Content Ideas</h3>
+        {activeTab === 'images' && (
+          <div className="card">
+            <div className="card-header">
+              <h2>Visual Content Ideas</h2>
+            </div>
+            <div className="flex-col">
               {imageIdeas.map((idea, idx) => (
-                <div key={idx} className="output-card">
+                <div key={idx} className="idea-card">
                   <p>{idea}</p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
-        {/* Sidebar - Saved Generations History */}
-        <div className="sidebar">
-          <h3>
-            <Clock size={16} />
-            Saved Items ({savedItems.length})
-          </h3>
+      <aside className="cs-sidebar">
+        <div className="card">
+          <div className="card-header">
+            <h3>Saved Items</h3>
+            <span className="badge">{savedItems.length}</span>
+          </div>
 
           {savedItems.length === 0 ? (
-            <div className="empty-state" style={{ padding: '1rem' }}>
-              <p>No saved items yet</p>
-            </div>
+            <p className="text-muted cs-empty">No saved items yet</p>
           ) : (
-            <div className="history-list">
+            <div className="saved-list">
               {savedItems.map((item) => (
-                <div key={item.id} className="history-item">
-                  <div className="history-item-text" title={item.content}>
-                    {item.content.substring(0, 40)}...
+                <div key={item.id} className="saved-item flex-between">
+                  <div className="saved-preview">
+                    <span className="badge">{item.type}</span>
+                    <p title={item.content}>{item.content.substring(0, 40)}...</p>
+                    <span className="text-muted cs-small">{formatDate(item.timestamp)}</span>
                   </div>
                   <button
-                    className="icon-button"
+                    className="btn-ghost"
                     onClick={() => deleteHistoryItem(item.id)}
-                    style={{ padding: '0.25rem' }}
                     title="Delete"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))}
             </div>
           )}
         </div>
+      </aside>
       </div>
     </div>
   );
-}
+};
+
+export default ContentStudio;

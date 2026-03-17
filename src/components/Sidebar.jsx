@@ -1,22 +1,22 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  BarChart3,
+  LayoutDashboard,
+  CheckCircle2,
   TrendingUp,
-  Pencil,
+  PenTool,
   Zap,
-  Calendar,
+  CalendarDays,
   Grid3x3,
   Search,
   Hash,
-  PieChart,
-  Mail,
+  BarChart3,
+  Target,
+  MessageSquare,
   Heart,
   ShieldCheck,
   Megaphone,
-  Coins,
-  Target,
-  CheckCircle,
+  DollarSign,
   BookOpen,
   Settings,
   ChevronLeft,
@@ -29,48 +29,48 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
   const navGroups = [
     {
-      title: 'Core',
+      title: 'CORE',
       items: [
-        { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-        { path: '/daily-actions', label: 'Daily Actions', icon: CheckCircle },
+        { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/daily-actions', label: 'Daily Actions', icon: CheckCircle2 },
         { path: '/growth-milestones', label: 'Growth Milestones', icon: TrendingUp },
       ],
     },
     {
-      title: 'Create',
+      title: 'CREATE',
       items: [
-        { path: '/content-studio', label: 'Content Studio', icon: Pencil },
+        { path: '/content-studio', label: 'Content Studio', icon: PenTool },
         { path: '/viral-lab', label: 'Viral Lab', icon: Zap },
-        { path: '/calendar', label: 'Calendar', icon: Calendar },
+        { path: '/calendar', label: 'Calendar', icon: CalendarDays },
         { path: '/grid-planner', label: 'Grid Planner', icon: Grid3x3 },
       ],
     },
     {
-      title: 'Grow',
+      title: 'GROW',
       items: [
         { path: '/seo-suite', label: 'SEO Suite', icon: Search },
         { path: '/hashtags', label: 'Hashtags', icon: Hash },
-        { path: '/analytics', label: 'Analytics', icon: PieChart },
+        { path: '/analytics', label: 'Analytics', icon: BarChart3 },
         { path: '/strategy', label: 'Strategy', icon: Target },
       ],
     },
     {
-      title: 'Engage',
+      title: 'ENGAGE',
       items: [
-        { path: '/dm-funnels', label: 'DM Funnels', icon: Mail },
+        { path: '/dm-funnels', label: 'DM Funnels', icon: MessageSquare },
         { path: '/engagement', label: 'Engagement', icon: Heart },
         { path: '/account-health', label: 'Account Health', icon: ShieldCheck },
       ],
     },
     {
-      title: 'Monetize',
+      title: 'MONETIZE',
       items: [
         { path: '/ads', label: 'Ads', icon: Megaphone },
-        { path: '/monetization', label: 'Monetization', icon: Coins },
+        { path: '/monetization', label: 'Monetization', icon: DollarSign },
       ],
     },
     {
-      title: 'Learn',
+      title: 'LEARN',
       items: [
         { path: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
       ],
@@ -110,9 +110,8 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                     className={`nav-item ${active ? 'active' : ''}`}
                     title={isCollapsed ? item.label : ''}
                   >
-                    <Icon size={20} className="nav-icon" />
+                    <Icon className="nav-icon" />
                     {!isCollapsed && <span className="nav-label">{item.label}</span>}
-                    {active && <div className="active-indicator" />}
                   </Link>
                 );
               })}

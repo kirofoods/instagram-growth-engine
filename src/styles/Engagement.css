@@ -1,0 +1,121 @@
+/* Engagement Component Styles */
+
+/* Tab Navigation */
+.eng-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.eng-tabs .tab {
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  position: relative;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+}
+
+.eng-tabs .tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.eng-tabs .tab.tab-active {
+  background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+  color: white;
+}
+
+/* Progress Bar */
+.eng-progress-bar {
+  width: 100%;
+  height: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.eng-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end));
+  transition: width var(--transition-base);
+}
+
+/* Strategy Card */
+.eng-strategy-card {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.eng-strategy-card:hover {
+  border-color: var(--border-secondary);
+}
+
+.eng-strategy-card button {
+  transition: all var(--transition-fast);
+}
+
+.eng-strategy-card button:hover {
+  opacity: 0.9;
+}
+
+/* List Item */
+.eng-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.eng-list-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Metric Box */
+.eng-metric-box {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.eng-metric-box:hover {
+  border-color: var(--border-secondary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .eng-tabs {
+    gap: 0.25rem;
+  }
+
+  .eng-tabs .tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .eng-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .eng-list-item > div:last-child {
+    width: 100%;
+  }
+}

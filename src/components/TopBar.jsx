@@ -1,8 +1,10 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { Bell, Settings, Search } from 'lucide-react';
 import './TopBar.css';
 
-const TopBar = ({ onSettingsClick }) => {
+const TopBar = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const handleSearch = (e) => {
@@ -12,12 +14,16 @@ const TopBar = ({ onSettingsClick }) => {
     }
   };
 
+  const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
   return (
     <div className="topbar">
       <div className="topbar-left">
-        <h1 className="topbar-title">
-          <span className="gradient-text">KiroGram</span>
-        </h1>
+        {isSidebarCollapsed && (
+          <h1 className="topbar-title">
+            <span className="gradient-text">KiroGram</span>
+          </h1>
+        )}
       </div>
 
       <div className="topbar-center">
@@ -37,20 +43,19 @@ const TopBar = ({ onSettingsClick }) => {
 
       <div className="topbar-right">
         <button className="topbar-btn notification-btn" title="Notifications">
-          <Bell size={20} />
-          <span className="notification-badge">3</span>
+          <Bell size={18} />
+          <span className="notification-badge"></span>
         </button>
 
         <button
           className="topbar-btn settings-btn"
-          onClick={onSettingsClick}
           title="Settings"
         >
-          <Settings size={20} />
+          <Settings size={18} />
         </button>
 
         <div className="user-avatar">
-          <div className="avatar-placeholder">U</div>
+          <div className="avatar-placeholder">S</div>
         </div>
       </div>
     </div>

@@ -2,16 +2,11 @@ import { useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
-  Plus,
   Trash2,
   Edit,
   CalendarDays,
   Clock,
-  Type,
-  Hash,
-  Eye,
-  MessageCircle,
-  Heart,
+  Sparkles,
 } from 'lucide-react';
 import '../styles/Calendar.css';
 
@@ -173,7 +168,6 @@ export default function Calendar() {
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Get posts planned this week
   const currentDate = new Date();
   const weekStart = new Date(currentDate);
   weekStart.setDate(currentDate.getDate() - currentDate.getDay());
@@ -200,477 +194,39 @@ export default function Calendar() {
   }
 
   return (
-    <div className="calendar-container">
-      <style>{`
-        .calendar-container {
-          background: #0a0a0a;
-          color: #e0e0e0;
-          min-height: 100vh;
-          padding: 2rem;
-        }
-
-        .header {
-          text-align: center;
-          margin-bottom: 2rem;
-        }
-
-        .header h1 {
-          color: #fff;
-          margin: 0 0 0.5rem 0;
-          font-size: 2.5rem;
-        }
-
-        .header p {
-          color: #999;
-          font-size: 1.1rem;
-        }
-
-        .main-grid {
-          display: grid;
-          grid-template-columns: 1fr 320px;
-          gap: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-          .main-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .calendar-card {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 12px;
-          padding: 2rem;
-        }
-
-        .calendar-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2rem;
-        }
-
-        .month-year {
-          color: #fff;
-          font-size: 1.5rem;
-          font-weight: 600;
-        }
-
-        .nav-buttons {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .nav-button {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.5rem;
-          color: #999;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .nav-button:hover {
-          background: #833AB4;
-          border-color: #833AB4;
-          color: #fff;
-        }
-
-        .view-toggle {
-          display: flex;
-          gap: 0.5rem;
-          background: #0a0a0a;
-          border-radius: 6px;
-          padding: 0.25rem;
-        }
-
-        .view-button {
-          background: transparent;
-          border: 1px solid transparent;
-          border-radius: 4px;
-          padding: 0.4rem 0.8rem;
-          color: #999;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: all 0.3s ease;
-        }
-
-        .view-button.active {
-          background: #833AB4;
-          border-color: #833AB4;
-          color: #fff;
-        }
-
-        .calendar-grid {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 0.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .day-header {
-          text-align: center;
-          color: #999;
-          font-size: 0.85rem;
-          font-weight: 600;
-          padding: 0.75rem 0;
-        }
-
-        .calendar-day {
-          aspect-ratio: 1;
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 0.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          min-height: 80px;
-        }
-
-        .calendar-day:hover {
-          border-color: #833AB4;
-          background: #151530;
-        }
-
-        .calendar-day.empty {
-          background: transparent;
-          border: none;
-          cursor: default;
-        }
-
-        .calendar-day.empty:hover {
-          border: none;
-          background: transparent;
-        }
-
-        .day-number {
-          color: #fff;
-          font-weight: 600;
-          font-size: 0.9rem;
-          margin-bottom: 0.25rem;
-        }
-
-        .day-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-          overflow-y: auto;
-          font-size: 0.65rem;
-        }
-
-        .content-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          display: inline-block;
-          margin-right: 0.25rem;
-        }
-
-        .content-item-mini {
-          padding: 0.25rem 0.4rem;
-          border-radius: 3px;
-          background: rgba(131, 58, 180, 0.2);
-          color: #ccc;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .sidebar {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .sidebar-card {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 12px;
-          padding: 1.5rem;
-        }
-
-        .sidebar-card h3 {
-          color: #fff;
-          margin: 0 0 1rem 0;
-          font-size: 1rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .sidebar-card h3 svg {
-          color: #833AB4;
-        }
-
-        .stats-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 0;
-          border-bottom: 1px solid #2a2a3e;
-        }
-
-        .stats-row:last-child {
-          border-bottom: none;
-        }
-
-        .stats-label {
-          color: #999;
-          font-size: 0.9rem;
-        }
-
-        .stats-value {
-          color: #fff;
-          font-weight: 600;
-          font-size: 1rem;
-        }
-
-        .pipeline-bar {
-          display: flex;
-          gap: 0.25rem;
-          margin-top: 1rem;
-        }
-
-        .pipeline-segment {
-          flex: 1;
-          height: 8px;
-          border-radius: 4px;
-          position: relative;
-        }
-
-        .theme-badge {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.6rem 0.8rem;
-          margin-bottom: 0.5rem;
-          font-size: 0.85rem;
-          color: #ccc;
-        }
-
-        .theme-indicator {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          display: inline-block;
-          margin-right: 0.5rem;
-        }
-
-        .modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-
-        .modal-content {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 12px;
-          padding: 2rem;
-          max-width: 500px;
-          width: 90%;
-          max-height: 90vh;
-          overflow-y: auto;
-        }
-
-        .modal-header {
-          color: #fff;
-          margin: 0 0 1.5rem 0;
-          font-size: 1.3rem;
-        }
-
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-          display: block;
-          color: #fff;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-          font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-          width: 100%;
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 0.75rem 1rem;
-          color: #fff;
-          font-family: inherit;
-          font-size: 0.95rem;
-          transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-          outline: none;
-          border-color: #833AB4;
-          box-shadow: 0 0 0 3px rgba(131, 58, 180, 0.1);
-        }
-
-        .form-group textarea {
-          min-height: 80px;
-          resize: vertical;
-        }
-
-        .type-selector {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.5rem;
-          margin-top: 0.5rem;
-        }
-
-        .type-button {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 6px;
-          padding: 0.75rem;
-          color: #999;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: all 0.3s ease;
-          text-align: center;
-        }
-
-        .type-button:hover,
-        .type-button.active {
-          border-color: #833AB4;
-          color: #fff;
-        }
-
-        .modal-buttons {
-          display: flex;
-          gap: 1rem;
-          margin-top: 2rem;
-        }
-
-        .button {
-          flex: 1;
-          background: linear-gradient(135deg, #E1306C, #833AB4);
-          border: none;
-          border-radius: 8px;
-          padding: 0.75rem;
-          color: #fff;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(131, 58, 180, 0.3);
-        }
-
-        .button-cancel {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          color: #ccc;
-        }
-
-        .button-cancel:hover {
-          background: #252540;
-        }
-
-        .content-preview {
-          background: #0a0a0a;
-          border: 1px solid #2a2a3e;
-          border-radius: 8px;
-          padding: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .content-preview h4 {
-          color: #fff;
-          margin: 0 0 0.5rem 0;
-          font-size: 0.95rem;
-        }
-
-        .content-preview p {
-          color: #999;
-          margin: 0;
-          font-size: 0.85rem;
-          line-height: 1.4;
-        }
-
-        .action-buttons {
-          display: flex;
-          gap: 0.5rem;
-          margin-top: 0.75rem;
-        }
-
-        .icon-button {
-          background: #1a1a2e;
-          border: 1px solid #2a2a3e;
-          border-radius: 4px;
-          padding: 0.4rem;
-          color: #999;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .icon-button:hover {
-          background: #833AB4;
-          border-color: #833AB4;
-          color: #fff;
-        }
-      `}</style>
-
-      <div className="header">
-        <h1>📅 Content Calendar & Scheduler</h1>
-        <p>Plan, schedule, and track your Instagram content</p>
+    <div className="calendar-page">
+      <div className="calendar-header-section">
+        <h1 className="calendar-title">📅 Content Calendar & Scheduler</h1>
+        <p className="calendar-subtitle">Plan, schedule, and track your Instagram content</p>
       </div>
 
-      <div className="main-grid">
-        <div>
-          <div className="calendar-card">
-            <div className="calendar-header">
-              <div className="month-year">
+      <div className="calendar-grid-container">
+        <div className="calendar-main">
+          <div className="card calendar-card">
+            <div className="calendar-controls flex-between">
+              <h2 className="calendar-month-year">
                 {monthNames[currentMonth]} {currentYear}
-              </div>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div className="view-toggle">
+              </h2>
+              <div className="flex gap-md items-center">
+                <div className="view-toggle tab-group">
                   <button
-                    className={`view-button ${viewMode === 'month' ? 'active' : ''}`}
+                    className={`tab view-toggle-btn ${viewMode === 'month' ? 'tab-active' : ''}`}
                     onClick={() => setViewMode('month')}
                   >
                     Month
                   </button>
                   <button
-                    className={`view-button ${viewMode === 'week' ? 'active' : ''}`}
+                    className={`tab view-toggle-btn ${viewMode === 'week' ? 'tab-active' : ''}`}
                     onClick={() => setViewMode('week')}
                   >
                     Week
                   </button>
                 </div>
-                <div className="nav-buttons">
-                  <button className="nav-button" onClick={prevMonth} title="Previous month">
+                <div className="flex gap-sm">
+                  <button className="btn btn-ghost" onClick={prevMonth} title="Previous month">
                     <ChevronLeft size={18} />
                   </button>
-                  <button className="nav-button" onClick={nextMonth} title="Next month">
+                  <button className="btn btn-ghost" onClick={nextMonth} title="Next month">
                     <ChevronRight size={18} />
                   </button>
                 </div>
@@ -679,7 +235,7 @@ export default function Calendar() {
 
             <div className="calendar-grid">
               {days.map((day) => (
-                <div key={day} className="day-header">
+                <div key={day} className="calendar-day-header">
                   {day}
                 </div>
               ))}
@@ -689,7 +245,7 @@ export default function Calendar() {
                 return (
                   <div
                     key={idx}
-                    className={`calendar-day ${!day ? 'empty' : ''}`}
+                    className={`calendar-day-cell ${!day ? 'empty' : 'active'}`}
                     onClick={() => {
                       if (day) {
                         setSelectedDate(day);
@@ -699,20 +255,22 @@ export default function Calendar() {
                   >
                     {day && (
                       <>
-                        <div className="day-number">{day}</div>
-                        <div className="day-content">
+                        <div className="calendar-day-number">{day}</div>
+                        <div className="calendar-day-items">
                           {content.map((c) => {
                             const typeInfo = getContentTypeInfo(c.type);
                             return (
-                              <div key={c.id} className="content-item-mini" style={{ borderLeft: `3px solid ${typeInfo.color}` }}>
+                              <div
+                                key={c.id}
+                                className="content-badge"
+                                style={{ borderLeftColor: typeInfo.color }}
+                              >
                                 {typeInfo.emoji} {c.title.substring(0, 12)}
                               </div>
                             );
                           })}
                           {content.length === 0 && (
-                            <div style={{ color: '#666', fontSize: '0.7rem', padding: '0.25rem' }}>
-                              Click to add
-                            </div>
+                            <div className="calendar-day-empty">Click to add</div>
                           )}
                         </div>
                       </>
@@ -724,26 +282,26 @@ export default function Calendar() {
           </div>
         </div>
 
-        <div className="sidebar">
-          {/* Stats Card */}
-          <div className="sidebar-card">
-            <h3>
+        <div className="calendar-sidebar">
+          {/* This Week Stats */}
+          <div className="card">
+            <h3 className="card-header-title flex items-center gap-md">
               <CalendarDays size={18} />
               This Week
             </h3>
             <div className="stats-row">
-              <span className="stats-label">Posts Planned</span>
-              <span className="stats-value">{postsThisWeek.length}</span>
+              <span className="text-secondary">Posts Planned</span>
+              <span className="stat-value">{postsThisWeek.length}</span>
             </div>
-            <div style={{ marginTop: '1rem', color: '#999', fontSize: '0.85rem' }}>
-              <strong style={{ color: '#fff' }}>Type Distribution:</strong>
-              <div style={{ marginTop: '0.5rem' }}>
+            <div className="type-distribution-section">
+              <strong className="text-primary text-sm">Type Distribution:</strong>
+              <div className="type-distribution">
                 {Object.entries(typeDistribution).map(([type, count]) => {
                   const typeInfo = contentTypes.find((t) => t.id === type);
                   return count > 0 ? (
-                    <div key={type} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <div key={type} className="flex gap-sm items-center">
                       <span>{typeInfo.emoji}</span>
-                      <span>{typeInfo.name}: {count}</span>
+                      <span className="text-secondary text-sm">{typeInfo.name}: {count}</span>
                     </div>
                   ) : null;
                 })}
@@ -752,15 +310,15 @@ export default function Calendar() {
           </div>
 
           {/* Content Pipeline */}
-          <div className="sidebar-card">
-            <h3>
+          <div className="card">
+            <h3 className="card-header-title flex items-center gap-md">
               <Clock size={18} />
               Content Pipeline
             </h3>
             {contentPipeline.map((item) => (
               <div key={item.stage} className="stats-row">
-                <span className="stats-label">{item.stage}</span>
-                <span className="stats-value" style={{ color: item.color }}>
+                <span className="text-secondary text-sm">{item.stage}</span>
+                <span className="stat-value" style={{ color: item.color }}>
                   {item.count}
                 </span>
               </div>
@@ -771,42 +329,46 @@ export default function Calendar() {
                   key={item.stage}
                   className="pipeline-segment"
                   style={{
-                    background: item.color,
+                    backgroundColor: item.color,
                     flex: item.count / 10,
                   }}
                   title={`${item.stage}: ${item.count}`}
-                ></div>
+                />
               ))}
             </div>
           </div>
 
           {/* Recurring Themes */}
-          <div className="sidebar-card">
-            <h3>
-              <Sparkles size={18} style={{ color: '#FFB84D' }} />
+          <div className="card">
+            <h3 className="card-header-title flex items-center gap-md">
+              <Sparkles size={18} style={{ color: 'var(--status-warning)' }} />
               Recurring Themes
             </h3>
             {recurringThemes.map((theme) => (
               <div key={theme.day} className="theme-badge">
                 <span
-                  className="theme-indicator"
-                  style={{ background: theme.color }}
-                ></span>
-                <strong>{theme.day}:</strong> {theme.theme}
+                  className="theme-dot"
+                  style={{ backgroundColor: theme.color }}
+                />
+                <span className="text-sm">
+                  <strong className="text-primary">{theme.day}:</strong> {theme.theme}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Add Content Modal */}
       {showModal && (
-        <div className="modal" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2 className="modal-header">Add Content - {monthNames[currentMonth]} {selectedDate}</h2>
+        <div className="calendar-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="calendar-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">
+              Add Content - {monthNames[currentMonth]} {selectedDate}
+            </h2>
 
             <div className="form-group">
-              <label>Content Type</label>
+              <label className="form-label">Content Type</label>
               <div className="type-selector">
                 {contentTypes.map((type) => (
                   <button
@@ -821,7 +383,7 @@ export default function Calendar() {
             </div>
 
             <div className="form-group">
-              <label>Title</label>
+              <label className="form-label">Title</label>
               <input
                 type="text"
                 value={newContent.title}
@@ -831,7 +393,7 @@ export default function Calendar() {
             </div>
 
             <div className="form-group">
-              <label>Caption</label>
+              <label className="form-label">Caption</label>
               <textarea
                 value={newContent.caption}
                 onChange={(e) => setNewContent({ ...newContent, caption: e.target.value })}
@@ -840,7 +402,7 @@ export default function Calendar() {
             </div>
 
             <div className="form-group">
-              <label>Hashtags</label>
+              <label className="form-label">Hashtags</label>
               <input
                 type="text"
                 value={newContent.hashtags}
@@ -850,7 +412,7 @@ export default function Calendar() {
             </div>
 
             <div className="form-group">
-              <label>Status</label>
+              <label className="form-label">Status</label>
               <select
                 value={newContent.status}
                 onChange={(e) => setNewContent({ ...newContent, status: e.target.value })}
@@ -864,7 +426,7 @@ export default function Calendar() {
             </div>
 
             <div className="form-group">
-              <label>Scheduled Time (Optional)</label>
+              <label className="form-label">Scheduled Time (Optional)</label>
               <input
                 type="time"
                 value={newContent.scheduledTime}
@@ -872,11 +434,11 @@ export default function Calendar() {
               />
             </div>
 
-            <div className="modal-buttons">
-              <button className="button button-cancel" onClick={() => setShowModal(false)}>
+            <div className="modal-actions flex gap-md">
+              <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
                 Cancel
               </button>
-              <button className="button" onClick={handleAddContent}>
+              <button className="btn btn-primary" onClick={handleAddContent}>
                 Add Content
               </button>
             </div>
