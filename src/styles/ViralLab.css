@@ -101,8 +101,9 @@
 }
 
 .hook-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   cursor: pointer;
@@ -110,8 +111,10 @@
 }
 
 .hook-card:hover {
-  border-color: var(--color-secondary);
+  border-color: rgba(225, 48, 108, 0.5);
+  background: rgba(18, 18, 26, 0.8);
   transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
 }
 
 .hook-card.expanded {
@@ -193,8 +196,9 @@
 
 /* Analyzer Section */
 .analyzer-section {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-lg);
   padding: 2rem;
 }
@@ -272,12 +276,20 @@
 }
 
 .score-card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-left: 3px solid var(--color-secondary);
   border-radius: 0.5rem;
   padding: 1.25rem;
   text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.score-card:hover {
+  background: rgba(18, 18, 26, 0.8);
+  box-shadow: 0 0 15px rgba(225, 48, 108, 0.25);
+  border-left-color: var(--color-primary);
 }
 
 .score-card.overall {
@@ -347,15 +359,18 @@
 }
 
 .sound-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   transition: all var(--transition-base);
 }
 
 .sound-card:hover {
-  border-color: var(--color-secondary);
+  border-color: rgba(225, 48, 108, 0.5);
+  background: rgba(18, 18, 26, 0.8);
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
 }
 
 .sound-header {
@@ -447,8 +462,9 @@
 }
 
 .format-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   text-align: center;
@@ -460,8 +476,10 @@
 }
 
 .format-card:hover {
-  border-color: var(--color-secondary);
+  border-color: rgba(225, 48, 108, 0.5);
+  background: rgba(18, 18, 26, 0.8);
   transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(225, 48, 108, 0.25);
 }
 
 .format-icon {
@@ -488,9 +506,11 @@
 }
 
 .reel-format-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-left: 3px solid var(--color-secondary);
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, #E1306C, #833AB4) 1;
   border-radius: 0.5rem;
   padding: 1.25rem;
   display: flex;
@@ -500,7 +520,9 @@
 }
 
 .reel-format-card:hover {
-  border-left-color: var(--color-primary);
+  background: rgba(18, 18, 26, 0.8);
+  box-shadow: 0 0 15px rgba(225, 48, 108, 0.2);
+  border-left: 3px solid var(--color-primary);
 }
 
 .reel-format-name {

@@ -5,13 +5,17 @@
 /* Audit Item */
 .audit-item {
   padding: 0.75rem;
-  background-color: var(--bg-secondary);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .audit-item:hover {
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
+  border-color: var(--color-primary);
 }
 
 /* Score Bar */
@@ -39,26 +43,36 @@
 .task-card {
   cursor: pointer;
   transition: all var(--transition-fast);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  backdrop-filter: blur(8px);
 }
 
 .task-card:hover {
-  border-color: var(--border-secondary);
-  background-color: var(--bg-tertiary);
+  border-color: var(--color-primary);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
 }
 
 /* Trend Item */
 .trend-item {
   padding: 1rem;
-  background-color: var(--bg-secondary);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .trend-item:hover {
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
+  border-color: var(--color-primary);
 }
 
 /* SWOT Card */
@@ -74,8 +88,8 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: inherit;
-  opacity: 0.3;
+  background: linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end));
+  opacity: 0.6;
 }
 
 /* Table Highlight Row */
@@ -123,37 +137,3 @@
   background: var(--border-primary);
 }
 
-/* Input styling for strategy page */
-input[type="text"],
-input[type="number"] {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.875rem;
-  transition: all var(--transition-fast);
-}
-
-input[type="text"]::placeholder,
-input[type="number"]::placeholder {
-  color: var(--text-muted);
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  background: var(--bg-secondary);
-}
-
-input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--color-primary);
-  cursor: pointer;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-}

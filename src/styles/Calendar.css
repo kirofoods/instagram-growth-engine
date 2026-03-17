@@ -102,8 +102,9 @@
 
 .calendar-day-cell {
   aspect-ratio: 1;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-lg);
   padding: 0.75rem;
   cursor: pointer;
@@ -115,8 +116,10 @@
 }
 
 .calendar-day-cell.active:hover {
-  border-color: var(--color-primary);
-  background: var(--bg-secondary);
+  border-color: rgba(225, 48, 108, 0.6);
+  background: rgba(18, 18, 26, 0.75);
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
+  transform: translateY(-2px);
 }
 
 .calendar-day-cell.empty {
@@ -148,19 +151,24 @@
 .content-badge {
   padding: 0.35rem 0.5rem;
   border-radius: var(--radius-sm);
-  background: rgba(225, 48, 108, 0.1);
-  color: var(--text-secondary);
+  background: rgba(225, 48, 108, 0.2);
+  backdrop-filter: blur(4px);
+  color: #E1306C;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.7rem;
   border-left: 3px solid var(--color-primary);
+  border: 1px solid rgba(225, 48, 108, 0.4);
+  border-left: 3px solid var(--color-primary);
   transition: all var(--transition-fast);
 }
 
 .content-badge:hover {
-  background: rgba(225, 48, 108, 0.15);
-  color: var(--text-primary);
+  background: rgba(225, 48, 108, 0.3);
+  color: #E1306C;
+  box-shadow: 0 0 10px rgba(225, 48, 108, 0.25);
+  border-color: rgba(225, 48, 108, 0.6);
 }
 
 .calendar-day-empty {
@@ -233,16 +241,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-md);
   margin-bottom: 0.5rem;
   transition: all var(--transition-fast);
 }
 
 .theme-badge:hover {
-  border-color: var(--border-secondary);
-  background: var(--bg-secondary);
+  border-color: rgba(225, 48, 108, 0.5);
+  background: rgba(18, 18, 26, 0.75);
+  box-shadow: 0 0 15px rgba(225, 48, 108, 0.25);
 }
 
 .theme-dot {
@@ -264,19 +274,20 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(8px);
 }
 
 .calendar-modal-content {
-  background: var(--bg-card);
-  border: 1px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(225, 48, 108, 0.3);
   border-radius: var(--radius-lg);
   padding: 2rem;
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(225, 48, 108, 0.2);
 }
 
 .modal-title {
@@ -338,8 +349,9 @@
 }
 
 .type-button {
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-primary);
+  background: rgba(18, 18, 26, 0.5);
+  backdrop-filter: blur(6px);
+  border: 2px solid rgba(225, 48, 108, 0.2);
   border-radius: var(--radius-md);
   padding: 0.75rem;
   color: var(--text-secondary);
@@ -351,15 +363,16 @@
 }
 
 .type-button:hover {
-  border-color: var(--color-primary);
+  border-color: rgba(225, 48, 108, 0.5);
   color: var(--color-primary);
-  background: var(--bg-secondary);
+  background: rgba(18, 18, 26, 0.75);
 }
 
 .type-button.active {
   background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
   border-color: transparent;
   color: white;
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.4);
 }
 
 .modal-actions {

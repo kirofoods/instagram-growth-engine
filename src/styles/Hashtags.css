@@ -8,19 +8,23 @@
   border: 2px solid var(--border-primary);
   border-radius: var(--radius-md);
   text-align: left;
-  background: transparent;
+  background: var(--bg-glass);
   cursor: pointer;
   transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .hashtag-set-card:hover {
   border-color: var(--border-secondary);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
 }
 
 .hashtag-set-active {
   border-color: var(--color-primary);
-  background: linear-gradient(135deg, rgba(225, 48, 108, 0.1), rgba(131, 58, 180, 0.1));
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.15), rgba(131, 58, 180, 0.15));
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .hashtag-set-card > div:first-child {
@@ -50,15 +54,17 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md);
-  background: var(--bg-tertiary);
+  background: var(--bg-glass);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .hashtag-tag-card:hover {
   border-color: rgba(225, 48, 108, 0.5);
-  background: var(--bg-secondary);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
 }
 
 .hashtag-tag-card > div:first-child {
@@ -78,15 +84,17 @@
 /* Trending Tag Card */
 .trending-tag-card {
   padding: var(--spacing-md);
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.4);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .trending-tag-card:hover {
   border-color: rgba(245, 158, 11, 0.6);
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.08));
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12));
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
 }
 
 .trending-tag-card .font-semibold {
@@ -112,16 +120,18 @@
 /* Restricted Tag Item */
 .restricted-tag-item {
   padding: var(--spacing-md);
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: var(--radius-md);
   text-align: center;
   transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
 }
 
 .restricted-tag-item:hover {
   border-color: rgba(239, 68, 68, 0.6);
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.18);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.25);
 }
 
 .restricted-tag-item > div:first-child {
@@ -182,28 +192,6 @@ input[type="range"]::-moz-range-track {
   border: none;
 }
 
-/* Input fields */
-input[type="text"] {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  padding: 0.625rem 0.875rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  transition: all var(--transition-fast);
-}
-
-input[type="text"]::placeholder {
-  color: var(--text-muted);
-}
-
-input[type="text"]:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  background: var(--bg-secondary);
-  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.1);
-}
 
 /* Table Styles */
 .data-table {

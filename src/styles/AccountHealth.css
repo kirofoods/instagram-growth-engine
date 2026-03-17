@@ -17,6 +17,18 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xl);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+}
+
+.health-score-container:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-secondary);
+  box-shadow: var(--glow-primary);
 }
 
 .health-score-circle {
@@ -88,8 +100,16 @@
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass);
   border: 1px solid var(--border-primary);
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
+}
+
+.symptom-item:hover {
+  box-shadow: var(--glow-primary);
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, var(--color-primary-start), var(--color-primary-end)) 1;
 }
 
 .symptom-checkbox {
@@ -122,6 +142,8 @@
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
   border-left: 4px solid;
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
 }
 
 .alert-box.alert-warning {
@@ -163,6 +185,14 @@
   font-size: 0.875rem;
   font-weight: 600;
   flex-shrink: 0;
+  border: 3px solid;
+  border-image: linear-gradient(180deg, var(--color-primary-start), var(--color-primary-end)) 1;
+  box-shadow: 0 0 12px rgba(225, 48, 108, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.recovery-step:hover .step-number {
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.4);
 }
 
 .recovery-step p {
@@ -259,8 +289,16 @@
   padding: var(--spacing-md);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
-  background-color: var(--bg-card);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
   align-items: flex-start;
+  transition: all var(--transition-base);
+}
+
+.alert-card:hover {
+  box-shadow: var(--glow-primary);
+  border-color: var(--border-secondary);
+  background: var(--bg-glass-hover);
 }
 
 .alert-indicator {
@@ -296,7 +334,15 @@
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   overflow: hidden;
-  background-color: var(--bg-card);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+}
+
+.playbook-card:hover {
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
+  border-color: var(--border-secondary);
+  background: var(--bg-glass-hover);
 }
 
 .playbook-header {
@@ -313,7 +359,8 @@
 }
 
 .playbook-header:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: rgba(225, 48, 108, 0.05);
+  backdrop-filter: blur(6px);
 }
 
 .playbook-title {
@@ -394,7 +441,16 @@
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
+}
+
+.settings-item:hover {
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
+  border-color: var(--color-primary);
 }
 
 .settings-item span {

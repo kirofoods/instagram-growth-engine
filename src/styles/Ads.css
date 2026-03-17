@@ -5,6 +5,16 @@
 /* Stat Cards */
 .stat-card {
   position: relative;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+}
+
+.stat-card:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-secondary);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
 }
 
 .stat-header {
@@ -21,6 +31,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: rgba(225, 48, 108, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 /* Form Header */
@@ -78,10 +90,15 @@
 .campaign-card {
   cursor: pointer;
   transition: all var(--transition-base);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
 }
 
 .campaign-card:hover {
-  border-color: var(--border-secondary);
+  border-color: var(--color-primary);
+  background: var(--bg-glass-hover);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
 }
 
 .campaign-header {
@@ -123,7 +140,15 @@
 .stat-box {
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
-  background-color: var(--bg-tertiary);
+  background: rgba(225, 48, 108, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(225, 48, 108, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.stat-box:hover {
+  background: rgba(225, 48, 108, 0.12);
+  border-color: rgba(225, 48, 108, 0.2);
 }
 
 .stat-box-label {
@@ -163,6 +188,16 @@
 .ab-test-card {
   position: relative;
   overflow: hidden;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+}
+
+.ab-test-card:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-secondary);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
 }
 
 .winner-badge {
@@ -265,7 +300,16 @@
 .result-box {
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-primary);
+  transition: all var(--transition-fast);
+}
+
+.result-box:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-secondary);
+  box-shadow: var(--glow-primary);
 }
 
 .result-box p {
