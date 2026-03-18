@@ -23,6 +23,7 @@ import {
   ChevronRight,
   MoreVertical,
   X,
+  Swords,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -54,6 +55,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         { path: '/seo-suite', label: 'SEO Suite', icon: Search },
         { path: '/hashtags', label: 'Hashtags', icon: Hash },
         { path: '/analytics', label: 'Analytics', icon: PieChart },
+        { path: '/competitor-analysis', label: 'Competitor Intel', icon: Swords },
         { path: '/strategy', label: 'Strategy', icon: Target },
       ],
     },

@@ -26,6 +26,7 @@ import KnowledgeBase from './pages/KnowledgeBase';
 import Settings from './pages/Settings';
 import Guide from './pages/Guide';
 import TrendScanner from './pages/TrendScanner';
+import CompetitorAnalysis from './pages/CompetitorAnalysis';
 import './App.css';
 
 const App = () => {
@@ -80,6 +81,7 @@ const App = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/guide" element={<Guide />} />
               <Route path="/trend-scanner" element={<TrendScanner />} />
+              <Route path="/competitor-analysis" element={<CompetitorAnalysis />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </ErrorBoundary>
