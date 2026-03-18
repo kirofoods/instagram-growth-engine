@@ -36,28 +36,28 @@ const Analytics = () => {
       value: 125400,
       trend: 12.5,
       icon: Eye,
-      color: '#E1306C',
+      color: 'var(--color-primary)',
     },
     {
       label: 'Impressions',
       value: 342800,
       trend: 8.3,
       icon: Activity,
-      color: '#833AB4',
+      color: 'var(--color-secondary)',
     },
     {
       label: 'Profile Visits',
       value: 8942,
       trend: -2.1,
       icon: Target,
-      color: '#F77737',
+      color: 'var(--color-primary-start)',
     },
     {
       label: 'Website Clicks',
       value: 412,
       trend: 18.7,
       icon: Share2,
-      color: '#FCAF45',
+      color: 'var(--status-warning)',
     },
   ];
 

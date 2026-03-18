@@ -867,7 +867,7 @@ export default function AutoAds() {
           <div className="grid grid-4 gap-md" style={{ marginTop: '1.5rem' }}>
             <div className="metric-card">
               <div className="metric-icon" style={{ backgroundColor: 'rgba(225, 48, 108, 0.1)' }}>
-                <DollarSign size={20} style={{ color: '#E1306C' }} />
+                <DollarSign size={20} style={{ color: 'var(--color-primary)' }} />
               </div>
               <div className="metric-content">
                 <span className="metric-label">Total Spend</span>
@@ -877,7 +877,7 @@ export default function AutoAds() {
 
             <div className="metric-card">
               <div className="metric-icon" style={{ backgroundColor: 'rgba(51, 184, 245, 0.1)' }}>
-                <Eye size={20} style={{ color: '#33b8f5' }} />
+                <Eye size={20} style={{ color: 'var(--color-accent-cyan)' }} />
               </div>
               <div className="metric-content">
                 <span className="metric-label">Impressions</span>
@@ -887,7 +887,7 @@ export default function AutoAds() {
 
             <div className="metric-card">
               <div className="metric-icon" style={{ backgroundColor: 'rgba(131, 58, 180, 0.1)' }}>
-                <MousePointer size={20} style={{ color: '#833AB4' }} />
+                <MousePointer size={20} style={{ color: 'var(--color-secondary)' }} />
               </div>
               <div className="metric-content">
                 <span className="metric-label">Clicks</span>
@@ -897,7 +897,7 @@ export default function AutoAds() {
 
             <div className="metric-card">
               <div className="metric-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
-                <ShoppingCart size={20} style={{ color: '#10b981' }} />
+                <ShoppingCart size={20} style={{ color: 'var(--status-success)' }} />
               </div>
               <div className="metric-content">
                 <span className="metric-label">Conversions</span>
@@ -936,8 +936,8 @@ export default function AutoAds() {
                 <span className="roas-value">{campaignMetrics.roas}x</span>
               </div>
               <div className="roas-status">
-                <TrendingUp size={24} style={{ color: '#10b981' }} />
-                <span style={{ color: '#10b981' }}>
+                <TrendingUp size={24} style={{ color: 'var(--status-success)' }} />
+                <span style={{ color: 'var(--status-success)' }}>
                   {parseFloat(campaignMetrics.roas) >= 3 ? 'Above 3x Floor' : 'Optimizing to 3x Floor'}
                   {parseFloat(campaignMetrics.roas) >= 5 && ' — Scaling Zone'}
                   {parseFloat(campaignMetrics.roas) >= 8 && ' — Peak Performance'}

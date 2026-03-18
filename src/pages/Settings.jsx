@@ -102,6 +102,13 @@ export default function Settings() {
     saveSettings({ notifications: updated });
   };
 
+  const handleFirebaseUpdate = (field, value) => {
+    // Firebase config is read-only for display purposes
+    // This prevents mutation of masked values
+    setSavedMessage('Firebase configuration is read-only');
+    setTimeout(() => setSavedMessage(''), 2000);
+  };
+
   const saveProfile = () => {
     saveSettings({ profile });
     setSavedMessage('Profile saved and synced across devices!');

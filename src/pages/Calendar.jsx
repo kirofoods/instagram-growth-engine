@@ -11,17 +11,17 @@ import {
 import '../styles/Calendar.css';
 
 const contentTypes = [
-  { id: 'reel', name: 'Reel', color: '#833AB4', emoji: '🎥' },
-  { id: 'carousel', name: 'Carousel', color: '#4ECDC4', emoji: '📱' },
-  { id: 'single', name: 'Single Post', color: '#4CAF50', emoji: '🖼️' },
-  { id: 'story', name: 'Story', emoji: '📸', color: '#FF6B9D' },
-  { id: 'caption', name: 'Caption Only', color: '#FFB84D', emoji: '📝' },
+  { id: 'reel', name: 'Reel', color: 'var(--color-secondary)', emoji: '🎥' },
+  { id: 'carousel', name: 'Carousel', color: 'var(--color-accent-cyan)', emoji: '📱' },
+  { id: 'single', name: 'Single Post', color: 'var(--status-success)', emoji: '🖼️' },
+  { id: 'story', name: 'Story', emoji: '📸', color: 'var(--color-primary)' },
+  { id: 'caption', name: 'Caption Only', color: 'var(--status-warning)', emoji: '📝' },
 ];
 
 const recurringThemes = [
-  { day: 'Monday', theme: 'Motivation Monday 💪', color: '#FF6B6B' },
-  { day: 'Wednesday', theme: 'Wisdom Wednesday 🧠', color: '#4ECDC4' },
-  { day: 'Friday', theme: 'Throwback Friday 📸', color: '#FFB84D' },
+  { day: 'Monday', theme: 'Motivation Monday 💪', color: 'var(--status-error)' },
+  { day: 'Wednesday', theme: 'Wisdom Wednesday 🧠', color: 'var(--color-accent-cyan)' },
+  { day: 'Friday', theme: 'Throwback Friday 📸', color: 'var(--status-warning)' },
 ];
 
 const mockContent = [
@@ -83,11 +83,11 @@ const mockContent = [
 ];
 
 const contentPipeline = [
-  { stage: 'Idea', count: 8, color: '#FFB84D' },
-  { stage: 'Draft', count: 5, color: '#FF9999' },
-  { stage: 'Ready', count: 12, color: '#4ECDC4' },
-  { stage: 'Posted', count: 24, color: '#4CAF50' },
-  { stage: 'Analyzed', count: 18, color: '#833AB4' },
+  { stage: 'Idea', count: 8, color: 'var(--status-warning)' },
+  { stage: 'Draft', count: 5, color: 'var(--status-error)' },
+  { stage: 'Ready', count: 12, color: 'var(--color-accent-cyan)' },
+  { stage: 'Posted', count: 24, color: 'var(--status-success)' },
+  { stage: 'Analyzed', count: 18, color: 'var(--color-secondary)' },
 ];
 
 function getDaysInMonth(month, year) {

@@ -641,7 +641,7 @@ export default function DailyActions() {
         {/* Unlocked Milestones */}
         <div>
           <h2 className="section-title flex items-center gap-2">
-            <Star className="w-6 h-6" style={{ color: '#FFD700' }} />
+            <Star className="w-6 h-6" style={{ color: 'var(--status-warning)' }} />
             Unlocked Milestones
           </h2>
           <div className="milestones-list">

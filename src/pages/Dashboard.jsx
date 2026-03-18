@@ -300,17 +300,17 @@ export default function Dashboard() {
                           <stop offset="95%" stopColor="#d92e7f" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#2a2a4e" />
-                      <XAxis dataKey="date" stroke="#666" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#666" style={{ fontSize: '12px' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-secondary)" />
+                      <XAxis dataKey="date" stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1a1a2e',
-                          border: '1px solid #2a2a4e',
+                          backgroundColor: 'var(--bg-card)',
+                          border: '1px solid var(--border-secondary)',
                           borderRadius: '8px',
-                          color: '#fff',
+                          color: 'var(--text-primary)',
                         }}
-                        cursor={{ stroke: '#fa7e1e', strokeWidth: 1 }}
+                        cursor={{ stroke: 'var(--color-primary-start)', strokeWidth: 1 }}
                       />
                       <Area
                         type="monotone"
@@ -482,7 +482,7 @@ export default function Dashboard() {
                 </h2>
                 <div className="dashboard-insight-card">
                   <div className="dashboard-insight-header">
-                    <Lightbulb size={20} style={{ color: '#fa7e1e', flexShrink: 0 }} />
+                    <Lightbulb size={20} style={{ color: 'var(--color-primary-start)', flexShrink: 0 }} />
                     <span className="dashboard-insight-header-title">Tip for Today</span>
                     <button
                       onClick={handleNextInsight}
@@ -514,7 +514,7 @@ export default function Dashboard() {
         {isLoading && !hasProfileData && (
           <div style={{ textAlign: 'center', padding: '48px 24px' }}>
             <Loader size={40} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
-            <p style={{ marginTop: '16px', color: '#888' }}>Loading your data...</p>
+            <p style={{ marginTop: '16px', color: 'var(--text-tertiary)' }}>Loading your data...</p>
           </div>
         )}
 

@@ -52,7 +52,7 @@ export default function Engagement() {
       ],
       frequency: 'Daily',
       impact: 'High',
-      color: '#E1306C',
+      color: 'var(--color-primary)',
     },
     {
       id: 2,
@@ -67,7 +67,7 @@ export default function Engagement() {
       ],
       frequency: 'Daily',
       impact: 'High',
-      color: '#833AB4',
+      color: 'var(--color-secondary)',
     },
     {
       id: 3,
@@ -82,7 +82,7 @@ export default function Engagement() {
       ],
       frequency: 'Every 2 days',
       impact: 'Medium',
-      color: '#5ed8f8',
+      color: 'var(--color-accent-cyan)',
     },
     {
       id: 4,
@@ -97,7 +97,7 @@ export default function Engagement() {
       ],
       frequency: 'Every post',
       impact: 'Medium',
-      color: '#FFB533',
+      color: 'var(--status-warning)',
     },
   ]);
 
@@ -438,7 +438,7 @@ export default function Engagement() {
           {/* Superfans */}
           <div className="card mb-6">
             <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-              <Award className="w-6 h-6" style={{ color: '#FFB533' }} />
+              <Award className="w-6 h-6" style={{ color: 'var(--status-warning)' }} />
               Your Superfans
             </h3>
             <div className="space-y-3">
