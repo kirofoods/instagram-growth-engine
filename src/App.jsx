@@ -25,6 +25,7 @@ import DailyActions from './pages/DailyActions';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Settings from './pages/Settings';
 import Guide from './pages/Guide';
+import TrendScanner from './pages/TrendScanner';
 import './App.css';
 
 const App = () => {
@@ -78,6 +79,7 @@ const App = () => {
               <Route path="/knowledge-base" element={<KnowledgeBase />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/guide" element={<Guide />} />
+              <Route path="/trend-scanner" element={<TrendScanner />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </ErrorBoundary>

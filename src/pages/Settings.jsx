@@ -55,6 +55,14 @@ export default function Settings() {
     }
   }, [settings]);
 
+  // Load Apify token from localStorage on mount
+  useEffect(() => {
+    const apifyToken = localStorage.getItem('kirogram-apify-token');
+    if (apifyToken) {
+      setApiKeys(prev => ({ ...prev, apifyToken }));
+    }
+  }, []);
+
   const [firebaseConfig] = useState({
     apiKey: '••••••••••••••••••',
     authDomain: 'kirogram-5de66.firebaseapp.com',
@@ -68,11 +76,13 @@ export default function Settings() {
   const [apiKeys, setApiKeys] = useState({
     claudeApiKey: '',
     instagramAccessToken: '',
+    apifyToken: '',
   });
 
   const [showApiKeys, setShowApiKeys] = useState({
     claude: false,
     instagram: false,
+    apify: false,
   });
 
   const [savedMessage, setSavedMessage] = useState('');
@@ -99,6 +109,10 @@ export default function Settings() {
   };
 
   const saveApiKeysHandler = () => {
+    // Save Apify token to localStorage
+    if (apiKeys.apifyToken) {
+      localStorage.setItem('kirogram-apify-token', apiKeys.apifyToken);
+    }
     setSavedMessage('API keys saved locally (not synced for security).');
     setTimeout(() => setSavedMessage(''), 3000);
   };
@@ -267,6 +281,7 @@ export default function Settings() {
           {[
             { key: 'claudeApiKey', label: 'Claude API Key', hint: 'Get from https://console.anthropic.com' },
             { key: 'instagramAccessToken', label: 'Instagram Access Token', hint: 'Generate from Facebook Developer Console' },
+            { key: 'apifyToken', label: 'Apify API Token', hint: 'Get from https://console.apify.com/account/integrations' },
           ].map((field) => (
             <div key={field.key}>
               <div className="flex-between items-center mb-2">
