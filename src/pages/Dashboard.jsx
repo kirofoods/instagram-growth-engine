@@ -63,28 +63,31 @@ export default function Dashboard() {
     }));
   }, [growthDataFirestore, chartDays]);
 
-  // Calculate metrics from real data
+  // Calculate metrics from real data — use profileData as primary source, chartData as supplement
   const metrics = useMemo(() => {
-    if (!chartData || chartData.length === 0) {
-      return {
-        currentFollowers: 0,
-        followerChange: 0,
-        engagementRate: 0,
-        growthVelocity: 0,
-      };
+    const followers = Number(profileData?.followers) || 0;
+    const engagementRate = Number(profileData?.engagementRate) || 0;
+    const postsCount = Number(profileData?.postsCount) || 0;
+    const following = Number(profileData?.following) || 0;
+
+    // If we have chart data, calculate growth metrics from it
+    let followerChange = 0;
+    let growthVelocity = 0;
+    if (chartData && chartData.length > 1) {
+      const latest = chartData[chartData.length - 1]?.followers || followers;
+      const earliest = chartData[0]?.followers || followers;
+      followerChange = latest - earliest;
+      growthVelocity = (followerChange / chartData.length).toFixed(1);
     }
 
-    const currentFollowers = chartData[chartData.length - 1]?.followers || 0;
-    const previousFollowers = chartData[0]?.followers || 0;
-    const followerChange = currentFollowers - previousFollowers;
-    const growthVelocity = chartData.length > 0 ? (followerChange / chartData.length).toFixed(1) : 0;
-
     return {
-      currentFollowers,
+      currentFollowers: followers,
       followerChange,
-      engagementRate: profileData?.engagementRate || 0,
-      postsThisWeek: profileData?.postsThisWeek || 0,
-      postsTarget: profileData?.postsTarget || 7,
+      engagementRate,
+      postsThisWeek: Number(profileData?.postsThisWeek) || 0,
+      postsTarget: Number(profileData?.postsTarget) || 7,
+      postsCount,
+      following,
       growthVelocity,
     };
   }, [chartData, profileData]);
