@@ -86,9 +86,9 @@ export default function Settings() {
   });
 
   const [showApiKeys, setShowApiKeys] = useState({
-    claude: false,
-    instagram: false,
-    apify: false,
+    claudeApiKey: false,
+    instagramAccessToken: false,
+    apifyToken: false,
   });
 
   const [savedMessage, setSavedMessage] = useState('');
@@ -100,6 +100,10 @@ export default function Settings() {
 
   const handleApiKeyUpdate = (field, value) => {
     setApiKeys({ ...apiKeys, [field]: value });
+    // Auto-save Apify token to localStorage immediately on change
+    if (field === 'apifyToken' && value) {
+      localStorage.setItem('kirogram-apify-token', value);
+    }
   };
 
   const handleNotificationToggle = (field) => {

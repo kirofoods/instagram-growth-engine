@@ -8,25 +8,43 @@ class ApifyService {
 
   async runActor(actorId, input, options = {}) {
     const { waitForFinish = 120, memory = 256 } = options;
-    const response = await fetch(
-      `${APIFY_BASE_URL}/acts/${actorId}/runs?token=${this.token}&waitForFinish=${waitForFinish}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...input, proxyConfiguration: { useApifyProxy: true } }),
-      }
-    );
-    if (!response.ok) throw new Error(`Apify error: ${response.status}`);
-    return response.json();
+    const url = `${APIFY_BASE_URL}/acts/${actorId}/runs?token=${this.token}&waitForFinish=${waitForFinish}`;
+
+    console.log('[Apify] Running actor:', actorId, 'with input:', JSON.stringify(input));
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      console.error('[Apify] Actor run failed:', response.status, errorText);
+      throw new Error(`Apify error ${response.status}: ${errorText || response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('[Apify] Actor run result:', result?.data?.status, 'dataset:', result?.data?.defaultDatasetId);
+    return result;
   }
 
   async getDatasetItems(datasetId, options = {}) {
     const { limit = 100, offset = 0, format = 'json' } = options;
-    const response = await fetch(
-      `${APIFY_BASE_URL}/datasets/${datasetId}/items?token=${this.token}&limit=${limit}&offset=${offset}&format=${format}`
-    );
-    if (!response.ok) throw new Error(`Dataset fetch error: ${response.status}`);
-    return response.json();
+    const url = `${APIFY_BASE_URL}/datasets/${datasetId}/items?token=${this.token}&limit=${limit}&offset=${offset}&format=${format}`;
+
+    console.log('[Apify] Fetching dataset:', datasetId);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      console.error('[Apify] Dataset fetch failed:', response.status, errorText);
+      throw new Error(`Dataset fetch error ${response.status}: ${errorText || response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('[Apify] Dataset items:', data.length);
+    return data;
   }
 
   // Instagram Profile Scraper
@@ -38,6 +56,7 @@ class ApifyService {
     if (run?.data?.defaultDatasetId) {
       return this.getDatasetItems(run.data.defaultDatasetId);
     }
+    console.warn('[Apify] No dataset ID in run result');
     return [];
   }
 
