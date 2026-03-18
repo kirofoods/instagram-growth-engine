@@ -722,6 +722,20 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .projection-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .page {
     padding: var(--spacing-lg);
@@ -766,5 +780,61 @@
 
   .navigation-buttons .btn {
     width: 100%;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+  }
+
+  .form-input {
+    padding: 0.65rem;
+    font-size: 0.8125rem;
+  }
+
+  .metric-card {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .progress-item {
+    flex: 0 1 100%;
+  }
+
+  .carousel-slides {
+    flex-wrap: wrap;
+  }
+
+  .carousel-slide {
+    min-width: 100px;
+    padding: var(--spacing-sm);
+  }
+
+  .form-group label {
+    font-size: 0.8125rem;
+  }
+
+  .bidding-option {
+    padding: var(--spacing-sm);
+  }
+
+  .metric-card {
+    flex-direction: column;
+    padding: var(--spacing-sm);
+  }
+
+  .metric-icon {
+    width: 40px;
+    height: 40px;
   }
 }

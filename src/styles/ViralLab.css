@@ -559,87 +559,273 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .viral-lab {
+    gap: 1.5rem;
+  }
+
+  .viral-lab-header {
+    margin-bottom: 0.75rem;
+  }
+
   .viral-lab-header h1 {
     font-size: 2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .viral-lab-header p {
+    font-size: 1rem;
   }
 
   .hook-library-controls {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .hook-search {
     min-width: auto;
   }
 
+  .hook-filters {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
   .hooks-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .hook-card {
+    padding: 1.25rem;
   }
 
   .sounds-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sound-card {
+    padding: 1.25rem;
   }
 
   .formats-grid {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .format-card {
+    padding: 1.25rem;
   }
 
   .reel-format-card {
+    padding: 1rem;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .reel-format-stats {
     width: 100%;
-    gap: 1rem;
+    gap: 0.75rem;
     justify-content: space-between;
   }
 
   .reel-format-stat {
     text-align: left;
+    font-size: 0.75rem;
   }
 
   .scores-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .analyzer-section {
+    padding: 1.5rem;
+  }
+
+  .analyzer-textarea {
+    min-height: 100px;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
+  .viral-lab {
+    gap: 1.25rem;
+  }
+
+  .viral-lab-header {
+    margin-bottom: 0.5rem;
+  }
+
   .viral-lab-header h1 {
     font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .viral-lab-header p {
+    font-size: 0.95rem;
+  }
+
+  .hook-library-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hook-search {
+    padding: 0.65rem 0.875rem;
+  }
+
+  .hook-search input {
+    font-size: 0.8125rem;
   }
 
   .hook-filters {
     width: 100%;
+    gap: 0.3rem;
   }
 
   .hook-filter-btn {
     flex: 1;
-    min-width: calc(33.333% - 0.5rem);
+    min-width: calc(33.333% - 0.3rem);
+    padding: 0.4rem 0.65rem;
+    font-size: 0.75rem;
   }
 
   .hooks-grid {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .hook-card {
+    padding: 1rem;
+  }
+
+  .hook-text {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .hook-footer {
+    padding-top: 0.75rem;
+    gap: 0.5rem;
+    flex-direction: column;
+  }
+
+  .hook-niches {
+    gap: 0.3rem;
+  }
+
+  .hook-copy-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sound-search {
+    padding: 0.65rem 0.875rem;
+    margin-bottom: 1rem;
   }
 
   .sounds-grid {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 
-  .formats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .scores-grid {
-    grid-template-columns: 1fr;
+  .sound-card {
+    padding: 1rem;
   }
 
   .sound-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .peak-badge {
     align-self: flex-start;
+  }
+
+  .sound-name {
+    font-size: 0.9rem;
+  }
+
+  .sound-category {
+    font-size: 0.75rem;
+  }
+
+  .sound-preview-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .formats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .format-card {
+    padding: 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .format-icon {
+    font-size: 2rem;
+  }
+
+  .format-name {
+    font-size: 0.85rem;
+  }
+
+  .format-description {
+    font-size: 0.75rem;
+  }
+
+  .reel-format-card {
+    padding: 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .reel-format-name {
+    font-size: 0.9rem;
+  }
+
+  .reel-format-stats {
+    gap: 0.5rem;
+  }
+
+  .scores-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .score-card {
+    padding: 1rem;
+  }
+
+  .score-value {
+    font-size: 1.75rem;
+  }
+
+  .analyzer-section {
+    padding: 1.25rem;
+  }
+
+  .analyzer-textarea {
+    padding: 0.75rem;
+    min-height: 90px;
+    font-size: 0.8125rem;
+  }
+
+  .analyze-btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.8125rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section-description {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 }

@@ -112,6 +112,7 @@
 @media (max-width: 768px) {
   .eng-tabs {
     gap: 0.25rem;
+    overflow-x: auto;
   }
 
   .eng-tabs .tab {
@@ -142,9 +143,14 @@
   .eng-strategy-card {
     overflow-x: auto;
   }
+
+  .eng-strategy-card button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
   .eng-tabs {
     gap: 0.15rem;
   }
@@ -165,5 +171,14 @@
 
   .eng-progress-bar {
     height: 0.5rem;
+  }
+
+  .eng-strategy-card button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .eng-tabs {
+    padding-bottom: 0.25rem;
   }
 }

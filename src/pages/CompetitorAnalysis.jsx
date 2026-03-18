@@ -278,7 +278,7 @@ const CompetitorAnalysis = () => {
               <div className="profile-header">
                 <div className="profile-pic">
                   {profileData.profile.profileImage && (
-                    <img src={profileData.profile.profileImage} alt="Your profile" />
+                    <img src={profileData.profile.profileImage} alt="Your Instagram profile picture" />
                   )}
                 </div>
                 <div className="profile-details">
@@ -365,7 +365,7 @@ const CompetitorAnalysis = () => {
               <div className="card-body">
                 <div className="profile-header-mini">
                   {profileData.profile.profileImage && (
-                    <img src={profileData.profile.profileImage} alt="Your profile" />
+                    <img src={profileData.profile.profileImage} alt="Your Instagram profile picture" />
                   )}
                   <p className="username">@{profileData.profile.handle || 'You'}</p>
                 </div>
@@ -419,7 +419,7 @@ const CompetitorAnalysis = () => {
                 <div className="card-body">
                   <div className="profile-header-mini">
                     {competitor.profileImage && (
-                      <img src={competitor.profileImage} alt={competitor.username} />
+                      <img src={competitor.profileImage} alt={`${competitor.username} Instagram profile picture`} />
                     )}
                     <p className="username">@{competitor.username}</p>
                   </div>

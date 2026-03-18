@@ -334,15 +334,15 @@ export default function Dashboard() {
                           <stop offset="95%" stopColor="#d92e7f" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#2a2a4e" />
-                      <XAxis dataKey="date" stroke="#666" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#666" style={{ fontSize: '12px' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                      <XAxis dataKey="date" stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1a1a2e',
-                          border: '1px solid #2a2a4e',
+                          backgroundColor: 'var(--bg-tertiary)',
+                          border: '1px solid var(--border-color)',
                           borderRadius: '8px',
-                          color: '#fff',
+                          color: 'var(--text-primary)',
                         }}
                         cursor={{ stroke: '#fa7e1e', strokeWidth: 1 }}
                       />
@@ -546,9 +546,9 @@ export default function Dashboard() {
 
         {/* Loading Indicator */}
         {isLoading && !hasProfileData && (
-          <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+          <div style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
             <Loader size={40} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
-            <p style={{ marginTop: '16px', color: '#888' }}>Loading your data...</p>
+            <p style={{ marginTop: '1rem', color: 'var(--text-secondary)' }}>Loading your data...</p>
           </div>
         )}
 

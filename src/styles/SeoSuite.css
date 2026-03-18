@@ -208,14 +208,95 @@ textarea {
   .grid-2 {
     grid-template-columns: 1fr;
   }
+
+  .seo-stat {
+    padding: var(--spacing-md);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .seo-suggestions {
+    max-height: 14rem;
+    padding: var(--spacing-md);
+  }
+
+  .keyword-item {
+    padding: var(--spacing-md);
+  }
+
+  .checklist-item {
+    padding: var(--spacing-md);
+  }
+
+  .alt-text-output {
+    min-height: 4.5rem;
+    padding: var(--spacing-md);
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
+  .seo-score-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .seo-score-circle {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .seo-score-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-stat {
+    padding: var(--spacing-sm);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .seo-suggestions {
-    max-height: 10rem;
+    max-height: 12rem;
+    padding: var(--spacing-sm);
+  }
+
+  .seo-suggestion-item {
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+
+  .keyword-item {
+    padding: var(--spacing-sm);
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .checklist-item {
     padding: var(--spacing-sm);
+  }
+
+  .checklist-item input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .checklist-item span {
+    font-size: 0.8125rem;
+  }
+
+  .alt-text-output {
+    min-height: 4rem;
+    padding: var(--spacing-sm);
+    font-size: 0.8125rem;
+  }
+
+  textarea {
+    min-height: 4rem;
   }
 }

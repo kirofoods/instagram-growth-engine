@@ -136,6 +136,7 @@
   .dm-step-card {
     padding: 0.75rem;
     font-size: 0.8rem;
+    border-left-width: 2px;
   }
 
   .dm-metric-box {
@@ -145,10 +146,19 @@
   .dm-code-block {
     font-size: 0.75rem;
     overflow-x: auto;
+    padding: 0.65rem;
+  }
+
+  .dm-sequence-flow {
+    gap: 0.25rem;
+  }
+
+  .dm-funnel-bar {
+    height: 0.65rem;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
   .dm-tabs {
     gap: 0.15rem;
   }
@@ -161,6 +171,7 @@
   .dm-step-card {
     padding: 0.5rem;
     font-size: 0.75rem;
+    border-left-width: 2px;
   }
 
   .dm-step-number {
@@ -169,11 +180,24 @@
     font-size: 0.65rem;
   }
 
+  .dm-step-arrow {
+    padding: 0.25rem 0;
+  }
+
   .dm-metric-box {
+    padding: 0.5rem;
+  }
+
+  .dm-code-block {
+    font-size: 0.7rem;
     padding: 0.5rem;
   }
 
   .dm-funnel-bar {
     height: 0.5rem;
+  }
+
+  .dm-sequence-flow {
+    gap: 0.15rem;
   }
 }
