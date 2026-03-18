@@ -1,27 +1,27 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Bell, Settings, Search } from 'lucide-react';
+import { Bell, Settings, Search, Menu } from 'lucide-react';
 import './TopBar.css';
 
-const TopBar = () => {
-  const location = useLocation();
+const TopBar = ({ onSettingsClick, onMenuClick }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Search functionality — will integrate with page navigation
+    if (searchQuery.trim()) {
+      console.log('Searching for:', searchQuery);
+    }
   };
-
-  const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
 
   return (
     <div className="topbar">
       <div className="topbar-left">
-        {isSidebarCollapsed && (
-          <h1 className="topbar-title">
-            <span className="gradient-text">KiroGram</span>
-          </h1>
-        )}
+        <h1 className="topbar-title">
+          <span className="gradient-text">InstaGrowth Engine</span>
+        </h1>
+      </div>
+
+      <div className="mobile-topbar-left">
+        <div className="mobile-logo">KG</div>
       </div>
 
       <div className="topbar-center">
@@ -40,23 +40,31 @@ const TopBar = () => {
       </div>
 
       <div className="topbar-right">
-        <button className="topbar-btn notification-btn" title="Notifications" aria-label="View notifications">
-          <Bell size={18} />
-          <span className="notification-badge"></span>
+        <button className="topbar-btn notification-btn" title="Notifications">
+          <Bell size={20} />
+          <span className="notification-badge">3</span>
         </button>
 
         <button
           className="topbar-btn settings-btn"
+          onClick={onSettingsClick}
           title="Settings"
-          aria-label="Open settings"
         >
-          <Settings size={18} />
+          <Settings size={20} />
         </button>
 
         <div className="user-avatar">
-          <div className="avatar-placeholder">S</div>
+          <div className="avatar-placeholder">U</div>
         </div>
       </div>
+
+      <button
+        className="mobile-menu-btn"
+        onClick={onMenuClick}
+        title="Menu"
+      >
+        <Menu size={24} />
+      </button>
     </div>
   );
 };

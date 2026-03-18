@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
+  LineChart,
+  Line,
   AreaChart,
   Area,
   XAxis,
@@ -7,100 +10,119 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
 } from 'recharts';
 import {
   Users,
   TrendingUp,
-  MessageSquare,
-  Image,
+  BookOpen,
+  Zap,
   CheckCircle2,
-  Calendar,
-  Lightbulb,
   Clock,
-  Flame,
+  MessageSquare,
   Target,
+  Flame,
+  Trophy,
+  Lightbulb,
+  Calendar,
+  Loader,
 } from 'lucide-react';
-import './Dashboard.css';
-
-// Mock data for follower growth
-const generateGrowthData = (days) => {
-  const data = [];
-  let followers = 462;
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-
-  for (let i = 0; i < days; i++) {
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
-    followers += Math.floor(Math.random() * 15) + 3;
-    data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      followers: followers,
-    });
-  }
-  return data;
-};
-
-// Mock daily tasks
-const mockTasks = [
-  { id: 1, title: 'Publish daily story', completed: true },
-  { id: 2, title: 'Engage with top 20 accounts', completed: true },
-  { id: 3, title: 'Respond to DMs', completed: false },
-  { id: 4, title: 'Check analytics', completed: false },
-  { id: 5, title: 'Post to main feed', completed: false },
-];
-
-// Mock upcoming posts
-const mockUpcomingPosts = [
-  {
-    id: 1,
-    type: 'Carousel',
-    caption: 'New product launch event happening this Saturday! Stay tuned...',
-    date: 'Today, 3:00 PM',
-  },
-  {
-    id: 2,
-    type: 'Reel',
-    caption: 'Behind the scenes: Our creative process for next month campaigns',
-    date: 'Tomorrow, 7:30 PM',
-  },
-  {
-    id: 3,
-    type: 'Photo',
-    caption: 'Throwback to our favorite moments from last quarter',
-    date: 'Mar 19, 6:00 PM',
-  },
-];
-
-// Mock AI insights
-const mockInsights = [
-  'Your audience is most active between 6-8 PM on weekdays. Schedule posts at 5:30 PM for maximum reach.',
-  'Carousel posts got 34% more engagement than static posts this month. Keep it up!',
-  'Your #photography hashtag has the highest reach rate at 12.3%. Use it more often!',
-  'Followers from US increased by 45% this week. Target more US-based content creators.',
-];
+import { useDocument, useCollection } from '../firebase/useFirestore';
+import '../styles/Dashboard.css';
 
 export default function Dashboard() {
-  const [completedTasks, setCompletedTasks] = useState(
-    mockTasks.reduce((acc, task) => {
-      acc[task.id] = task.completed;
-      return acc;
-    }, {})
-  );
-
   const [chartDays, setChartDays] = useState(30);
   const [insightIndex, setInsightIndex] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState({});
 
-  const growthData = useMemo(() => generateGrowthData(chartDays), [chartDays]);
-  const completedCount = useMemo(() => {
-    return mockTasks.filter((t) => completedTasks[t.id]).length;
-  }, [completedTasks]);
-  const taskCompletionPercentage = useMemo(() => {
-    return (completedCount / mockTasks.length) * 100;
-  }, [completedCount]);
+  // Firestore data hooks
+  const { data: profileData, loading: profileLoading } = useDocument('settings', 'profile');
+  const { data: growthDataFirestore, loading: growthLoading } = useCollection('growthData');
+  const { data: tasksData, loading: tasksLoading } = useCollection('tasks');
+  const { data: postsData, loading: postsLoading } = useCollection('scheduledPosts');
+  const { data: insightsData, loading: insightsLoading } = useDocument('settings', 'insights');
 
+  // Process growth data for chart
+  const chartData = useMemo(() => {
+    if (!growthDataFirestore || growthDataFirestore.length === 0) {
+      return [];
+    }
+
+    // Sort by date and filter to requested days
+    const sorted = [...growthDataFirestore].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA - dateB;
+    });
+
+    return sorted.slice(-chartDays).map((item) => ({
+      date: new Date(item.date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
+      followers: item.followers || 0,
+    }));
+  }, [growthDataFirestore, chartDays]);
+
+  // Calculate metrics from real data
+  const metrics = useMemo(() => {
+    if (!chartData || chartData.length === 0) {
+      return {
+        currentFollowers: 0,
+        followerChange: 0,
+        engagementRate: 0,
+        growthVelocity: 0,
+      };
+    }
+
+    const currentFollowers = chartData[chartData.length - 1]?.followers || 0;
+    const previousFollowers = chartData[0]?.followers || 0;
+    const followerChange = currentFollowers - previousFollowers;
+    const growthVelocity = chartData.length > 0 ? (followerChange / chartData.length).toFixed(1) : 0;
+
+    return {
+      currentFollowers,
+      followerChange,
+      engagementRate: profileData?.engagementRate || 0,
+      postsThisWeek: profileData?.postsThisWeek || 0,
+      postsTarget: profileData?.postsTarget || 7,
+      growthVelocity,
+    };
+  }, [chartData, profileData]);
+
+  // Get upcoming posts (next 3)
+  const upcomingPosts = useMemo(() => {
+    if (!postsData || postsData.length === 0) {
+      return [];
+    }
+
+    return postsData
+      .filter((post) => post.scheduledTime && new Date(post.scheduledTime) > new Date())
+      .sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime))
+      .slice(0, 3);
+  }, [postsData]);
+
+  // Get today's tasks
+  const todaysTasks = useMemo(() => {
+    if (!tasksData || tasksData.length === 0) {
+      return [];
+    }
+
+    const today = new Date().toDateString();
+    return tasksData.filter((task) => {
+      const taskDate = new Date(task.dueDate).toDateString();
+      return taskDate === today;
+    });
+  }, [tasksData]);
+
+  // Get insights
+  const insights = useMemo(() => {
+    if (!insightsData || !insightsData.tips) {
+      return [];
+    }
+    return Array.isArray(insightsData.tips) ? insightsData.tips : [];
+  }, [insightsData]);
+
+  // Handle task completion
   const toggleTask = (taskId) => {
     setCompletedTasks((prev) => ({
       ...prev,
@@ -108,262 +130,373 @@ export default function Dashboard() {
     }));
   };
 
+  const completedCount = Object.values(completedTasks).filter(Boolean).length;
+
   const handleNextInsight = () => {
-    setInsightIndex((prev) => (prev + 1) % mockInsights.length);
+    setInsightIndex((prev) => (prev + 1) % Math.max(insights.length, 1));
   };
 
-  const handleInsightDotClick = (idx) => {
-    setInsightIndex(idx);
-  };
+  // Check if data is loading
+  const isLoading = profileLoading || growthLoading || tasksLoading || postsLoading || insightsLoading;
 
-  // Calculate metrics
-  const currentFollowers = growthData[growthData.length - 1]?.followers || 733;
-  const previousFollowers = growthData[0]?.followers || 462;
-  const followerChange = currentFollowers - previousFollowers;
-  const engagementRate = 8.4;
-  const engagementChange = 0.3;
-  const postsThisWeek = 5;
-  const postsTarget = 7;
-  const growthVelocity = (followerChange / chartDays).toFixed(1);
-
-  // Get current date
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
+  // Empty state check
+  const hasProfileData = profileData && profileData.followers !== undefined;
+  const hasGrowthData = growthDataFirestore && growthDataFirestore.length > 0;
 
   return (
-    <div className="page">
-      {/* Hero Welcome Section */}
-      <div className="page-header">
-        <div className="header-content">
-          <div>
-            <h1>Welcome back, Shreyansh</h1>
-            <div className="welcome-meta">
-              <span className="current-date">{currentDate}</span>
-            </div>
-          </div>
-          <div className="hero-velocity-badge">
-            <div className="flex flex-col items-end gap-xs">
-              <span className="hero-velocity-label">Growth Velocity</span>
-              <span className="hero-velocity-value">+{growthVelocity}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Premium Metric Cards - 6 Column Grid with unique accents */}
-      <div className="grid-6">
-        {/* Followers Card */}
-        <div className="card metric-card accent-primary">
-          <div className="metric-label">Followers</div>
-          <div className="num-lg">{currentFollowers.toLocaleString()}</div>
-          <div className="metric-trend positive">
-            <TrendingUp size={14} />
-            <span>+{followerChange.toLocaleString()}</span>
-          </div>
-          <div className="metric-icon-circle">
-            <Users size={24} />
-          </div>
+    <div className="dashboard">
+      <div className="dashboard-max-width">
+        {/* Welcome Section */}
+        <div className="dashboard-section">
+          <h1 className="dashboard-heading">Welcome back! 👋</h1>
+          {hasProfileData && hasGrowthData ? (
+            <p className="dashboard-subheading">
+              Phase 1: 0 → 1K | Growth Velocity: +{metrics.growthVelocity} followers/day
+            </p>
+          ) : (
+            <p className="dashboard-subheading">Connect your Instagram profile to get started</p>
+          )}
         </div>
 
-        {/* Engagement Card */}
-        <div className="card metric-card accent-success">
-          <div className="metric-label">Engagement Rate</div>
-          <div className="num-lg">{engagementRate}%</div>
-          <div className="metric-trend positive">
-            <TrendingUp size={14} />
-            <span>+{engagementChange}%</span>
+        {/* Empty State - Show when no data exists */}
+        {!hasProfileData && !isLoading && (
+          <div className="dashboard-empty-state">
+            <div className="dashboard-empty-state-icon">📊</div>
+            <h3>No data yet</h3>
+            <p>Connect your Instagram profile in Settings to see your real metrics here</p>
+            <Link to="/settings" className="btn-primary">
+              Connect Profile
+            </Link>
           </div>
-          <div className="metric-icon-circle">
-            <MessageSquare size={24} />
-          </div>
-        </div>
+        )}
 
-        {/* Posts This Week Card */}
-        <div className="card metric-card accent-warning">
-          <div className="metric-label">Posts This Week</div>
-          <div className="num-lg">{postsThisWeek}/{postsTarget}</div>
-          <div className="metric-trend warning">
-            <Image size={14} />
-            <span>{postsTarget - postsThisWeek} to goal</span>
-          </div>
-          <div className="metric-icon-circle">
-            <Image size={24} />
-          </div>
-        </div>
-
-        {/* Best Post Performance Card */}
-        <div className="card metric-card accent-info">
-          <div className="metric-label">Best Post</div>
-          <div className="num-lg">12.4K</div>
-          <div className="metric-trend positive">
-            <TrendingUp size={14} />
-            <span>Impressions</span>
-          </div>
-          <div className="metric-icon-circle">
-            <CheckCircle2 size={24} />
-          </div>
-        </div>
-
-        {/* Engagement Streak Card */}
-        <div className="card metric-card accent-success">
-          <div className="metric-label">Engagement Streak</div>
-          <div className="num-lg">14</div>
-          <div className="metric-trend positive">
-            <Flame size={14} />
-            <span>Days active</span>
-          </div>
-          <div className="metric-icon-circle">
-            <Flame size={24} />
-          </div>
-        </div>
-
-        {/* To Next Milestone Card */}
-        <div className="card metric-card accent-primary">
-          <div className="metric-label">To 1K Milestone</div>
-          <div className="num-lg">{(1000 - currentFollowers).toLocaleString()}</div>
-          <div className="metric-trend">
-            <TrendingUp size={14} />
-            <span>followers</span>
-          </div>
-          <div className="metric-icon-circle">
-            <Target size={24} />
-          </div>
-        </div>
-      </div>
-
-      {/* Growth Chart Section */}
-      <div className="card growth-chart-card">
-        <div className="card-header">
-          <h3>Follower Growth</h3>
-          <div className="period-selector">
-            {[30, 60, 90].map((days) => (
-              <button
-                key={days}
-                className={`period-pill ${chartDays === days ? 'active' : ''}`}
-                onClick={() => setChartDays(days)}
-              >
-                {days}D
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="chart-container">
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={growthData}>
-              <defs>
-                <linearGradient id="colorFollowers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="rgba(225, 48, 108, 0.3)" />
-                  <stop offset="95%" stopColor="rgba(225, 48, 108, 0.02)" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" vertical={false} />
-              <XAxis dataKey="date" stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
-              <YAxis stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-primary)',
-                  borderRadius: 'var(--radius-lg)',
-                  color: 'var(--text-primary)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                }}
-                cursor={{ stroke: 'var(--color-primary)', strokeWidth: 2 }}
-                formatter={(value) => [value.toLocaleString(), 'Followers']}
-              />
-              <Area
-                type="monotone"
-                dataKey="followers"
-                stroke="var(--color-primary)"
-                fillOpacity={1}
-                fill="url(#colorFollowers)"
-                strokeWidth={2.5}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid-2">
-        {/* Today's Tasks */}
-        <div className="card">
-          <div className="task-section-header">
-            <h3>Today's Tasks</h3>
-            <span className="badge">{completedCount}/{mockTasks.length}</span>
-          </div>
-
-          <div className="task-progress-bar">
-            <div className="task-progress-fill" style={{ width: `${taskCompletionPercentage}%` }} />
-          </div>
-          <p className="task-progress-text">{Math.round(taskCompletionPercentage)}% Complete</p>
-
-          <div className="task-list">
-            {mockTasks.map((task) => (
-              <label key={task.id} className={`task-item ${completedTasks[task.id] ? 'task-completed' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={completedTasks[task.id]}
-                  onChange={() => toggleTask(task.id)}
-                  className="task-checkbox"
-                />
-                <span className="task-label">{task.title}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Upcoming Posts */}
-        <div className="card">
-          <div className="card-header">
-            <h3>Upcoming Posts</h3>
-            <span className="badge">{mockUpcomingPosts.length}</span>
-          </div>
-          <div className="post-list">
-            {mockUpcomingPosts.map((post) => {
-              const postType = post.type.toLowerCase();
-              return (
-                <div key={post.id} className={`post-item type-${postType}`}>
-                  <span className="post-type-badge">{post.type}</span>
-                  <div className="post-details">
-                    <p className="post-caption">{post.caption}</p>
-                    <div className="post-meta">
-                      <Clock size={12} />
-                      <span>{post.date}</span>
+        {/* Main Dashboard - Only show if data exists or still loading */}
+        {(hasProfileData || isLoading) && (
+          <>
+            {/* Key Metrics Cards - Top Row */}
+            {isLoading && !hasGrowthData ? (
+              <div className="dashboard-metrics-grid">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="dashboard-skeleton-card dashboard-skeleton"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="dashboard-metrics-grid">
+                {/* Current Followers Card */}
+                <div className="dashboard-metric-card">
+                  <div className="dashboard-metric-gradient-border"></div>
+                  <div className="dashboard-metric-inner">
+                    <div className="dashboard-metric-label">Current Followers</div>
+                    <div className="dashboard-metric-value">
+                      {metrics.currentFollowers.toLocaleString()}
+                    </div>
+                    <div className="dashboard-metric-change positive">
+                      <TrendingUp size={16} />
+                      <span>+{metrics.followerChange} this month</span>
+                    </div>
+                    <div className="dashboard-icon-container">
+                      <Users size={20} />
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
 
-      {/* AI Insight Card - Most Visually Distinct */}
-      <div className="card insight-card">
-        <div className="insight-content">
-          <div className="insight-header">
-            <div className="insight-icon-glow">
-              <Lightbulb size={24} />
+                {/* Engagement Rate Card */}
+                <div className="dashboard-metric-card">
+                  <div className="dashboard-metric-gradient-border"></div>
+                  <div className="dashboard-metric-inner">
+                    <div className="dashboard-metric-label">Engagement Rate</div>
+                    <div className="dashboard-metric-value">
+                      {metrics.engagementRate.toFixed(1)}%
+                    </div>
+                    <div className="dashboard-metric-change positive">
+                      <TrendingUp size={16} />
+                      <span>+0.3% vs last week</span>
+                    </div>
+                    <div className="dashboard-icon-container">
+                      <MessageSquare size={20} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Posts This Week Card */}
+                <div className="dashboard-metric-card">
+                  <div className="dashboard-metric-gradient-border"></div>
+                  <div className="dashboard-metric-inner">
+                    <div className="dashboard-metric-label">Posts This Week</div>
+                    <div className="dashboard-metric-value">
+                      {metrics.postsThisWeek}/{metrics.postsTarget}
+                    </div>
+                    <div className="dashboard-metric-change neutral">
+                      <Target size={16} />
+                      <span>{metrics.postsTarget - metrics.postsThisWeek} to goal</span>
+                    </div>
+                    <div className="dashboard-icon-container">
+                      <BookOpen size={20} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Growth Velocity Card */}
+                <div className="dashboard-metric-card">
+                  <div className="dashboard-metric-gradient-border"></div>
+                  <div className="dashboard-metric-inner">
+                    <div className="dashboard-metric-label">Growth Velocity</div>
+                    <div className="dashboard-metric-value">+{metrics.growthVelocity}</div>
+                    <div className="dashboard-metric-change positive">
+                      <Zap size={16} />
+                      <span>followers/day avg</span>
+                    </div>
+                    <div className="dashboard-icon-container">
+                      <Zap size={20} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Growth Chart */}
+            {hasGrowthData && (
+              <div className="dashboard-section dashboard-chart-container">
+                <div className="dashboard-toggle-group">
+                  {[30, 60, 90].map((days) => (
+                    <button
+                      key={days}
+                      onClick={() => setChartDays(days)}
+                      className={`dashboard-toggle-button ${chartDays === days ? 'active' : ''}`}
+                    >
+                      {days} Days
+                    </button>
+                  ))}
+                </div>
+                {chartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorFollowers" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#fa7e1e" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#d92e7f" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2a2a4e" />
+                      <XAxis dataKey="date" stroke="#666" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="#666" style={{ fontSize: '12px' }} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1a1a2e',
+                          border: '1px solid #2a2a4e',
+                          borderRadius: '8px',
+                          color: '#fff',
+                        }}
+                        cursor={{ stroke: '#fa7e1e', strokeWidth: 1 }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="followers"
+                        stroke="#fa7e1e"
+                        fillOpacity={1}
+                        fill="url(#colorFollowers)"
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="dashboard-empty-state">
+                    <p>No growth data available yet</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Two Column Layout */}
+            <div className="dashboard-two-col">
+              {/* Today's Action Items */}
+              <div className="dashboard-section">
+                <h2 className="dashboard-section-title">
+                  <CheckCircle2 size={18} />
+                  Today's Action Items
+                </h2>
+                {isLoading && !todaysTasks.length ? (
+                  <div className="dashboard-task-list">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="dashboard-skeleton-line"></div>
+                    ))}
+                  </div>
+                ) : todaysTasks.length === 0 ? (
+                  <div className="dashboard-empty-state">
+                    <div className="dashboard-empty-state-icon">✓</div>
+                    <h3>No tasks today</h3>
+                    <p>All caught up! Come back tomorrow for new action items.</p>
+                  </div>
+                ) : (
+                  <div className="dashboard-task-list">
+                    {todaysTasks.map((task) => (
+                      <div key={task.id} className="dashboard-task-item">
+                        <input
+                          type="checkbox"
+                          checked={completedTasks[task.id] || false}
+                          onChange={() => toggleTask(task.id)}
+                          className="dashboard-task-checkbox"
+                        />
+                        <span
+                          className={`dashboard-task-text ${
+                            completedTasks[task.id] ? 'completed' : ''
+                          }`}
+                        >
+                          {task.title}
+                        </span>
+                        <div className="dashboard-progress-ring">
+                          {completedCount}/{todaysTasks.length}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="dashboard-task-summary">
+                      {completedCount}/{todaysTasks.length} tasks completed (
+                      {Math.round((completedCount / todaysTasks.length) * 100)}%)
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Content Pipeline */}
+              <div className="dashboard-section">
+                <h2 className="dashboard-section-title">
+                  <Calendar size={18} />
+                  Content Pipeline (Next 3)
+                </h2>
+                {isLoading && !upcomingPosts.length ? (
+                  <div className="dashboard-content-pipeline">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="dashboard-skeleton-card"></div>
+                    ))}
+                  </div>
+                ) : upcomingPosts.length === 0 ? (
+                  <div className="dashboard-empty-state">
+                    <div className="dashboard-empty-state-icon">📅</div>
+                    <h3>No scheduled posts</h3>
+                    <p>Schedule your next Instagram post to see it here</p>
+                  </div>
+                ) : (
+                  <div className="dashboard-content-pipeline">
+                    {upcomingPosts.map((post) => (
+                      <div key={post.id} className="dashboard-content-card">
+                        <div className="dashboard-content-thumb">
+                          {post.thumbnail || '📸'}
+                        </div>
+                        <div className="dashboard-content-info">
+                          <div className="dashboard-content-caption">{post.caption}</div>
+                          <div className="dashboard-content-time">
+                            <Clock size={12} />
+                            {new Date(post.scheduledTime).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}{' '}
+                            at{' '}
+                            {new Date(post.scheduledTime).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <h3>Daily AI Insight</h3>
-            <button className="insight-nav-btn" onClick={handleNextInsight}>
-              Next →
-            </button>
+
+            {/* Quick Stats Grid */}
+            {profileData && (
+              <div className="dashboard-section">
+                <h2 className="dashboard-section-title">
+                  <Trophy size={18} />
+                  Quick Stats
+                </h2>
+                <div className="dashboard-stat-grid">
+                  <div className="dashboard-stat-box">
+                    <div className="dashboard-stat-value">
+                      {profileData.bestPostType || '📸'} Carousel
+                    </div>
+                    <div className="dashboard-stat-label">Best Performing Post</div>
+                    <div className="dashboard-stat-detail">
+                      +{profileData.bestPostImpressions || 0} impressions
+                    </div>
+                  </div>
+                  <div className="dashboard-stat-box">
+                    <div className="dashboard-stat-value">
+                      {profileData.topHashtag || '#growth'}
+                    </div>
+                    <div className="dashboard-stat-label">Top Hashtag Set</div>
+                    <div className="dashboard-stat-detail">
+                      {profileData.topHashtagReach || 0}K total reach
+                    </div>
+                  </div>
+                  <div className="dashboard-stat-box">
+                    <div className="dashboard-stat-value">
+                      <Flame size={24} style={{ display: 'inline' }} />
+                    </div>
+                    <div className="dashboard-stat-label">Engagement Streak</div>
+                    <div className="dashboard-stat-detail">
+                      {profileData.engagementStreak || 0} days 🔥
+                    </div>
+                  </div>
+                  <div className="dashboard-stat-box">
+                    <div className="dashboard-stat-value">
+                      {profileData.toNextMilestone || 342}
+                    </div>
+                    <div className="dashboard-stat-label">To Next Milestone</div>
+                    <div className="dashboard-stat-detail">1K followers goal</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* AI Insight Card */}
+            {insights.length > 0 && (
+              <div className="dashboard-section">
+                <h2 className="dashboard-section-title">
+                  <Lightbulb size={18} />
+                  Daily AI Insight
+                </h2>
+                <div className="dashboard-insight-card">
+                  <div className="dashboard-insight-header">
+                    <Lightbulb size={20} style={{ color: '#fa7e1e', flexShrink: 0 }} />
+                    <span className="dashboard-insight-header-title">Tip for Today</span>
+                    <button
+                      onClick={handleNextInsight}
+                      className="dashboard-insight-nav-button"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                  <p className="dashboard-insight-text">
+                    {insights[insightIndex] || 'No insights available yet'}
+                  </p>
+                  <div className="dashboard-insight-dots">
+                    {insights.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`dashboard-insight-dot ${
+                          idx === insightIndex ? 'active' : ''
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Loading Indicator */}
+        {isLoading && !hasProfileData && (
+          <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+            <Loader size={40} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
+            <p style={{ marginTop: '16px', color: '#888' }}>Loading your data...</p>
           </div>
-          <p className="insight-text">{mockInsights[insightIndex]}</p>
-          <div className="insight-dots">
-            {mockInsights.map((_, idx) => (
-              <div
-                key={idx}
-                className={`dot ${idx === insightIndex ? 'dot-active' : ''}`}
-                onClick={() => handleInsightDotClick(idx)}
-              />
-            ))}
-          </div>
-        </div>
+        )}
+
+        {/* Footer Spacing */}
+        <div className="dashboard-footer-spacing"></div>
       </div>
     </div>
   );
