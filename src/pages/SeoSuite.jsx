@@ -18,7 +18,7 @@ const SeoSuite = () => {
   const { data: seoProgressData = {}, updateData: updateSeoProgress } = useAppData('seoProgress', {});
   const { engine: insightsEngine, hasData } = useInsights();
 
-  const [bio, setBio] = useState(profileData.bio || 'Digital Creator | Photography | Lifestyle | 📸 DM for collabs');
+  const [bio, setBio] = useState(profileData.bio || '');
   const [caption, setCaption] = useState(
     'Loving this golden hour light! 🌅 Photography tips coming soon. What\'s your favorite time of day to shoot? #photography #goldenhour #creator'
   );

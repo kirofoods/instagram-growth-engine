@@ -284,7 +284,7 @@ export default function GrowthMilestones() {
   const [unlockedPhase, setUnlockedPhase] = useState(null);
 
   // Try to fetch real data from Firestore
-  const { data: profileData, loading } = useDocument('settings/profile');
+  const { data: profileData, loading } = useDocument('settings', 'profile');
   const { engine: insightsEngine, hasData } = useInsights();
   const [followerCount, setFollowerCount] = useState(0);
 

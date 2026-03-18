@@ -24,22 +24,22 @@ export default function Strategy() {
   const { data: profileData } = useDocument('settings', 'profile');
 
   const [auditInputs, setAuditInputs] = useState({
-    username: '@fashionista_sarah',
-    bio: 'Fashion, Travel & Lifestyle | DM for collabs',
-    followers: 152000,
+    username: '',
+    bio: '',
+    followers: 0,
     posts: 287,
     avgEngagement: 4.2,
   });
 
   // Update form with Firestore profile data when available
   useEffect(() => {
-    if (profileData?.profile) {
+    if (profileData) {
       setAuditInputs({
-        username: '@' + (profileData.profile.handle || 'fashionista_sarah'),
-        bio: profileData.profile.bio || 'Fashion, Travel & Lifestyle | DM for collabs',
-        followers: profileData.profile.followers || 152000,
-        posts: profileData.profile.postsCount || 287,
-        avgEngagement: profileData.profile.engagementRate || 4.2,
+        username: '@' + (profileData.handle || ''),
+        bio: profileData.bio || '',
+        followers: profileData.followers || 0,
+        posts: profileData.postsCount || 287,
+        avgEngagement: profileData.engagementRate || 4.2,
       });
     }
   }, [profileData]);
