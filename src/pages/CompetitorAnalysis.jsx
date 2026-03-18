@@ -22,7 +22,7 @@ import ApifyService from '../services/apifyService';
 import '../styles/CompetitorAnalysis.css';
 
 const CompetitorAnalysis = () => {
-  const { data: profileData } = useDocument('appData', 'settings');
+  const { data: profileData } = useDocument('settings', 'profile');
   const [competitors, setCompetitors] = useState([]);
   const [newCompetitor, setNewCompetitor] = useState('');
   const [loading, setLoading] = useState(false);

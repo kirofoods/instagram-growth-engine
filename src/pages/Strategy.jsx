@@ -21,7 +21,7 @@ import { useDocument } from '../firebase/useFirestore';
 import '../styles/Strategy.css';
 
 export default function Strategy() {
-  const { data: profileData } = useDocument('appData', 'settings');
+  const { data: profileData } = useDocument('settings', 'profile');
 
   const [auditInputs, setAuditInputs] = useState({
     username: '@fashionista_sarah',

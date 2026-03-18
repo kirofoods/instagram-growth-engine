@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Copy,
   Sparkles,
@@ -9,6 +9,7 @@ import {
   Zap,
   ImageIcon,
 } from 'lucide-react';
+import { useInsights } from '../services/useInsights';
 import '../styles/ContentStudio.css';
 
 const tones = ['Witty', 'Professional', 'Casual', 'Inspirational', 'Educational'];
@@ -121,6 +122,15 @@ const ContentStudio = () => {
     mockGenerations.captions[0]?.captions || []
   );
 
+  // Load insights for data-driven recommendations
+  const { engine: insightsEngine, hasData } = useInsights();
+  const contentInsights = useMemo(() => {
+    if (hasData && insightsEngine) {
+      return insightsEngine.getContentInsights();
+    }
+    return null;
+  }, [hasData, insightsEngine]);
+
   const [hashtagNiche, setHashtagNiche] = useState('fitness coaching');
   const [hashtagCount, setHashtagCount] = useState(20);
   const [generatedHashtags, setGeneratedHashtags] = useState(mockGenerations.hashtags[0]?.hashtags || null);
@@ -204,6 +214,30 @@ const ContentStudio = () => {
           <p className="text-muted">Generate captions, hashtags, carousels, and more</p>
         </div>
       </div>
+
+      {contentInsights && (
+        <div className="card mb-8" style={{ backgroundColor: 'var(--bg-secondary)', borderLeft: '4px solid var(--color-primary)' }}>
+          <div className="card-header">
+            <h3 style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Zap size={18} /> Data-Driven Content Tips for You
+            </h3>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+            <div>
+              <strong>Caption Strategy</strong>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>{contentInsights.captionTip}</p>
+            </div>
+            <div>
+              <strong>Hashtag Strategy</strong>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>{contentInsights.hashtagTip}</p>
+            </div>
+            <div>
+              <strong>Posting Schedule</strong>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>{contentInsights.postingSchedule}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="cs-main-grid">
         <div className="cs-left-section">

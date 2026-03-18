@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useAppData } from '../firebase/useAppData';
+import { useInsights } from '../services/useInsights';
 import {
   Search,
   Lightbulb,
@@ -15,6 +16,7 @@ const SeoSuite = () => {
   // Load profile data from Firestore
   const { data: profileData = {}, updateData: updateProfile } = useAppData('profile', {});
   const { data: seoProgressData = {}, updateData: updateSeoProgress } = useAppData('seoProgress', {});
+  const { engine: insightsEngine, hasData } = useInsights();
 
   const [bio, setBio] = useState(profileData.bio || 'Digital Creator | Photography | Lifestyle | 📸 DM for collabs');
   const [caption, setCaption] = useState(
@@ -25,8 +27,13 @@ const SeoSuite = () => {
   const [altText, setAltText] = useState('');
   const [showAltSuggestions, setShowAltSuggestions] = useState(false);
 
-  // Calculate SEO score dynamically
+  // Calculate SEO score - use engine if available
   const seoScore = useMemo(() => {
+    if (hasData && insightsEngine) {
+      return insightsEngine.getSeoInsights().bioScore;
+    }
+
+    // Fallback calculation
     let score = 0;
 
     // Bio completeness
@@ -46,7 +53,7 @@ const SeoSuite = () => {
     if (niche && caption.toLowerCase().includes(niche)) score += 10;
 
     return Math.min(100, score);
-  }, [bio, caption, niche, profileData]);
+  }, [bio, caption, niche, profileData, hasData, insightsEngine]);
 
   // Bio suggestions with highlighted keywords
   const bioSuggestions = [

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   TrendingUp,
   CheckCircle2,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useDocument } from '../firebase/useFirestore';
+import { useInsights } from '../services/useInsights';
 import '../styles/GrowthMilestones.css';
 
 const phases = {
@@ -284,7 +285,16 @@ export default function GrowthMilestones() {
 
   // Try to fetch real data from Firestore
   const { data: profileData, loading } = useDocument('settings/profile');
+  const { engine: insightsEngine, hasData } = useInsights();
   const [followerCount, setFollowerCount] = useState(0);
+
+  // Get growth projection from insights engine
+  const growthProjection = useMemo(() => {
+    if (hasData && insightsEngine) {
+      return insightsEngine.getGrowthProjection();
+    }
+    return null;
+  }, [hasData, insightsEngine]);
 
   useEffect(() => {
     if (profileData?.followers) {
@@ -429,6 +439,50 @@ export default function GrowthMilestones() {
         <div className="phase-unlock-notification">
           <Lock size={20} />
           <span>Unlock Phase {unlockedPhase} by reaching the required follower count</span>
+        </div>
+      )}
+
+      {/* Growth Projection Card */}
+      {growthProjection && (
+        <div className="card mb-8" style={{ backgroundColor: 'var(--bg-secondary)', borderLeft: '4px solid var(--color-primary)' }}>
+          <div className="card-header">
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)' }}>
+              <TrendingUp size={20} /> Your Growth Projection
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+            <div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Estimated Monthly Growth</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-primary)' }}>
+                +{growthProjection.estimatedMonthlyGrowth}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>followers/month</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Time to Next Milestone</div>
+              <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                {growthProjection.estimatedTimeToNextMilestone.estimatedMonths} months
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                to {growthProjection.estimatedTimeToNextMilestone.milestone.toLocaleString()} followers
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Daily Growth Rate</div>
+              <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{growthProjection.growthRate}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>at current engagement</div>
+            </div>
+          </div>
+          {growthProjection.accelerators.length > 0 && (
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+              <h4 style={{ marginBottom: '8px' }}>To Accelerate Growth:</h4>
+              <ul style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
+                {growthProjection.accelerators.slice(0, 3).map((acc, idx) => (
+                  <li key={idx}>• {acc}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 

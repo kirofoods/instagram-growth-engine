@@ -133,7 +133,7 @@ const defaultTasks = {
 };
 
 export default function DailyActions() {
-  const { data: profileData } = useDocument('appData', 'settings');
+  const { data: profileData } = useDocument('settings', 'profile');
   const { data: dailyData } = useDocument('settings', 'dailyActions');
   const { db } = useFirebase();
 

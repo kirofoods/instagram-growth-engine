@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAppData } from '../firebase/useAppData';
+import { useInsights } from '../services/useInsights';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -68,11 +69,18 @@ export default function AccountHealth() {
     { id: 6, name: 'Shadowban Timer', checked: false, severity: 'medium' },
   ]);
 
-  // Load profile data and calculate health score dynamically
+  // Load profile data and use insights engine
   const { data: profileData = {} } = useAppData('profile', {});
   const { data: accountHealthData, updateData: updateAccountHealth } = useAppData('accountHealth', {});
+  const { engine: insightsEngine, hasData } = useInsights();
 
+  // Use engine's health score if available
   const healthScore = useMemo(() => {
+    if (hasData && insightsEngine) {
+      return insightsEngine.getHealthScore().score;
+    }
+
+    // Fallback to original calculation
     let score = 0;
 
     // Bio check (+10)
@@ -111,7 +119,7 @@ export default function AccountHealth() {
     }
 
     return Math.min(100, score);
-  }, [profileData]);
+  }, [hasData, insightsEngine, profileData]);
 
   const shadowbanSymptoms = [
     {

@@ -31,6 +31,7 @@ import { useDocument, useCollection } from '../firebase/useFirestore';
 import { useFirebase } from '../firebase/FirebaseContext';
 import { doc, setDoc } from 'firebase/firestore';
 import { autoSyncProfile } from '../services/autoSync';
+import { useInsights } from '../services/useInsights';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
@@ -41,6 +42,9 @@ export default function Dashboard() {
 
   // Firebase context
   const { db } = useFirebase();
+
+  // Insights engine hook
+  const { engine: insightsEngine } = useInsights();
 
   // Firestore data hooks
   const { data: profileData, loading: profileLoading } = useDocument('settings', 'profile');
@@ -125,13 +129,18 @@ export default function Dashboard() {
     });
   }, [tasksData]);
 
-  // Get insights
+  // Get insights - use engine-generated if no Firestore data
   const insights = useMemo(() => {
-    if (!insightsData || !insightsData.tips) {
-      return [];
+    // Try Firestore first
+    if (insightsData && insightsData.tips) {
+      return Array.isArray(insightsData.tips) ? insightsData.tips : [];
     }
-    return Array.isArray(insightsData.tips) ? insightsData.tips : [];
-  }, [insightsData]);
+    // Fall back to engine-generated insights
+    if (insightsEngine && profileData && profileData.followers) {
+      return insightsEngine.getDashboardInsights();
+    }
+    return [];
+  }, [insightsData, insightsEngine, profileData]);
 
   // Handle task completion
   const toggleTask = (taskId) => {

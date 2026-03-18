@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   TrendingUp,
   Eye,
@@ -24,16 +24,50 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useDocument } from '../firebase/useFirestore';
+import { useInsights } from '../services/useInsights';
 import '../styles/Analytics.css';
 
 const Analytics = () => {
   const [sortBy, setSortBy] = useState('reach');
   const [sortOrder, setSortOrder] = useState('desc');
-  const { data: profileData } = useDocument('appData', 'settings');
+  const { data: profileData } = useDocument('settings', 'profile');
+  const { engine: insightsEngine, hasData } = useInsights();
 
-  // Overview metrics - Use Firestore data if available
-  const getMetrics = () => {
-    if (profileData?.profile) {
+  // Overview metrics - Use real insights if available
+  const metrics = useMemo(() => {
+    if (hasData && insightsEngine) {
+      const analyticsInsights = insightsEngine.getAnalyticsInsights();
+      return [
+        {
+          label: 'Estimated Reach',
+          value: analyticsInsights.estimatedReach,
+          trend: 12.5,
+          icon: Eye,
+          color: 'var(--color-primary)',
+        },
+        {
+          label: 'Estimated Impressions',
+          value: analyticsInsights.estimatedImpressions,
+          trend: 8.3,
+          icon: Activity,
+          color: 'var(--color-secondary)',
+        },
+        {
+          label: 'Profile Visits (est)',
+          value: analyticsInsights.estimatedProfileVisits,
+          trend: -2.1,
+          icon: Target,
+          color: 'var(--color-primary-start)',
+        },
+        {
+          label: 'Website Clicks (est)',
+          value: analyticsInsights.estimatedWebsiteClicks,
+          trend: 18.7,
+          icon: Share2,
+          color: 'var(--status-warning)',
+        },
+      ];
+    } else if (profileData?.profile) {
       return [
         {
           label: 'Total Followers',
@@ -97,9 +131,7 @@ const Analytics = () => {
         color: 'var(--status-warning)',
       },
     ];
-  };
-
-  const metrics = getMetrics();
+  }, [hasData, insightsEngine, profileData]);
 
   // Post performance data
   const posts = [
