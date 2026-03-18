@@ -98,19 +98,75 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .weekly-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .swot-card {
+    padding: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .weekly-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .task-card {
+    padding: 0.65rem;
+  }
+
+  .audit-item {
+    padding: 0.65rem;
+  }
+
+  .trend-item {
+    padding: 0.75rem;
+  }
+
+  .swot-card {
+    padding: 0.75rem;
+  }
+
+  .score-bar {
+    height: 0.4rem;
+  }
+
+  .overflow-auto {
+    overflow-x: auto;
   }
 }
 
 @media (max-width: 640px) {
   .weekly-grid {
     grid-template-columns: 1fr;
+    gap: 0.35rem;
   }
 
-  .grid-4 {
-    grid-template-columns: 1fr;
+  .task-card {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .audit-item {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .trend-item {
+    padding: 0.5rem;
+    flex-direction: column;
+  }
+
+  .swot-card {
+    padding: 0.5rem;
+  }
+
+  .score-bar {
+    height: 0.35rem;
   }
 }
 

@@ -386,6 +386,7 @@
     grid-column: 1;
     grid-row: auto;
     position: static;
+    top: auto;
   }
 
   .page-header {
@@ -399,38 +400,154 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .cs-main-grid {
     gap: 1rem;
   }
 
+  .page-header {
+    gap: 0.5rem;
+    flex-direction: column;
+  }
+
   .page-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .input {
+    font-size: 0.9rem;
+  }
+
+  .select {
+    font-size: 0.9rem;
   }
 
   .tab-item {
-    padding: 0.4rem 0.75rem;
+    padding: 0.35rem 0.75rem;
     font-size: 0.8rem;
   }
 
   .tone-pills {
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
 
   .tone-pill {
-    padding: 0.35rem 0.75rem;
+    padding: 0.3rem 0.65rem;
     font-size: 0.75rem;
   }
 
   .result-item,
   .slide-card,
-  .idea-card {
+  .idea-card,
+  .saved-item {
     padding: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
-  .btn-primary,
-  .btn-secondary {
-    padding: 0.65rem 1rem;
-    font-size: 0.9rem;
+  .saved-list {
+    max-height: 400px;
+  }
+
+  .flex-col {
+    gap: 1rem;
+  }
+
+  .badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .cs-main-grid {
+    gap: 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.125rem;
+  }
+
+  .page-header .flex-col p {
+    margin-top: 0.25rem;
+  }
+
+  .tab-group {
+    overflow-x: auto;
+    gap: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .tab-item {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  .input-label {
+    font-size: 0.85rem;
+  }
+
+  .input {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .input-range {
+    height: 4px;
+  }
+
+  .select {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .checkbox-label {
+    font-size: 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tone-pills {
+    gap: 0.25rem;
+  }
+
+  .tone-pill {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  .result-item,
+  .slide-card,
+  .idea-card {
+    padding: 0.5rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .saved-list {
+    max-height: 300px;
+    gap: 0.5rem;
+  }
+
+  .saved-item {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .saved-preview p {
+    font-size: 0.7rem;
+  }
+
+  .flex-col {
+    gap: 0.75rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
   }
 }

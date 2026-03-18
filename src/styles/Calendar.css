@@ -380,33 +380,183 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .calendar-page {
-    padding: 1rem;
-  }
-
+@media (max-width: 1024px) {
   .calendar-grid-container {
     grid-template-columns: 1fr;
-  }
-
-  .calendar-day-cell {
-    min-height: 80px;
-  }
-
-  .calendar-grid {
-    gap: 0.25rem;
+    gap: 1.5rem;
   }
 
   .calendar-sidebar {
     order: -1;
   }
+}
+
+@media (max-width: 768px) {
+  .calendar-page {
+    padding: 1rem;
+  }
+
+  .calendar-header-section {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .calendar-title {
+    font-size: 1.5rem;
+  }
+
+  .calendar-grid {
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .calendar-day-cell {
+    min-height: 70px;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .calendar-day-number {
+    font-size: 0.8rem;
+  }
+
+  .calendar-day-header {
+    font-size: 0.7rem;
+    padding: 0.5rem 0;
+  }
+
+  .content-badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.35rem;
+  }
 
   .calendar-modal-content {
     width: 95%;
     padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
   }
 
   .type-selector {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .type-button {
+    padding: 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .form-label {
+    font-size: 0.8rem;
+  }
+
+  .theme-badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .theme-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-page {
+    padding: 0.75rem;
+  }
+
+  .calendar-title {
+    font-size: 1.25rem;
+  }
+
+  .calendar-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .calendar-grid {
+    gap: 0.15rem;
+  }
+
+  .calendar-day-cell {
+    min-height: 60px;
+    padding: 0.35rem;
+    border-radius: var(--radius-md);
+  }
+
+  .calendar-day-number {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .calendar-day-header {
+    font-size: 0.65rem;
+    padding: 0.35rem 0;
+  }
+
+  .calendar-day-items {
+    gap: 0.15rem;
+  }
+
+  .content-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.25rem;
+    border-left-width: 2px;
+  }
+
+  .calendar-controls {
+    margin-bottom: 1rem;
+  }
+
+  .calendar-month-year {
+    font-size: 1.125rem;
+  }
+
+  .view-toggle {
+    padding: 0.15rem;
+  }
+
+  .view-toggle-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .calendar-sidebar {
+    gap: 1rem;
+  }
+
+  .card-header-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stats-row {
+    padding: 0.5rem 0;
+  }
+
+  .type-selector {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .type-button {
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .modal-title {
+    font-size: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.75rem;
+  }
+
+  .calendar-modal-content {
+    padding: 1rem;
   }
 }

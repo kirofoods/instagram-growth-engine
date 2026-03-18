@@ -493,32 +493,91 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .metric-card {
+    padding: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
   .grid-4 {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .grid-2 {
+    gap: 1rem;
+  }
+
+  .metric-card {
+    padding: 1rem;
+  }
+
+  .metric-header {
+    gap: 0.5rem;
+  }
+
+  .num-lg {
+    font-size: 1.5rem;
   }
 
   .time-header {
-    grid-template-columns: 70px repeat(4, 1fr);
-    font-size: 0.65rem;
+    grid-template-columns: 60px repeat(4, 1fr);
+    font-size: 0.6rem;
+    gap: 0.35rem;
   }
 
   .time-row {
-    grid-template-columns: 70px repeat(4, 1fr);
+    grid-template-columns: 60px repeat(4, 1fr);
+    gap: 0.35rem;
   }
 
   .day-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .time-cell {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.65rem;
   }
 
   .caption-cell {
-    max-width: 150px;
+    max-width: 100px;
+  }
+
+  .data-table {
+    font-size: 0.75rem;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody tr {
+    display: block;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+  }
+
+  .data-table td {
+    padding: 0.4rem 0;
+    padding-left: 30%;
+    position: relative;
+    display: block;
   }
 
   .data-table th,
   .data-table td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .analytics-chart .card-header,
@@ -527,50 +586,108 @@
   .analytics-report .card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .table-controls {
     width: 100%;
+    flex-direction: column;
+    gap: 0.35rem;
   }
 
   .sort-select,
   .sort-button {
-    flex: 1;
+    width: 100%;
+  }
+
+  .badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.65rem;
   }
 }
 
-@media (max-width: 480px) {
-  .analytics-breakdown .card-header {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 640px) {
+  .grid-4,
+  .grid-2 {
+    grid-template-columns: 1fr;
     gap: 0.5rem;
   }
 
-  .time-header {
-    grid-template-columns: 60px repeat(4, 1fr);
-    gap: 0.25rem;
+  .metric-card {
+    padding: 0.75rem;
   }
 
+  .metric-header {
+    flex-direction: column;
+  }
+
+  .num-lg {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .time-header,
   .time-row {
-    grid-template-columns: 60px repeat(4, 1fr);
+    grid-template-columns: 50px repeat(4, 1fr);
     gap: 0.25rem;
+    font-size: 0.55rem;
   }
 
-  .time-slot-header {
-    font-size: 0.6rem;
-  }
-
-  .time-cell {
-    padding: 0.5rem 0.25rem;
+  .day-label {
     font-size: 0.65rem;
   }
 
+  .time-slot-header {
+    font-size: 0.55rem;
+  }
+
+  .time-cell {
+    padding: 0.35rem 0.15rem;
+    font-size: 0.6rem;
+  }
+
+  .caption-cell {
+    max-width: 80px;
+  }
+
+  .data-table td {
+    padding: 0.35rem 0;
+    padding-left: 25%;
+    font-size: 0.65rem;
+  }
+
+  .analytics-chart .card-header h2,
+  .analytics-table .card-header h2,
+  .analytics-breakdown .card-header h2,
+  .analytics-report .card-header h2 {
+    font-size: 1rem;
+  }
+
+  .analytics-chart .card-header,
+  .analytics-table .card-header,
+  .analytics-breakdown .card-header,
+  .analytics-report .card-header {
+    gap: 0.5rem;
+  }
+
   .report-sections {
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .report-section {
-    padding: 1rem;
+    padding: 0.75rem;
+  }
+
+  .report-section h3 {
+    font-size: 0.95rem;
+  }
+
+  .report-section li {
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6rem;
   }
 }

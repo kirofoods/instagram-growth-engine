@@ -1066,6 +1066,10 @@ textarea {
   .grid-4 {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -1081,6 +1085,8 @@ textarea {
   .page-header {
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   h1 {
@@ -1095,16 +1101,23 @@ textarea {
     font-size: 2rem;
   }
 
-  .grid-2 {
+  .grid-1 {
     grid-template-columns: 1fr;
   }
 
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .grid-3 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   body {
@@ -1115,8 +1128,73 @@ textarea {
     padding: 1.25rem;
   }
 
+  .card-sm {
+    padding: 0.75rem;
+  }
+
+  .metric-card {
+    padding: 1.25rem;
+  }
+
   .tab {
     padding: 0.875rem 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  .tab-group {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .data-table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+  }
+
+  .data-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+  }
+
+  .data-table td {
+    padding: 0.5rem 0;
+    padding-left: 30%;
+    position: relative;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .section-title {
+    font-size: 1rem;
+    padding-left: 0.5rem;
+  }
+
+  .section-title::before {
+    width: 2px;
+    height: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
   }
 }
 
@@ -1131,14 +1209,17 @@ textarea {
 
   .grid-2 {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .grid-3 {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .grid-4 {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .tab-group {
@@ -1148,11 +1229,19 @@ textarea {
 
   .tab {
     padding: 0.75rem 1rem;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     white-space: nowrap;
   }
 
   .card {
+    padding: 1rem;
+  }
+
+  .card-sm {
+    padding: 0.75rem;
+  }
+
+  .metric-card {
     padding: 1rem;
   }
 
@@ -1166,6 +1255,93 @@ textarea {
 
   h2 {
     font-size: 1.125rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    padding: 0.35rem 0.625rem;
+    font-size: 0.7rem;
+  }
+
+  .data-table td {
+    padding: 0.4rem 0;
+    padding-left: 25%;
+  }
+
+  .data-table tr {
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .card-sm {
+    padding: 0.5rem;
+  }
+
+  .metric-card {
+    padding: 0.75rem;
+  }
+
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.125rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    padding-left: 0.375rem;
+  }
+
+  .page-header {
+    gap: 0.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.125rem;
+  }
+
+  .tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .badge {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .data-table {
+    font-size: 0.75rem;
   }
 }
 

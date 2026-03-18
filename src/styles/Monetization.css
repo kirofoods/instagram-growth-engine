@@ -87,18 +87,80 @@
 @media (max-width: 1024px) {
   .kanban-board {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .rate-item {
+    padding: 0.75rem;
   }
 }
 
 @media (max-width: 768px) {
   .kanban-board {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .kanban-column {
+    width: 100%;
+  }
+
+  .kanban-column h3 {
+    padding: 0.65rem;
+    font-size: 0.95rem;
   }
 
   .kanban-cards {
     min-height: auto;
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
+    gap: 0.5rem;
+  }
+
+  .deal-card {
+    padding: 0.75rem;
+  }
+
+  .rate-item {
+    padding: 0.65rem;
+  }
+
+  .progress-bar {
+    height: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .kanban-board {
+    gap: 0.75rem;
+  }
+
+  .kanban-column h3 {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .kanban-cards {
+    gap: 0.35rem;
+    max-height: 300px;
+  }
+
+  .deal-card {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .rate-item {
+    padding: 0.5rem;
+  }
+
+  .progress-bar {
+    height: 0.65rem;
+  }
+
+  .progress-fill {
+    border-radius: 9999px;
   }
 }
 
