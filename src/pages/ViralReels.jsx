@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useInsights } from '../services/useInsights';
 import ApifyService from '../services/apifyService';
+import AIProviderSelector from '../components/AIProviderSelector';
 import '../styles/ViralReels.css';
 
 const ViralReels = () => {
@@ -556,6 +557,7 @@ const ViralReels = () => {
         <div className="reels-section">
           <h2>Viral Hook Templates (20+)</h2>
           <p className="section-subtitle">Copy any hook and customize for your content. Organized by pattern type.</p>
+          <AIProviderSelector />
 
           {hookTemplates.map((category) => (
             <div key={category.category} className="hooks-category">

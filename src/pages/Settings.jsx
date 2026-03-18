@@ -20,11 +20,13 @@ import {
   CloudOff,
   RefreshCw,
   Loader,
+  Sparkles,
 } from 'lucide-react';
 import { useAppData } from '../firebase/useAppData';
 import { useTheme } from '../utils/ThemeContext';
 import { syncInstagramProfile } from '../services/profileSync';
 import { autoSyncProfile } from '../services/autoSync';
+import AIProviderSelector from '../components/AIProviderSelector';
 import '../styles/Settings.css';
 
 const defaultSettings = {
@@ -62,12 +64,16 @@ export default function Settings() {
     }
   }, [settings]);
 
-  // Load Apify token from localStorage on mount
+  // Load API keys from localStorage on mount
   useEffect(() => {
-    const apifyToken = localStorage.getItem('kirogram-apify-token');
-    if (apifyToken) {
-      setApiKeys(prev => ({ ...prev, apifyToken }));
-    }
+    setApiKeys(prev => ({
+      ...prev,
+      claudeApiKey: localStorage.getItem('kirogram-claude-key') || '',
+      chatgptApiKey: localStorage.getItem('kirogram-chatgpt-key') || '',
+      geminiApiKey: localStorage.getItem('kirogram-gemini-key') || '',
+      instagramAccessToken: localStorage.getItem('kirogram-instagram-token') || '',
+      apifyToken: localStorage.getItem('kirogram-apify-token') || '',
+    }));
   }, []);
 
   const [firebaseConfig] = useState({
@@ -82,12 +88,16 @@ export default function Settings() {
 
   const [apiKeys, setApiKeys] = useState({
     claudeApiKey: '',
+    chatgptApiKey: '',
+    geminiApiKey: '',
     instagramAccessToken: '',
     apifyToken: '',
   });
 
   const [showApiKeys, setShowApiKeys] = useState({
     claudeApiKey: false,
+    chatgptApiKey: false,
+    geminiApiKey: false,
     instagramAccessToken: false,
     apifyToken: false,
   });
@@ -99,11 +109,11 @@ export default function Settings() {
     setProfile({ ...profile, [field]: value });
   };
 
-  const handleApiKeyUpdate = (field, value) => {
+  const handleApiKeyUpdate = (field, value, storageKey) => {
     setApiKeys({ ...apiKeys, [field]: value });
-    // Auto-save Apify token to localStorage immediately on change
-    if (field === 'apifyToken' && value) {
-      localStorage.setItem('kirogram-apify-token', value);
+    // Auto-save to localStorage immediately on change
+    if (storageKey && value) {
+      localStorage.setItem(storageKey, value);
     }
   };
 
@@ -186,7 +196,19 @@ export default function Settings() {
   };
 
   const saveApiKeysHandler = () => {
-    // Save Apify token to localStorage
+    // Save all API keys to localStorage
+    if (apiKeys.claudeApiKey) {
+      localStorage.setItem('kirogram-claude-key', apiKeys.claudeApiKey);
+    }
+    if (apiKeys.chatgptApiKey) {
+      localStorage.setItem('kirogram-chatgpt-key', apiKeys.chatgptApiKey);
+    }
+    if (apiKeys.geminiApiKey) {
+      localStorage.setItem('kirogram-gemini-key', apiKeys.geminiApiKey);
+    }
+    if (apiKeys.instagramAccessToken) {
+      localStorage.setItem('kirogram-instagram-token', apiKeys.instagramAccessToken);
+    }
     if (apiKeys.apifyToken) {
       localStorage.setItem('kirogram-apify-token', apiKeys.apifyToken);
     }
@@ -374,6 +396,18 @@ export default function Settings() {
         </div>
       </section>
 
+      {/* AI Provider */}
+      <section className="card section">
+        <div className="section-header">
+          <Sparkles size={24} style={{ color: 'var(--color-primary)' }} />
+          <h2 className="section-title">AI Provider</h2>
+        </div>
+        <p className="text-sm text-secondary" style={{ marginBottom: '1rem' }}>
+          Choose which AI model powers content generation across KiroGram
+        </p>
+        <AIProviderSelector />
+      </section>
+
       {/* API Keys */}
       <section className="card section">
         <div className="section-header">
@@ -391,9 +425,11 @@ export default function Settings() {
 
         <div className="settings-form">
           {[
-            { key: 'claudeApiKey', label: 'Claude API Key', hint: 'Get from https://console.anthropic.com' },
-            { key: 'instagramAccessToken', label: 'Instagram Access Token', hint: 'Generate from Facebook Developer Console' },
-            { key: 'apifyToken', label: 'Apify API Token', hint: 'Get from https://console.apify.com/account/integrations' },
+            { key: 'claudeApiKey', label: 'Claude API Key (Anthropic)', hint: 'Get from console.anthropic.com', storageKey: 'kirogram-claude-key' },
+            { key: 'chatgptApiKey', label: 'ChatGPT API Key (OpenAI)', hint: 'Get from platform.openai.com/api-keys', storageKey: 'kirogram-chatgpt-key' },
+            { key: 'geminiApiKey', label: 'Gemini API Key (Google)', hint: 'Get from aistudio.google.com/apikey', storageKey: 'kirogram-gemini-key' },
+            { key: 'instagramAccessToken', label: 'Instagram Access Token', hint: 'From Meta Graph API Explorer', storageKey: 'kirogram-instagram-token' },
+            { key: 'apifyToken', label: 'Apify API Token', hint: 'Get from console.apify.com/account/integrations', storageKey: 'kirogram-apify-token' },
           ].map((field) => (
             <div key={field.key}>
               <div className="flex-between items-center mb-2">
@@ -409,7 +445,7 @@ export default function Settings() {
                 <input
                   type={showApiKeys[field.key] ? 'text' : 'password'}
                   value={apiKeys[field.key]}
-                  onChange={(e) => handleApiKeyUpdate(field.key, e.target.value)}
+                  onChange={(e) => handleApiKeyUpdate(field.key, e.target.value, field.storageKey)}
                   className="form-input"
                 />
                 <button

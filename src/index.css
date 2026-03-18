@@ -1501,3 +1501,79 @@ textarea {
   box-shadow: var(--glow-primary);
   border-color: var(--color-primary);
 }
+
+/* ============================================
+   AI PROVIDER SELECTOR
+   ============================================ */
+.ai-provider-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ai-provider-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ai-provider-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ai-provider-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  user-select: none;
+}
+
+.ai-provider-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.ai-provider-btn.active {
+  background: linear-gradient(135deg, #fa7e1e, #d92e7f);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+.ai-provider-btn.no-key {
+  opacity: 0.5;
+}
+
+.ai-provider-btn.no-key:hover {
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.ai-provider-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: var(--status-error);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}

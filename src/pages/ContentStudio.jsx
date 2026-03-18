@@ -10,6 +10,8 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { useInsights } from '../services/useInsights';
+import AIProviderSelector from '../components/AIProviderSelector';
+import { generateContent } from '../services/aiProvider';
 import '../styles/ContentStudio.css';
 
 const tones = ['Witty', 'Professional', 'Casual', 'Inspirational', 'Educational'];
@@ -145,21 +147,19 @@ const ContentStudio = () => {
 
   const [savedItems, setSavedItems] = useState([]);
 
-  const handleGenerateCaptions = () => {
+  const handleGenerateCaptions = async () => {
     setLoading(true);
-    setTimeout(() => {
-      // Use insights engine for profile-based suggestions when available
-      const userTopic = contentInsights?.captionTip || captionTopic;
-      const hashtagSuggestion = contentInsights?.hashtagTip ? `${contentInsights.hashtagTip.split(' ')[0]} ` : '#growth ';
+    try {
+      const lengthMap = { short: '100 characters', medium: '200-250 characters', long: '500+ characters' };
+      const prompt = `Generate 3 Instagram captions about "${captionTopic}" in a ${captionTone} tone. Each caption should be ${lengthMap[captionLength]}, include a hook, body, and ${includeCTA ? 'a strong CTA' : 'no CTA'}. Format as numbered list (1. 2. 3.)`;
 
-      const newCaptions = [
-        `${captionTone} caption about ${userTopic} - Hook them in the first line. Then tell the story. End with a question to boost engagement. ${includeCTA ? `Swipe up! ${hashtagSuggestion}` : hashtagSuggestion}`,
-        `Another ${captionTone} take on ${userTopic}. This version focuses on the emotional angle and builds curiosity throughout. Perfect for ${captionLength} form content. ${includeCTA ? `Link in bio! ${hashtagSuggestion}` : hashtagSuggestion}`,
-        `Third variation: Lead with the benefit, not the feature. Talk about ${userTopic} in a way that makes people stop scrolling. ${captionLength === 'short' ? 'Keep it tight.' : 'Give them details.'} ${includeCTA ? `Comment "READY"! ${hashtagSuggestion}` : hashtagSuggestion}`,
-      ];
-      setGeneratedCaptions(newCaptions);
+      const result = await generateContent(prompt);
+      setGeneratedCaptions(result.split('\n').filter(line => line.trim()));
+    } catch (err) {
+      setGeneratedCaptions([`Error: ${err.message}`]);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleGenerateHashtags = () => {
@@ -289,6 +289,7 @@ const ContentStudio = () => {
             <div className="card-header">
               <h2>Generate Captions</h2>
             </div>
+            <AIProviderSelector />
             <div className="flex-col">
               <div>
                 <label className="input-label">Topic / Subject</label>
