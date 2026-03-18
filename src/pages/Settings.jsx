@@ -18,9 +18,12 @@ import {
   Info,
   Cloud,
   CloudOff,
+  RefreshCw,
+  Loader,
 } from 'lucide-react';
 import { useAppData } from '../firebase/useAppData';
 import { useTheme } from '../utils/ThemeContext';
+import { syncInstagramProfile } from '../services/profileSync';
 import '../styles/Settings.css';
 
 const defaultSettings = {
@@ -46,6 +49,9 @@ export default function Settings() {
 
   const [profile, setProfile] = useState(defaultSettings.profile);
   const [notifications, setNotifications] = useState(defaultSettings.notifications);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState('');
+  const [syncSuccess, setSyncSuccess] = useState('');
 
   // Sync from Firestore when data arrives
   useEffect(() => {
@@ -113,6 +119,47 @@ export default function Settings() {
     saveSettings({ profile });
     setSavedMessage('Profile saved and synced across devices!');
     setTimeout(() => setSavedMessage(''), 3000);
+  };
+
+  const handleSyncProfile = async () => {
+    if (!profile.handle) {
+      setSyncError('Please enter your Instagram handle first');
+      return;
+    }
+
+    const apifyToken = localStorage.getItem('kirogram-apify-token');
+    if (!apifyToken) {
+      setSyncError('Please add your Apify API token in the API Keys section first');
+      return;
+    }
+
+    setSyncing(true);
+    setSyncError('');
+    setSyncSuccess('');
+
+    try {
+      const syncedData = await syncInstagramProfile(
+        profile.handle.replace('@', ''),
+        apifyToken
+      );
+
+      // Update local state
+      setProfile(prev => ({
+        ...prev,
+        ...syncedData,
+      }));
+
+      // Save to Firestore
+      await saveSettings({ profile: { ...profile, ...syncedData } });
+
+      setSyncSuccess(`Profile synced! ${syncedData.followers.toLocaleString()} followers found.`);
+      setTimeout(() => setSyncSuccess(''), 4000);
+    } catch (err) {
+      setSyncError(err.message || 'Failed to sync profile. Check your API token and try again.');
+      setTimeout(() => setSyncError(''), 4000);
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const saveApiKeysHandler = () => {
@@ -216,11 +263,46 @@ export default function Settings() {
           ))}
         </div>
 
-        <button className="btn btn-primary" onClick={saveProfile}>
-          <Save size={18} />
-          Save Profile
-          {synced && <Cloud size={14} style={{ marginLeft: '0.5rem', opacity: 0.7 }} />}
-        </button>
+        <div className="flex gap-sm" style={{ marginTop: '1rem' }}>
+          <button className="btn btn-primary" onClick={saveProfile}>
+            <Save size={18} />
+            Save Profile
+            {synced && <Cloud size={14} style={{ marginLeft: '0.5rem', opacity: 0.7 }} />}
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={handleSyncProfile}
+            disabled={syncing || !profile.handle}
+          >
+            {syncing ? (
+              <>
+                <Loader size={18} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+                Syncing...
+              </>
+            ) : (
+              <>
+                <RefreshCw size={18} />
+                Sync from Instagram
+              </>
+            )}
+          </button>
+        </div>
+
+        {syncError && (
+          <div className="alert alert-danger" style={{ marginTop: '0.75rem' }}>
+            <AlertCircle size={16} /> {syncError}
+          </div>
+        )}
+        {syncSuccess && (
+          <div className="alert alert-success" style={{ marginTop: '0.75rem' }}>
+            <CheckCircle size={16} /> {syncSuccess}
+          </div>
+        )}
+        {profile.lastSynced && (
+          <div className="text-xs text-secondary" style={{ marginTop: '0.5rem' }}>
+            Last synced: {new Date(profile.lastSynced).toLocaleString()}
+          </div>
+        )}
       </section>
 
       {/* Firebase Configuration */}

@@ -160,36 +160,13 @@ export default function Dashboard() {
 
         {/* Empty State - Show when no data exists */}
         {!hasProfileData && !isLoading && (
-          <div className="dashboard-onboarding">
-            <div className="onboarding-hero">
-              <div className="onboarding-icon">🚀</div>
-              <h2>Welcome to KiroGram</h2>
-              <p>Your AI-powered Instagram growth engine. Connect your profile to unlock all features.</p>
-              <Link to="/settings" className="btn-primary btn-lg">Connect Instagram Profile</Link>
-            </div>
-
-            <div className="onboarding-features">
-              <div className="feature-card">
-                <span className="feature-icon">📊</span>
-                <h4>Real-time Analytics</h4>
-                <p>Track followers, engagement, and growth velocity</p>
-              </div>
-              <div className="feature-card">
-                <span className="feature-icon">🎯</span>
-                <h4>0 → 1M Roadmap</h4>
-                <p>Phase-based growth strategy with milestones</p>
-              </div>
-              <div className="feature-card">
-                <span className="feature-icon">🔥</span>
-                <h4>Viral Content Lab</h4>
-                <p>AI-powered hooks, captions, and hashtags</p>
-              </div>
-              <div className="feature-card">
-                <span className="feature-icon">📈</span>
-                <h4>Smart Scheduling</h4>
-                <p>Optimal posting times and content calendar</p>
-              </div>
-            </div>
+          <div className="dashboard-empty-state">
+            <div className="dashboard-empty-state-icon">📊</div>
+            <h3>No data yet</h3>
+            <p>Connect your Instagram profile in Settings to see your real metrics here</p>
+            <Link to="/settings" className="btn-primary">
+              Connect Profile
+            </Link>
           </div>
         )}
 
@@ -300,17 +277,17 @@ export default function Dashboard() {
                           <stop offset="95%" stopColor="#d92e7f" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-secondary)" />
-                      <XAxis dataKey="date" stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="var(--text-tertiary)" style={{ fontSize: '12px' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2a2a4e" />
+                      <XAxis dataKey="date" stroke="#666" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="#666" style={{ fontSize: '12px' }} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'var(--bg-card)',
-                          border: '1px solid var(--border-secondary)',
+                          backgroundColor: '#1a1a2e',
+                          border: '1px solid #2a2a4e',
                           borderRadius: '8px',
-                          color: 'var(--text-primary)',
+                          color: '#fff',
                         }}
-                        cursor={{ stroke: 'var(--color-primary-start)', strokeWidth: 1 }}
+                        cursor={{ stroke: '#fa7e1e', strokeWidth: 1 }}
                       />
                       <Area
                         type="monotone"
@@ -482,7 +459,7 @@ export default function Dashboard() {
                 </h2>
                 <div className="dashboard-insight-card">
                   <div className="dashboard-insight-header">
-                    <Lightbulb size={20} style={{ color: 'var(--color-primary-start)', flexShrink: 0 }} />
+                    <Lightbulb size={20} style={{ color: '#fa7e1e', flexShrink: 0 }} />
                     <span className="dashboard-insight-header-title">Tip for Today</span>
                     <button
                       onClick={handleNextInsight}
@@ -514,7 +491,7 @@ export default function Dashboard() {
         {isLoading && !hasProfileData && (
           <div style={{ textAlign: 'center', padding: '48px 24px' }}>
             <Loader size={40} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
-            <p style={{ marginTop: '16px', color: 'var(--text-tertiary)' }}>Loading your data...</p>
+            <p style={{ marginTop: '16px', color: '#888' }}>Loading your data...</p>
           </div>
         )}
 

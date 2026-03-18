@@ -30,9 +30,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useDocument } from '../firebase/useFirestore';
 import '../styles/DailyActions.css';
 
 export default function DailyActions() {
+  const { data: profileData } = useDocument('appData', 'settings');
+
   const [tasks, setTasks] = useState({
     content: [
       {
@@ -193,35 +196,43 @@ export default function DailyActions() {
     },
   ]);
 
-  const [milestones] = useState([
-    {
-      id: 1,
-      milestone: '10,000 Followers',
-      progress: 8500,
-      target: 10000,
-      reward: 'Verified Badge Unlock',
-      icon: Trophy,
-      status: 'in-progress',
-    },
-    {
-      id: 2,
-      milestone: '500k Total Reach',
-      progress: 245000,
-      target: 500000,
-      reward: '1000 XP Bonus',
-      icon: TrendingUp,
-      status: 'in-progress',
-    },
-    {
-      id: 3,
-      milestone: '100 Posts',
-      progress: 87,
-      target: 100,
-      reward: 'Content Creator Badge',
-      icon: Camera,
-      status: 'in-progress',
-    },
-  ]);
+  const getMilestones = () => {
+    // Use Firestore followers if available, otherwise use mock data
+    const currentFollowers = profileData?.profile?.followers || 8500;
+    const currentPosts = profileData?.profile?.postsCount || 87;
+
+    return [
+      {
+        id: 1,
+        milestone: '10,000 Followers',
+        progress: currentFollowers,
+        target: 10000,
+        reward: 'Verified Badge Unlock',
+        icon: Trophy,
+        status: 'in-progress',
+      },
+      {
+        id: 2,
+        milestone: '500k Total Reach',
+        progress: 245000,
+        target: 500000,
+        reward: '1000 XP Bonus',
+        icon: TrendingUp,
+        status: 'in-progress',
+      },
+      {
+        id: 3,
+        milestone: '100 Posts',
+        progress: currentPosts,
+        target: 100,
+        reward: 'Content Creator Badge',
+        icon: Camera,
+        status: 'in-progress',
+      },
+    ];
+  };
+
+  const [milestones] = useState(getMilestones());
 
   const [unlockedMilestones] = useState([
     {

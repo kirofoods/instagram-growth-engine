@@ -23,43 +23,83 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useDocument } from '../firebase/useFirestore';
 import '../styles/Analytics.css';
 
 const Analytics = () => {
   const [sortBy, setSortBy] = useState('reach');
   const [sortOrder, setSortOrder] = useState('desc');
+  const { data: profileData } = useDocument('appData', 'settings');
 
-  // Overview metrics
-  const metrics = [
-    {
-      label: 'Total Reach',
-      value: 125400,
-      trend: 12.5,
-      icon: Eye,
-      color: 'var(--color-primary)',
-    },
-    {
-      label: 'Impressions',
-      value: 342800,
-      trend: 8.3,
-      icon: Activity,
-      color: 'var(--color-secondary)',
-    },
-    {
-      label: 'Profile Visits',
-      value: 8942,
-      trend: -2.1,
-      icon: Target,
-      color: 'var(--color-primary-start)',
-    },
-    {
-      label: 'Website Clicks',
-      value: 412,
-      trend: 18.7,
-      icon: Share2,
-      color: 'var(--status-warning)',
-    },
-  ];
+  // Overview metrics - Use Firestore data if available
+  const getMetrics = () => {
+    if (profileData?.profile) {
+      return [
+        {
+          label: 'Total Followers',
+          value: profileData.profile.followers || 0,
+          trend: 12.5,
+          icon: Eye,
+          color: 'var(--color-primary)',
+        },
+        {
+          label: 'Engagement Rate',
+          value: profileData.profile.engagementRate || 0,
+          trend: 8.3,
+          icon: Activity,
+          color: 'var(--color-secondary)',
+          isSuffix: '%',
+        },
+        {
+          label: 'Posts Count',
+          value: profileData.profile.postsCount || 0,
+          trend: -2.1,
+          icon: Target,
+          color: 'var(--color-primary-start)',
+        },
+        {
+          label: 'Following',
+          value: profileData.profile.following || 0,
+          trend: 18.7,
+          icon: Share2,
+          color: 'var(--status-warning)',
+        },
+      ];
+    }
+    // Fallback to mock data
+    return [
+      {
+        label: 'Total Reach',
+        value: 125400,
+        trend: 12.5,
+        icon: Eye,
+        color: 'var(--color-primary)',
+      },
+      {
+        label: 'Impressions',
+        value: 342800,
+        trend: 8.3,
+        icon: Activity,
+        color: 'var(--color-secondary)',
+      },
+      {
+        label: 'Profile Visits',
+        value: 8942,
+        trend: -2.1,
+        icon: Target,
+        color: 'var(--color-primary-start)',
+      },
+      {
+        label: 'Website Clicks',
+        value: 412,
+        trend: 18.7,
+        icon: Share2,
+        color: 'var(--status-warning)',
+      },
+    ];
+  };
+
+  const metrics = getMetrics();
 
   // Post performance data
   const posts = [
@@ -228,7 +268,10 @@ const Analytics = () => {
                   {Math.abs(metric.trend).toFixed(1)}%
                 </div>
               </div>
-              <div className="num-lg">{metric.value.toLocaleString()}</div>
+              <div className="num-lg">
+                {metric.value.toLocaleString()}
+                {metric.isSuffix && metric.isSuffix}
+              </div>
               <div className="text-muted">{metric.label}</div>
             </div>
           );

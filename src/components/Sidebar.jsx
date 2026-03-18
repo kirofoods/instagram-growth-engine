@@ -23,7 +23,6 @@ import {
   ChevronRight,
   MoreVertical,
   X,
-  Radar,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -52,7 +51,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     {
       title: 'Grow',
       items: [
-        { path: '/trend-scanner', label: 'Trend Scanner', icon: Radar },
         { path: '/seo-suite', label: 'SEO Suite', icon: Search },
         { path: '/hashtags', label: 'Hashtags', icon: Hash },
         { path: '/analytics', label: 'Analytics', icon: PieChart },

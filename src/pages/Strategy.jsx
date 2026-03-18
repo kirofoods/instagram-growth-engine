@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Target,
   TrendingUp,
@@ -17,9 +17,12 @@ import {
   Search,
   Edit2,
 } from 'lucide-react';
+import { useDocument } from '../firebase/useFirestore';
 import '../styles/Strategy.css';
 
 export default function Strategy() {
+  const { data: profileData } = useDocument('appData', 'settings');
+
   const [auditInputs, setAuditInputs] = useState({
     username: '@fashionista_sarah',
     bio: 'Fashion, Travel & Lifestyle | DM for collabs',
@@ -27,6 +30,19 @@ export default function Strategy() {
     posts: 287,
     avgEngagement: 4.2,
   });
+
+  // Update form with Firestore profile data when available
+  useEffect(() => {
+    if (profileData?.profile) {
+      setAuditInputs({
+        username: '@' + (profileData.profile.handle || 'fashionista_sarah'),
+        bio: profileData.profile.bio || 'Fashion, Travel & Lifestyle | DM for collabs',
+        followers: profileData.profile.followers || 152000,
+        posts: profileData.profile.postsCount || 287,
+        avgEngagement: profileData.profile.engagementRate || 4.2,
+      });
+    }
+  }, [profileData]);
 
   const [competitors, setCompetitors] = useState([
     { name: 'competitor1', followers: 180000, engagementRate: 3.8, postingFreq: 5, contentMix: 'Mixed', growthRate: 2.1 },
