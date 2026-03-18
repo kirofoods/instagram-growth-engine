@@ -171,23 +171,91 @@ export default function ViralLab() {
   const handleAnalyzePost = () => {
     if (!postContent.trim()) return;
 
-    const mockAnalysis = {
-      hookScore: Math.floor(Math.random() * 30 + 70),
-      emotionalTrigger: ['Curiosity', 'Inspiration', 'FOMO'][Math.floor(Math.random() * 3)],
-      ctaStrength: Math.floor(Math.random() * 30 + 60),
-      formatBonus: Math.floor(Math.random() * 20 + 70),
-      timingScore: Math.floor(Math.random() * 25 + 75),
+    const content = postContent.toLowerCase();
+
+    // Analyze hook: question, statistic, or bold claim at start
+    let hookScore = 50;
+    if (content.match(/^\s*[?!]/)) {
+      hookScore = 85; // Starts with question or exclamation
+    } else if (content.match(/^\s*(\d+%?|\d+[km])/i)) {
+      hookScore = 80; // Starts with statistic
+    } else if (content.match(/^\s*(this|that|you|never|never say)/i)) {
+      hookScore = 75; // Bold claim
+    }
+
+    // CTA presence: ends with call-to-action phrase
+    let ctaStrength = 40;
+    if (content.match(/(link in bio|comment|dm me|swipe up|tag someone|save this|share|follow|subscribe)/i)) {
+      ctaStrength = 85;
+    }
+
+    // Hashtag count: 5-30 is optimal
+    const hashtagCount = (content.match(/#/g) || []).length;
+    let hashtagScore = 50;
+    if (hashtagCount >= 5 && hashtagCount <= 30) {
+      hashtagScore = 85;
+    } else if (hashtagCount > 0) {
+      hashtagScore = 70;
+    }
+
+    // Caption length: 125-200 chars is optimal
+    const captionLength = content.length;
+    let lengthScore = 60;
+    if (captionLength >= 125 && captionLength <= 200) {
+      lengthScore = 85;
+    } else if (captionLength >= 80 && captionLength <= 250) {
+      lengthScore = 75;
+    }
+
+    // Emoji usage: has emojis = better engagement
+    let emojiScore = 50;
+    const emojiPattern = /[\u{1F300}-\u{1F9FF}]/gu;
+    const emojiCount = (content.match(emojiPattern) || []).length;
+    if (emojiCount > 0) {
+      emojiScore = 80;
+    }
+
+    // Emotional trigger detection
+    const emotionalTriggers = {
+      'Curiosity': /(but wait|here's the thing|what if|secret|hidden|revealed)/i,
+      'Inspiration': /(dream|believe|possible|unstoppable|you can|never give up)/i,
+      'FOMO': /(before|limited|only|exclusive|everyone|trending)/i,
+    };
+
+    let emotionalTrigger = 'Curiosity';
+    for (const [trigger, pattern] of Object.entries(emotionalTriggers)) {
+      if (pattern.test(content)) {
+        emotionalTrigger = trigger;
+        break;
+      }
+    }
+
+    // Format bonus based on structure
+    let formatBonus = 60;
+    if (content.includes('\n')) {
+      formatBonus = 80; // Line breaks improve readability
+    }
+
+    // Timing score (consistent - not random)
+    const timingScore = 78;
+
+    const analysis = {
+      hookScore: Math.min(Math.max(hookScore, 30), 100),
+      emotionalTrigger,
+      ctaStrength: Math.min(Math.max(ctaStrength, 30), 100),
+      formatBonus: Math.min(Math.max(formatBonus, 30), 100),
+      timingScore,
       overallScore: 0,
     };
 
-    mockAnalysis.overallScore =
-      (mockAnalysis.hookScore +
-        mockAnalysis.ctaStrength +
-        mockAnalysis.formatBonus +
-        mockAnalysis.timingScore) /
+    analysis.overallScore =
+      (analysis.hookScore +
+        analysis.ctaStrength +
+        analysis.formatBonus +
+        analysis.timingScore) /
       4;
 
-    setAnalysisResult(mockAnalysis);
+    setAnalysisResult(analysis);
   };
 
   const filteredSounds = trendingSounds.filter(

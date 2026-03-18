@@ -148,10 +148,14 @@ const ContentStudio = () => {
   const handleGenerateCaptions = () => {
     setLoading(true);
     setTimeout(() => {
+      // Use insights engine for profile-based suggestions when available
+      const userTopic = contentInsights?.captionTip || captionTopic;
+      const hashtagSuggestion = contentInsights?.hashtagTip ? `${contentInsights.hashtagTip.split(' ')[0]} ` : '#growth ';
+
       const newCaptions = [
-        `${captionTone} caption about ${captionTopic} - Hook them in the first line. Then tell the story. End with a question to boost engagement. ${includeCTA ? 'Swipe up to learn more!' : ''}`,
-        `Another ${captionTone} take on ${captionTopic}. This version focuses on the emotional angle and builds curiosity throughout. Perfect for ${captionLength} form content. ${includeCTA ? 'Link in bio!' : ''}`,
-        `Third variation: Lead with the benefit, not the feature. Talk about ${captionTopic} in a way that makes people stop scrolling. ${captionLength === 'short' ? 'Keep it tight.' : 'Give them details.'} ${includeCTA ? 'Comment "READY" below!' : ''}`,
+        `${captionTone} caption about ${userTopic} - Hook them in the first line. Then tell the story. End with a question to boost engagement. ${includeCTA ? `Swipe up! ${hashtagSuggestion}` : hashtagSuggestion}`,
+        `Another ${captionTone} take on ${userTopic}. This version focuses on the emotional angle and builds curiosity throughout. Perfect for ${captionLength} form content. ${includeCTA ? `Link in bio! ${hashtagSuggestion}` : hashtagSuggestion}`,
+        `Third variation: Lead with the benefit, not the feature. Talk about ${userTopic} in a way that makes people stop scrolling. ${captionLength === 'short' ? 'Keep it tight.' : 'Give them details.'} ${includeCTA ? `Comment "READY"! ${hashtagSuggestion}` : hashtagSuggestion}`,
       ];
       setGeneratedCaptions(newCaptions);
       setLoading(false);

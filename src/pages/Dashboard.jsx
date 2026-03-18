@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LineChart,
@@ -25,28 +25,19 @@ import {
   Lightbulb,
   Calendar,
   Loader,
-  RefreshCw,
 } from 'lucide-react';
+import { doc, updateDoc } from 'firebase/firestore';
 import { useDocument, useCollection } from '../firebase/useFirestore';
 import { useFirebase } from '../firebase/FirebaseContext';
-import { doc, setDoc } from 'firebase/firestore';
-import { autoSyncProfile } from '../services/autoSync';
-import { useInsights } from '../services/useInsights';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
   const [chartDays, setChartDays] = useState(30);
   const [insightIndex, setInsightIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState({});
-  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Firebase context
+  // Firestore context and hooks
   const { db } = useFirebase();
-
-  // Insights engine hook
-  const { engine: insightsEngine } = useInsights();
-
-  // Firestore data hooks
   const { data: profileData, loading: profileLoading } = useDocument('settings', 'profile');
   const { data: growthDataFirestore, loading: growthLoading } = useCollection('growthData');
   const { data: tasksData, loading: tasksLoading } = useCollection('tasks');
@@ -75,14 +66,12 @@ export default function Dashboard() {
     }));
   }, [growthDataFirestore, chartDays]);
 
-  // Calculate metrics from real data — use profileData as primary source, chartData as supplement
+  // Calculate metrics — use profileData as primary, chartData as supplement
   const metrics = useMemo(() => {
     const followers = Number(profileData?.followers) || 0;
     const engagementRate = Number(profileData?.engagementRate) || 0;
     const postsCount = Number(profileData?.postsCount) || 0;
-    const following = Number(profileData?.following) || 0;
 
-    // If we have chart data, calculate growth metrics from it
     let followerChange = 0;
     let growthVelocity = 0;
     if (chartData && chartData.length > 1) {
@@ -99,7 +88,6 @@ export default function Dashboard() {
       postsThisWeek: Number(profileData?.postsThisWeek) || 0,
       postsTarget: Number(profileData?.postsTarget) || 7,
       postsCount,
-      following,
       growthVelocity,
     };
   }, [chartData, profileData]);
@@ -129,25 +117,29 @@ export default function Dashboard() {
     });
   }, [tasksData]);
 
-  // Get insights - use engine-generated if no Firestore data
+  // Get insights
   const insights = useMemo(() => {
-    // Try Firestore first
-    if (insightsData && insightsData.tips) {
-      return Array.isArray(insightsData.tips) ? insightsData.tips : [];
+    if (!insightsData || !insightsData.tips) {
+      return [];
     }
-    // Fall back to engine-generated insights
-    if (insightsEngine && profileData && profileData.followers) {
-      return insightsEngine.getDashboardInsights();
-    }
-    return [];
-  }, [insightsData, insightsEngine, profileData]);
+    return Array.isArray(insightsData.tips) ? insightsData.tips : [];
+  }, [insightsData]);
 
   // Handle task completion
-  const toggleTask = (taskId) => {
+  const toggleTask = async (taskId) => {
+    const newCompleted = !completedTasks[taskId];
     setCompletedTasks((prev) => ({
       ...prev,
-      [taskId]: !prev[taskId],
+      [taskId]: newCompleted,
     }));
+    // Persist to Firestore
+    if (db) {
+      try {
+        await updateDoc(doc(db, 'tasks', taskId), { completed: newCompleted });
+      } catch (e) {
+        console.error('Failed to save task:', e);
+      }
+    }
   };
 
   const completedCount = Object.values(completedTasks).filter(Boolean).length;
@@ -163,58 +155,12 @@ export default function Dashboard() {
   const hasProfileData = profileData && profileData.followers !== undefined;
   const hasGrowthData = growthDataFirestore && growthDataFirestore.length > 0;
 
-  // Auto-sync on app open
-  useEffect(() => {
-    const runAutoSync = async () => {
-      const syncedData = await autoSyncProfile();
-      if (syncedData && db) {
-        try {
-          await setDoc(doc(db, 'settings', 'profile'), syncedData, { merge: true });
-          console.log('[Dashboard] Auto-synced and saved to Firestore');
-        } catch (err) {
-          console.error('[Dashboard] Failed to save auto-sync:', err);
-        }
-      }
-    };
-    runAutoSync();
-  }, [db]);
-
-  // Manual refresh handler
-  const handleManualSync = async () => {
-    setIsSyncing(true);
-    localStorage.removeItem('kirogram-last-sync'); // Bypass cooldown
-    const syncedData = await autoSyncProfile();
-    if (syncedData && db) {
-      try {
-        await setDoc(doc(db, 'settings', 'profile'), syncedData, { merge: true });
-      } catch (err) {
-        console.error('Sync failed:', err);
-      }
-    }
-    setIsSyncing(false);
-  };
-
   return (
     <div className="dashboard">
       <div className="dashboard-max-width">
         {/* Welcome Section */}
         <div className="dashboard-section">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h1 className="dashboard-heading">Welcome back! 👋</h1>
-            <button
-              onClick={handleManualSync}
-              disabled={isSyncing}
-              className="btn btn-ghost"
-              title="Refresh Instagram data"
-              style={{ padding: '8px' }}
-            >
-              <RefreshCw
-                size={20}
-                className={isSyncing ? 'spin' : ''}
-                style={isSyncing ? { animation: 'spin 1s linear infinite' } : {}}
-              />
-            </button>
-          </div>
+          <h1 className="dashboard-heading">Welcome back! 👋</h1>
           {hasProfileData && hasGrowthData ? (
             <p className="dashboard-subheading">
               Phase 1: 0 → 1K | Growth Velocity: +{metrics.growthVelocity} followers/day

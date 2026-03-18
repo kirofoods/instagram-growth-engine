@@ -23,8 +23,6 @@ import {
   ChevronRight,
   MoreVertical,
   X,
-  Swords,
-  Play,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -46,7 +44,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
       items: [
         { path: '/content-studio', label: 'Content Studio', icon: Pencil },
         { path: '/viral-lab', label: 'Viral Lab', icon: Zap },
-        { path: '/viral-reels', label: 'Viral Reels', icon: Play },
         { path: '/calendar', label: 'Calendar', icon: Calendar },
         { path: '/grid-planner', label: 'Grid Planner', icon: Grid3x3 },
       ],
@@ -57,7 +54,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         { path: '/seo-suite', label: 'SEO Suite', icon: Search },
         { path: '/hashtags', label: 'Hashtags', icon: Hash },
         { path: '/analytics', label: 'Analytics', icon: PieChart },
-        { path: '/competitor-analysis', label: 'Competitor Intel', icon: Swords },
         { path: '/strategy', label: 'Strategy', icon: Target },
       ],
     },

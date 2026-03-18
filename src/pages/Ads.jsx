@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppData, useAppCollection } from '../firebase/useAppData';
 import {
   TrendingUp,
@@ -27,7 +27,8 @@ export default function Ads() {
   const { data: profileData = {} } = useAppData('profile', {});
   const { items: savedCampaigns, addItem: addCampaign, updateItem: updateCampaign } = useAppCollection('adCampaigns');
 
-  const [campaigns, setCampaigns] = useState([
+  // Default campaigns as fallback examples
+  const defaultCampaigns = [
     {
       id: 1,
       name: 'Summer Collection Launch',
@@ -92,7 +93,16 @@ export default function Ads() {
       clicks: 198,
       conversions: 156,
     },
-  ]);
+  ];
+
+  const [campaigns, setCampaigns] = useState(defaultCampaigns);
+
+  // Load campaigns from Firestore, use defaults as fallback
+  useEffect(() => {
+    if (savedCampaigns && savedCampaigns.length > 0) {
+      setCampaigns(savedCampaigns);
+    }
+  }, [savedCampaigns]);
 
   const [abTestVariants] = useState([
     {
