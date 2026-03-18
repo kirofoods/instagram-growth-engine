@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAppData, useAppCollection } from '../firebase/useAppData';
 import {
   TrendingUp,
   Zap,
@@ -22,6 +23,10 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import '../styles/Ads.css';
 
 export default function Ads() {
+  // Load profile data and campaigns from Firestore
+  const { data: profileData = {} } = useAppData('profile', {});
+  const { items: savedCampaigns, addItem: addCampaign, updateItem: updateCampaign } = useAppCollection('adCampaigns');
+
   const [campaigns, setCampaigns] = useState([
     {
       id: 1,
@@ -114,12 +119,51 @@ export default function Ads() {
 
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [newCampaignName, setNewCampaignName] = useState('');
+  const [newCampaignObjective, setNewCampaignObjective] = useState('Conversions');
+  const [newCampaignBudget, setNewCampaignBudget] = useState('');
+  const [newCampaignAudience, setNewCampaignAudience] = useState('');
   const [budgetAllocations, setBudgetAllocations] = useState({
     1: 60,
     2: 25,
     3: 10,
     4: 5,
   });
+
+  const handleSaveNewCampaign = async () => {
+    if (!newCampaignName || !newCampaignBudget) return;
+
+    const newCampaign = {
+      name: newCampaignName,
+      status: 'active',
+      objective: newCampaignObjective,
+      budget: parseInt(newCampaignBudget),
+      spend: 0,
+      results: 0,
+      cpc: 0,
+      cpm: 0,
+      roas: 0,
+      startDate: new Date().toISOString().split('T')[0],
+      impressions: 0,
+      clicks: 0,
+      conversions: 0,
+      targetAudience: newCampaignAudience,
+      followerCount: profileData.followers || 0,
+      engagementRate: profileData.engagementRate || 0,
+    };
+
+    try {
+      await addCampaign(newCampaign);
+      setCampaigns([...campaigns, { ...newCampaign, id: campaigns.length + 1 }]);
+      setShowCampaignForm(false);
+      setNewCampaignName('');
+      setNewCampaignBudget('');
+      setNewCampaignAudience('');
+      setNewCampaignObjective('Conversions');
+    } catch (err) {
+      console.error('Error saving campaign:', err);
+    }
+  };
 
   const [roiInputs, setRoiInputs] = useState({
     adSpend: 5000,
@@ -260,25 +304,61 @@ export default function Ads() {
             </button>
           </div>
           <div className="grid grid-2 gap-md">
-            {[
-              { label: 'Campaign Name', placeholder: 'Enter campaign name' },
-              { label: 'Objective', placeholder: 'Select objective' },
-              { label: 'Daily Budget', placeholder: '$100' },
-              { label: 'Target Audience', placeholder: 'Select audience' },
-            ].map((field, idx) => (
-              <div key={idx}>
-                <label className="form-label">{field.label}</label>
-                <input
-                  type="text"
-                  placeholder={field.placeholder}
-                  className="input"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="form-label">Campaign Name</label>
+              <input
+                type="text"
+                placeholder="Enter campaign name"
+                value={newCampaignName}
+                onChange={(e) => setNewCampaignName(e.target.value)}
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="form-label">Objective</label>
+              <select
+                value={newCampaignObjective}
+                onChange={(e) => setNewCampaignObjective(e.target.value)}
+                className="input"
+              >
+                <option>Conversions</option>
+                <option>Reach</option>
+                <option>Engagement</option>
+                <option>Traffic</option>
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Total Budget ($)</label>
+              <input
+                type="number"
+                placeholder="e.g., 500"
+                value={newCampaignBudget}
+                onChange={(e) => setNewCampaignBudget(e.target.value)}
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="form-label">Target Audience</label>
+              <input
+                type="text"
+                placeholder="e.g., Interested in photography"
+                value={newCampaignAudience}
+                onChange={(e) => setNewCampaignAudience(e.target.value)}
+                className="input"
+              />
+            </div>
           </div>
-          <button className="btn btn-primary w-full mt-6">
-            Create Campaign
-          </button>
+          <div className="grid grid-2 gap-3 mt-6">
+            <button onClick={handleSaveNewCampaign} className="btn btn-primary">
+              Create Campaign
+            </button>
+            <button
+              onClick={() => setShowCampaignForm(false)}
+              className="btn btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 

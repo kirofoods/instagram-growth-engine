@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useAppData } from '../firebase/useAppData';
 import {
   Search,
   Lightbulb,
@@ -11,19 +12,41 @@ import {
 import '../styles/SeoSuite.css';
 
 const SeoSuite = () => {
-  const [bio, setBio] = useState(
-    'Digital Creator | Photography | Lifestyle | 📸 DM for collabs'
-  );
+  // Load profile data from Firestore
+  const { data: profileData = {}, updateData: updateProfile } = useAppData('profile', {});
+  const { data: seoProgressData = {}, updateData: updateSeoProgress } = useAppData('seoProgress', {});
+
+  const [bio, setBio] = useState(profileData.bio || 'Digital Creator | Photography | Lifestyle | 📸 DM for collabs');
   const [caption, setCaption] = useState(
     'Loving this golden hour light! 🌅 Photography tips coming soon. What\'s your favorite time of day to shoot? #photography #goldenhour #creator'
   );
   const [imageDesc, setImageDesc] = useState('Golden hour landscape with mountains');
-  const [niche, setNiche] = useState('photography');
+  const [niche, setNiche] = useState(profileData.niche || 'photography');
   const [altText, setAltText] = useState('');
   const [showAltSuggestions, setShowAltSuggestions] = useState(false);
 
-  // Mock SEO data
-  const seoScore = 72;
+  // Calculate SEO score dynamically
+  const seoScore = useMemo(() => {
+    let score = 0;
+
+    // Bio completeness
+    if (bio.length > 50) score += 15;
+    if (bio.includes('CTA') || bio.includes('DM') || bio.includes('Link')) score += 10;
+    if (bio.match(/[\p{Emoji}]/gu)) score += 10;
+
+    // Profile completeness
+    if (profileData.profilePic) score += 15;
+    if (profileData.followers && profileData.followers > 100) score += 10;
+
+    // Caption quality
+    if (caption.length > 50) score += 10;
+    if (caption.match(/#\w+/g)) score += 10;
+
+    // Keyword presence
+    if (niche && caption.toLowerCase().includes(niche)) score += 10;
+
+    return Math.min(100, score);
+  }, [bio, caption, niche, profileData]);
 
   // Bio suggestions with highlighted keywords
   const bioSuggestions = [
@@ -143,7 +166,10 @@ const SeoSuite = () => {
           <label className="text-sm font-medium mb-2">Current Bio</label>
           <textarea
             value={bio}
-            onChange={e => setBio(e.target.value)}
+            onChange={e => {
+              setBio(e.target.value);
+              updateProfile({ bio: e.target.value });
+            }}
             className="w-full h-24 rounded-md p-2 text-sm focus:outline-none resize-none mb-3"
             placeholder="Enter your bio..."
           />
@@ -264,7 +290,10 @@ const SeoSuite = () => {
           <label className="text-sm font-medium mb-2">Your Niche</label>
           <input
             value={niche}
-            onChange={e => setNiche(e.target.value)}
+            onChange={e => {
+              setNiche(e.target.value);
+              updateProfile({ niche: e.target.value });
+            }}
             type="text"
             className="w-full rounded-md p-2 text-sm focus:outline-none"
             placeholder="e.g., photography, fashion, fitness..."
@@ -313,7 +342,12 @@ const SeoSuite = () => {
               <input
                 type="checkbox"
                 checked={item.completed}
-                readOnly
+                onChange={(e) => {
+                  const updated = checklistItems.map((i) =>
+                    i.id === item.id ? { ...i, completed: e.target.checked } : i
+                  );
+                  updateSeoProgress({ checklist: updated });
+                }}
                 className="mr-3"
               />
               <span className={item.completed ? 'text-muted line-through' : 'text-primary'}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Hash,
   Zap,
@@ -9,43 +9,113 @@ import {
   Download,
   Plus,
 } from 'lucide-react';
+import { useCollection, useAddDocument, useDeleteDocument } from '../firebase/useFirestore';
 import '../styles/Hashtags.css';
 
 const Hashtags = () => {
   const [mixRatio, setMixRatio] = useState(50);
-  const [selectedSet, setSelectedSet] = useState(1);
+  const [selectedSet, setSelectedSet] = useState(null);
   const [showBannedWarning, setShowBannedWarning] = useState(false);
+  const [newSetName, setNewSetName] = useState('');
+  const [newSetTopic, setNewSetTopic] = useState('');
+  const [newSetTags, setNewSetTags] = useState('');
+  const [newSetCategory, setNewSetCategory] = useState('general');
 
-  // Mock saved hashtag collections
-  const savedSets = [
+  // Load from Firestore
+  const { data: firestoreSets, loading: setsLoading } = useCollection('hashtagSets');
+  const { addDocument } = useAddDocument('hashtagSets');
+  const { deleteDocument } = useDeleteDocument('hashtagSets');
+
+  // Default starter sets
+  const defaultSets = [
     {
-      id: 1,
       name: 'Photography Pro Mix',
       rating: 4.8,
       timesUsed: 12,
       avgReach: 45200,
       tags: 30,
       created: '2 weeks ago',
+      category: 'photography',
+      isDefault: true,
     },
     {
-      id: 2,
       name: 'Travel Vibes',
       rating: 4.5,
       timesUsed: 8,
       avgReach: 38500,
       tags: 30,
       created: '1 month ago',
+      category: 'travel',
+      isDefault: true,
     },
     {
-      id: 3,
       name: 'Lifestyle Everyday',
       rating: 4.2,
       timesUsed: 15,
       avgReach: 32000,
       tags: 30,
       created: '3 weeks ago',
+      category: 'lifestyle',
+      isDefault: true,
     },
   ];
+
+  // Combine default sets with Firestore sets
+  const savedSets = firestoreSets.length > 0 ? firestoreSets : defaultSets;
+
+  // Set initial selected set
+  useEffect(() => {
+    if (savedSets.length > 0 && selectedSet === null) {
+      setSelectedSet(savedSets[0].id || savedSets[0].name);
+    }
+  }, [savedSets, selectedSet]);
+
+  const handleCreateSet = async () => {
+    if (!newSetName.trim() || !newSetTags.trim()) {
+      alert('Please fill in set name and hashtags');
+      return;
+    }
+
+    const tagsArray = newSetTags
+      .split(/[\s,]+/)
+      .filter(tag => tag.trim())
+      .map(tag => (tag.startsWith('#') ? tag : `#${tag}`));
+
+    try {
+      await addDocument({
+        name: newSetName,
+        topic: newSetTopic,
+        category: newSetCategory,
+        hashtags: tagsArray,
+        rating: 0,
+        timesUsed: 0,
+        avgReach: 0,
+        tags: tagsArray.length,
+        created: new Date().toLocaleDateString(),
+      });
+      setNewSetName('');
+      setNewSetTopic('');
+      setNewSetTags('');
+      setNewSetCategory('general');
+    } catch (error) {
+      console.error('Error creating hashtag set:', error);
+      alert('Failed to create set');
+    }
+  };
+
+  const handleDeleteSet = async (setId) => {
+    if (window.confirm('Delete this hashtag set?')) {
+      try {
+        await deleteDocument(setId);
+        if (selectedSet === setId) {
+          setSelectedSet(null);
+        }
+      } catch (error) {
+        console.error('Error deleting set:', error);
+        alert('Failed to delete set');
+      }
+    }
+  };
 
   // Individual hashtags for the selected set
   const selectedSetTags = [
@@ -127,6 +197,8 @@ const Hashtags = () => {
             <input
               type="text"
               placeholder="e.g., photography, fashion, fitness..."
+              value={newSetTopic}
+              onChange={e => setNewSetTopic(e.target.value)}
               className="w-full rounded-md p-2 text-sm focus:outline-none"
             />
           </div>
@@ -136,9 +208,39 @@ const Hashtags = () => {
             <input
               type="text"
               placeholder="Name for this set..."
+              value={newSetName}
+              onChange={e => setNewSetName(e.target.value)}
               className="w-full rounded-md p-2 text-sm focus:outline-none"
             />
           </div>
+        </div>
+
+        <div className="mt-6">
+          <label className="text-sm font-medium mb-2">Hashtags (comma or space separated)</label>
+          <textarea
+            placeholder="e.g., #photography #photooftheday #instadaily"
+            value={newSetTags}
+            onChange={e => setNewSetTags(e.target.value)}
+            className="w-full rounded-md p-2 text-sm focus:outline-none h-20"
+          />
+        </div>
+
+        <div className="mt-6">
+          <label className="text-sm font-medium mb-2">Category</label>
+          <select
+            value={newSetCategory}
+            onChange={e => setNewSetCategory(e.target.value)}
+            className="w-full rounded-md p-2 text-sm focus:outline-none"
+          >
+            <option value="general">General</option>
+            <option value="photography">Photography</option>
+            <option value="fashion">Fashion</option>
+            <option value="travel">Travel</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="fitness">Fitness</option>
+            <option value="beauty">Beauty</option>
+            <option value="food">Food</option>
+          </select>
         </div>
 
         <div className="mt-6">
@@ -182,7 +284,7 @@ const Hashtags = () => {
           </div>
         </div>
 
-        <button className="btn btn-primary w-full mt-6">Generate Hashtag Set</button>
+        <button onClick={handleCreateSet} className="btn btn-primary w-full mt-6">Save Hashtag Set</button>
       </div>
 
       {/* Saved Collections */}
@@ -190,75 +292,104 @@ const Hashtags = () => {
         <h2 className="font-semibold text-lg mb-6">Saved Collections</h2>
         <div className="grid grid-3 gap-md">
           {savedSets.map(set => (
-            <button
-              key={set.id}
-              onClick={() => setSelectedSet(set.id)}
-              className={`hashtag-set-card ${selectedSet === set.id ? 'hashtag-set-active' : ''}`}
-            >
-              <div className="font-semibold mb-2">{set.name}</div>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span>Rating:</span>
-                  <span>⭐ {set.rating}</span>
+            <div key={set.id || set.name} className={`hashtag-set-card ${selectedSet === (set.id || set.name) ? 'hashtag-set-active' : ''}`}>
+              <button
+                onClick={() => setSelectedSet(set.id || set.name)}
+                className="w-full text-left"
+              >
+                <div className="font-semibold mb-2">{set.name}</div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span>Rating:</span>
+                    <span>⭐ {set.rating || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Used:</span>
+                    <span>{set.timesUsed || 0}x</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Avg Reach:</span>
+                    <span>{(set.avgReach || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="text-xs text-muted mt-2">{set.created}</div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Used:</span>
-                  <span>{set.timesUsed}x</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Avg Reach:</span>
-                  <span>{set.avgReach.toLocaleString()}</span>
-                </div>
-                <div className="text-xs text-muted mt-2">{set.created}</div>
-              </div>
-            </button>
+              </button>
+              {!set.isDefault && set.id && (
+                <button
+                  onClick={() => handleDeleteSet(set.id)}
+                  className="btn btn-small bg-error/20 text-error w-full mt-3"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>
 
       {/* Selected Set Details */}
-      <div className="card mb-8">
-        <div className="flex-between mb-6">
-          <h2 className="flex items-center gap-md">
-            <Hash size={24} />
-            {savedSets.find(s => s.id === selectedSet)?.name}
-          </h2>
-          <div className="flex gap-sm">
-            <button className="btn btn-secondary text-sm">
-              <Copy size={16} />
-              Copy Set
-            </button>
-            <button className="btn btn-secondary text-sm">
-              <RefreshCw size={16} />
-              Shuffle
-            </button>
+      {selectedSet && (
+        <div className="card mb-8">
+          <div className="flex-between mb-6">
+            <h2 className="flex items-center gap-md">
+              <Hash size={24} />
+              {savedSets.find(s => (s.id || s.name) === selectedSet)?.name}
+            </h2>
+            <div className="flex gap-sm">
+              <button
+                onClick={() => {
+                  const set = savedSets.find(s => (s.id || s.name) === selectedSet);
+                  const tags = set?.hashtags || selectedSetTags.map(t => t.tag);
+                  navigator.clipboard.writeText(tags.join(' '));
+                  alert('Hashtag set copied to clipboard!');
+                }}
+                className="btn btn-secondary text-sm"
+              >
+                <Copy size={16} />
+                Copy Set
+              </button>
+              <button className="btn btn-secondary text-sm">
+                <RefreshCw size={16} />
+                Shuffle
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-2 gap-sm">
+            {(() => {
+              const set = savedSets.find(s => (s.id || s.name) === selectedSet);
+              const tags = set?.hashtags || selectedSetTags;
+              return (tags.length > 0
+                ? tags.map((tag, idx) => {
+                    const tagObj = typeof tag === 'string' ? { tag, reach: 'Medium', competition: 'Medium', trending: false } : tag;
+                    return (
+                      <div key={idx} className="hashtag-tag-card">
+                        <div className="flex-1">
+                          <div className="font-medium">{tagObj.tag}</div>
+                          <div className="text-xs text-muted mt-1">
+                            Reach: {tagObj.reach || 'N/A'} • Competition: {tagObj.competition || 'N/A'}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-sm">
+                          {tagObj.trending && (
+                            <span className="badge badge-success text-xs">
+                              <TrendingUp size={12} />
+                              Trending
+                            </span>
+                          )}
+                          <button className="p-1 hover:opacity-60 transition" onClick={() => navigator.clipboard.writeText(tagObj.tag)}>
+                            <Copy size={14} className="text-secondary" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                : <p className="text-muted">No hashtags in this set yet</p>
+              );
+            })()}
           </div>
         </div>
-
-        <div className="grid grid-2 gap-sm">
-          {selectedSetTags.map((tag, idx) => (
-            <div key={idx} className="hashtag-tag-card">
-              <div className="flex-1">
-                <div className="font-medium">{tag.tag}</div>
-                <div className="text-xs text-muted mt-1">
-                  Reach: {tag.reach} • Competition: {tag.competition}
-                </div>
-              </div>
-              <div className="flex items-center gap-sm">
-                {tag.trending && (
-                  <span className="badge badge-success text-xs">
-                    <TrendingUp size={12} />
-                    Trending
-                  </span>
-                )}
-                <button className="p-1 hover:opacity-60 transition">
-                  <Copy size={14} className="text-secondary" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Performance Tracking Table */}
       <div className="card mb-8">

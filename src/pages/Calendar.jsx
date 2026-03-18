@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,6 +8,7 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
+import { useCollection, useAddDocument, useDeleteDocument } from '../firebase/useFirestore';
 import '../styles/Calendar.css';
 
 const contentTypes = [
@@ -24,63 +25,6 @@ const recurringThemes = [
   { day: 'Friday', theme: 'Throwback Friday 📸', color: 'var(--status-warning)' },
 ];
 
-const mockContent = [
-  {
-    id: 1,
-    date: 15,
-    month: 2,
-    year: 2025,
-    type: 'reel',
-    title: 'Morning Motivation Reel',
-    status: 'posted',
-    caption: 'Rise and grind! Your future self will thank you.',
-    hashtags: '#MondayMotivation #GymLife',
-    stats: { views: 4523, likes: 345, comments: 28 },
-  },
-  {
-    id: 2,
-    date: 16,
-    month: 2,
-    year: 2025,
-    type: 'carousel',
-    title: '5 Productivity Tips',
-    status: 'ready',
-    caption: 'Swipe for these game-changing tips...',
-    hashtags: '#ProductivityHacks #TimeManagement',
-  },
-  {
-    id: 3,
-    date: 18,
-    month: 2,
-    year: 2025,
-    type: 'single',
-    title: 'Office Setup Photo',
-    status: 'draft',
-    caption: 'Work from anywhere with this setup.',
-    hashtags: '#WorkFromHome',
-  },
-  {
-    id: 4,
-    date: 20,
-    month: 2,
-    year: 2025,
-    type: 'story',
-    title: 'Daily Story Series',
-    status: 'ready',
-    caption: 'Behind the scenes content',
-  },
-  {
-    id: 5,
-    date: 22,
-    month: 2,
-    year: 2025,
-    type: 'reel',
-    title: 'Tutorial: Quick Lunch Ideas',
-    status: 'ready',
-    caption: 'Fast, healthy, and delicious!',
-    hashtags: '#HealthyRecipes #FoodTutorial',
-  },
-];
 
 const contentPipeline = [
   { stage: 'Idea', count: 8, color: 'var(--status-warning)' },
@@ -99,6 +43,10 @@ function getFirstDayOfMonth(month, year) {
 }
 
 export default function Calendar() {
+  const { data: scheduledPosts } = useCollection('scheduledPosts');
+  const { addDocument } = useAddDocument('scheduledPosts');
+  const { deleteDocument } = useDeleteDocument('scheduledPosts');
+
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [viewMode, setViewMode] = useState('month');
@@ -150,18 +98,47 @@ export default function Calendar() {
   };
 
   const getContentForDate = (day) => {
-    return mockContent.filter((c) => c.date === day && c.month === currentMonth && c.year === currentYear);
+    return scheduledPosts.filter((c) => {
+      const postDate = new Date(c.date);
+      return postDate.getDate() === day && postDate.getMonth() === currentMonth && postDate.getFullYear() === currentYear;
+    });
   };
 
   const getContentTypeInfo = (typeId) => {
     return contentTypes.find((t) => t.id === typeId);
   };
 
-  const handleAddContent = () => {
+  const handleAddContent = async () => {
     if (!selectedDate || !newContent.title.trim()) return;
-    // TODO: Save to Firestore when data sync is wired up
-    setShowModal(false);
-    setNewContent({ title: '', type: 'reel', caption: '', hashtags: '', status: 'draft', scheduledTime: '' });
+    try {
+      const postDate = new Date(currentYear, currentMonth, selectedDate);
+      if (newContent.scheduledTime) {
+        const [hours, minutes] = newContent.scheduledTime.split(':');
+        postDate.setHours(parseInt(hours), parseInt(minutes));
+      }
+
+      await addDocument({
+        date: postDate.toISOString(),
+        title: newContent.title,
+        type: newContent.type,
+        caption: newContent.caption,
+        hashtags: newContent.hashtags,
+        status: newContent.status,
+      });
+
+      setShowModal(false);
+      setNewContent({ title: '', type: 'reel', caption: '', hashtags: '', status: 'draft', scheduledTime: '' });
+    } catch (err) {
+      console.error('Failed to add content:', err);
+    }
+  };
+
+  const handleDeleteContent = async (contentId) => {
+    try {
+      await deleteDocument(contentId);
+    } catch (err) {
+      console.error('Failed to delete content:', err);
+    }
   };
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -170,17 +147,17 @@ export default function Calendar() {
   const weekStart = new Date(currentDate);
   weekStart.setDate(currentDate.getDate() - currentDate.getDay());
 
-  const postsThisWeek = mockContent.filter((c) => {
-    const contentDate = new Date(c.year, c.month, c.date);
+  const postsThisWeek = scheduledPosts.filter((c) => {
+    const contentDate = new Date(c.date);
     return contentDate >= weekStart && contentDate < new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
   });
 
   const typeDistribution = {
-    reel: mockContent.filter((c) => c.type === 'reel').length,
-    carousel: mockContent.filter((c) => c.type === 'carousel').length,
-    single: mockContent.filter((c) => c.type === 'single').length,
-    story: mockContent.filter((c) => c.type === 'story').length,
-    caption: mockContent.filter((c) => c.type === 'caption').length,
+    reel: scheduledPosts.filter((c) => c.type === 'reel').length,
+    carousel: scheduledPosts.filter((c) => c.type === 'carousel').length,
+    single: scheduledPosts.filter((c) => c.type === 'single').length,
+    story: scheduledPosts.filter((c) => c.type === 'story').length,
+    caption: scheduledPosts.filter((c) => c.type === 'caption').length,
   };
 
   const days_array = [];

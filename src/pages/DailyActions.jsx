@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CheckCircle2,
   Circle,
@@ -31,113 +31,139 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useDocument } from '../firebase/useFirestore';
+import { useFirebase } from '../firebase/FirebaseContext';
+import { doc, setDoc } from 'firebase/firestore';
 import '../styles/DailyActions.css';
+
+const defaultTasks = {
+  content: [
+    {
+      id: 1,
+      title: 'Post main feed content',
+      description: 'Share 1 carousel or static post',
+      points: 50,
+      completed: false,
+      category: 'content',
+    },
+    {
+      id: 2,
+      title: 'Post stories (min 3)',
+      description: 'Share daily behind-the-scenes or tips',
+      points: 30,
+      completed: false,
+      category: 'content',
+    },
+    {
+      id: 3,
+      title: 'Post reel',
+      description: 'Short video content (under 60 seconds)',
+      points: 100,
+      completed: false,
+      category: 'content',
+    },
+  ],
+  engagement: [
+    {
+      id: 4,
+      title: 'Leave 10+ meaningful comments',
+      description: 'Target niche creators in your list',
+      points: 40,
+      completed: false,
+      category: 'engagement',
+    },
+    {
+      id: 5,
+      title: 'Send 5 DMs',
+      description: 'Start conversations with potential partners',
+      points: 25,
+      completed: false,
+      category: 'engagement',
+    },
+    {
+      id: 6,
+      title: 'Reply to 15+ story mentions',
+      description: 'Engage with your audience stories',
+      points: 35,
+      completed: false,
+      category: 'engagement',
+    },
+    {
+      id: 7,
+      title: 'Like 50+ relevant posts',
+      description: 'Spread engagement across accounts',
+      points: 30,
+      completed: false,
+      category: 'engagement',
+    },
+  ],
+  growth: [
+    {
+      id: 8,
+      title: 'Research 5 collab accounts',
+      description: 'Find potential partnership opportunities',
+      points: 35,
+      completed: false,
+      category: 'growth',
+    },
+    {
+      id: 9,
+      title: 'Outreach to 2 creators',
+      description: 'Send personalized DMs with collab ideas',
+      points: 50,
+      completed: false,
+      category: 'growth',
+    },
+    {
+      id: 10,
+      title: 'Analyze top performing post',
+      description: 'Study what worked and why',
+      points: 25,
+      completed: false,
+      category: 'growth',
+    },
+    {
+      id: 11,
+      title: 'Update content calendar',
+      description: 'Plan next 5 posts with themes',
+      points: 30,
+      completed: false,
+      category: 'growth',
+    },
+  ],
+};
 
 export default function DailyActions() {
   const { data: profileData } = useDocument('appData', 'settings');
+  const { data: dailyData } = useDocument('settings', 'dailyActions');
+  const { db } = useFirebase();
 
-  const [tasks, setTasks] = useState({
-    content: [
-      {
-        id: 1,
-        title: 'Post main feed content',
-        description: 'Share 1 carousel or static post',
-        points: 50,
-        completed: false,
-        category: 'content',
-      },
-      {
-        id: 2,
-        title: 'Post stories (min 3)',
-        description: 'Share daily behind-the-scenes or tips',
-        points: 30,
-        completed: false,
-        category: 'content',
-      },
-      {
-        id: 3,
-        title: 'Post reel',
-        description: 'Short video content (under 60 seconds)',
-        points: 100,
-        completed: true,
-        category: 'content',
-      },
-    ],
-    engagement: [
-      {
-        id: 4,
-        title: 'Leave 10+ meaningful comments',
-        description: 'Target niche creators in your list',
-        points: 40,
-        completed: false,
-        category: 'engagement',
-      },
-      {
-        id: 5,
-        title: 'Send 5 DMs',
-        description: 'Start conversations with potential partners',
-        points: 25,
-        completed: true,
-        category: 'engagement',
-      },
-      {
-        id: 6,
-        title: 'Reply to 15+ story mentions',
-        description: 'Engage with your audience stories',
-        points: 35,
-        completed: false,
-        category: 'engagement',
-      },
-      {
-        id: 7,
-        title: 'Like 50+ relevant posts',
-        description: 'Spread engagement across accounts',
-        points: 30,
-        completed: false,
-        category: 'engagement',
-      },
-    ],
-    growth: [
-      {
-        id: 8,
-        title: 'Research 5 collab accounts',
-        description: 'Find potential partnership opportunities',
-        points: 35,
-        completed: false,
-        category: 'growth',
-      },
-      {
-        id: 9,
-        title: 'Outreach to 2 creators',
-        description: 'Send personalized DMs with collab ideas',
-        points: 50,
-        completed: true,
-        category: 'growth',
-      },
-      {
-        id: 10,
-        title: 'Analyze top performing post',
-        description: 'Study what worked and why',
-        points: 25,
-        completed: false,
-        category: 'growth',
-      },
-      {
-        id: 11,
-        title: 'Update content calendar',
-        description: 'Plan next 5 posts with themes',
-        points: 30,
-        completed: false,
-        category: 'growth',
-      },
-    ],
-  });
-
+  const [tasks, setTasks] = useState(defaultTasks);
   const [streak, setStreak] = useState({
-    current: 23,
-    longest: 67,
-    lastActivity: 'Today at 2:45 PM',
+    current: 0,
+    longest: 0,
+    lastActivity: 'No activity',
   });
+
+  useEffect(() => {
+    if (dailyData) {
+      if (dailyData.tasks) {
+        setTasks(dailyData.tasks);
+      }
+      if (dailyData.streak) {
+        setStreak(dailyData.streak);
+      }
+    }
+  }, [dailyData]);
+
+  const saveProgress = async (updates) => {
+    if (db) {
+      try {
+        await setDoc(doc(db, 'settings', 'dailyActions'), updates, { merge: true });
+      } catch (err) {
+        console.error('Failed to save daily actions:', err);
+      }
+    }
+  };
 
   const [challenges, setChallenges] = useState([
     {
@@ -281,9 +307,9 @@ export default function DailyActions() {
     return Math.round((score / totalPoints) * 100);
   };
 
-  const calculateTotalPoints = () => {
+  const calculateTotalPoints = (tasksObj = tasks) => {
     let total = 0;
-    Object.values(tasks).forEach((category) => {
+    Object.values(tasksObj).forEach((category) => {
       category.forEach((task) => {
         if (task.completed) {
           total += task.points;
@@ -294,12 +320,26 @@ export default function DailyActions() {
   };
 
   const toggleTask = (category, taskId) => {
-    setTasks((prev) => ({
-      ...prev,
-      [category]: prev[category].map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      ),
-    }));
+    setTasks((prev) => {
+      const updated = {
+        ...prev,
+        [category]: prev[category].map((task) =>
+          task.id === taskId ? { ...task, completed: !task.completed } : task
+        ),
+      };
+
+      const newTotalPoints = calculateTotalPoints(updated);
+      const newLevel = Math.floor(newTotalPoints / 500) + 1;
+
+      saveProgress({
+        tasks: updated,
+        totalPoints: newTotalPoints,
+        level: newLevel,
+        lastUpdated: new Date(),
+      });
+
+      return updated;
+    });
   };
 
   const growthScore = calculateGrowthScore();

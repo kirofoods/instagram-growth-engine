@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DollarSign,
   TrendingUp,
@@ -17,28 +17,43 @@ import {
   Download,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useCollection, useAddDocument, useUpdateDocument, useDeleteDocument } from '../firebase/useFirestore';
 import '../styles/Monetization.css';
 
+const defaultDeals = [
+  { brand: 'FashionBrand Co', amount: 5000, status: 'active', deliverables: '3 Posts + 1 Story', deadline: '2026-04-15', description: 'Spring collection promotion' },
+  { brand: 'TechGear Inc', amount: 3500, status: 'negotiating', deliverables: '2 Reels + 5 Stories', deadline: '2026-04-30', description: 'Product launch campaign' },
+  { brand: 'BeveragePure', amount: 2000, status: 'pitched', deliverables: '4 Posts', deadline: '2026-05-10', description: 'Summer campaign' },
+  { brand: 'SkinCare Luxe', amount: 4200, status: 'completed', deliverables: '5 Posts + 1 Reel', deadline: '2026-03-10', description: 'Monthly sponsorship' },
+];
+
+const defaultAffiliateLinks = [
+  { program: 'Amazon Associates', url: 'amazon.com/ref=123', clicks: 3421, conversions: 87, commission: 145.30, status: 'active', created: '2025-10-15' },
+  { program: 'Shein Affiliate', url: 'shein.com/aff/456', clicks: 2150, conversions: 43, commission: 289.50, status: 'active', created: '2025-11-20' },
+  { program: 'Audible', url: 'audible.com/ref/789', clicks: 890, conversions: 12, commission: 84.00, status: 'active', created: '2025-12-01' },
+  { program: 'Coursera', url: 'coursera.com/aff/321', clicks: 456, conversions: 3, commission: 12.50, status: 'expired', created: '2025-08-10' },
+];
+
+const defaultProducts = [
+  { name: 'Instagram Growth Masterclass', price: 49.99, status: 'planning', projectedRevenue: 5000, launchDate: '2026-04-01' },
+  { name: 'Content Calender Template Bundle', price: 29.99, status: 'launched', projectedRevenue: 8000, launchDate: '2026-02-15' },
+  { name: 'Engagement Hacks E-book', price: 9.99, status: 'planning', projectedRevenue: 2000, launchDate: '2026-05-01' },
+];
+
 export default function Monetization() {
-  const [deals, setDeals] = useState([
-    { id: 1, brand: 'FashionBrand Co', amount: 5000, status: 'active', deliverables: '3 Posts + 1 Story', deadline: '2026-04-15', description: 'Spring collection promotion' },
-    { id: 2, brand: 'TechGear Inc', amount: 3500, status: 'negotiating', deliverables: '2 Reels + 5 Stories', deadline: '2026-04-30', description: 'Product launch campaign' },
-    { id: 3, brand: 'BeveragePure', amount: 2000, status: 'pitched', deliverables: '4 Posts', deadline: '2026-05-10', description: 'Summer campaign' },
-    { id: 4, brand: 'SkinCare Luxe', amount: 4200, status: 'completed', deliverables: '5 Posts + 1 Reel', deadline: '2026-03-10', description: 'Monthly sponsorship' },
-  ]);
+  // Firestore collections
+  const { data: firestoreDeals } = useCollection('deals');
+  const { data: firestoreAffiliateLinks } = useCollection('affiliateLinks');
+  const { addDocument: addDeal } = useAddDocument('deals');
+  const { addDocument: addAffiliateLink } = useAddDocument('affiliateLinks');
+  const { updateDocument: updateDeal } = useUpdateDocument('deals');
+  const { deleteDocument: deleteDeal } = useDeleteDocument('deals');
+  const { deleteDocument: deleteAffiliateLink } = useDeleteDocument('affiliateLinks');
 
-  const [affiliateLinks, setAffiliateLinks] = useState([
-    { id: 1, program: 'Amazon Associates', url: 'amazon.com/ref=123', clicks: 3421, conversions: 87, commission: 145.30, status: 'active', created: '2025-10-15' },
-    { id: 2, program: 'Shein Affiliate', url: 'shein.com/aff/456', clicks: 2150, conversions: 43, commission: 289.50, status: 'active', created: '2025-11-20' },
-    { id: 3, program: 'Audible', url: 'audible.com/ref/789', clicks: 890, conversions: 12, commission: 84.00, status: 'active', created: '2025-12-01' },
-    { id: 4, program: 'Coursera', url: 'coursera.com/aff/321', clicks: 456, conversions: 3, commission: 12.50, status: 'expired', created: '2025-08-10' },
-  ]);
-
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Instagram Growth Masterclass', price: 49.99, status: 'planning', projectedRevenue: 5000, launchDate: '2026-04-01' },
-    { id: 2, name: 'Content Calender Template Bundle', price: 29.99, status: 'launched', projectedRevenue: 8000, launchDate: '2026-02-15' },
-    { id: 3, name: 'Engagement Hacks E-book', price: 9.99, status: 'planning', projectedRevenue: 2000, launchDate: '2026-05-01' },
-  ]);
+  // Use Firestore data if available, otherwise use defaults
+  const [deals, setDeals] = useState([]);
+  const [affiliateLinks, setAffiliateLinks] = useState([]);
+  const [products, setProducts] = useState(defaultProducts);
 
   const [incomeTarget, setIncomeTarget] = useState(15000);
   const [incomeActual, setIncomeActual] = useState(12340);
@@ -48,6 +63,23 @@ export default function Monetization() {
     engagementRate: 4.5,
     niche: 'Fashion & Lifestyle',
   });
+
+  // Update deals and affiliate links when Firestore data changes
+  useEffect(() => {
+    if (firestoreDeals && firestoreDeals.length > 0) {
+      setDeals(firestoreDeals);
+    } else {
+      setDeals(defaultDeals.map((d, idx) => ({ ...d, id: `default-${idx}` })));
+    }
+  }, [firestoreDeals]);
+
+  useEffect(() => {
+    if (firestoreAffiliateLinks && firestoreAffiliateLinks.length > 0) {
+      setAffiliateLinks(firestoreAffiliateLinks);
+    } else {
+      setAffiliateLinks(defaultAffiliateLinks.map((a, idx) => ({ ...a, id: `default-${idx}` })));
+    }
+  }, [firestoreAffiliateLinks]);
 
   const monthlyRevenueData = [
     { month: 'Jan', deals: 8000, affiliate: 450, products: 0, total: 8450 },
@@ -88,16 +120,44 @@ export default function Monetization() {
     return deals.filter((d) => d.status === status);
   };
 
-  const moveDeal = (dealId, newStatus) => {
+  const moveDeal = async (dealId, newStatus) => {
+    // Update local state immediately
     setDeals(deals.map((d) => (d.id === dealId ? { ...d, status: newStatus } : d)));
+
+    // Update Firestore if it's a real deal (not default)
+    if (dealId && !dealId.startsWith('default-')) {
+      try {
+        await updateDeal(dealId, { status: newStatus });
+      } catch (error) {
+        console.error('Error updating deal:', error);
+      }
+    }
   };
 
-  const deleteDeal = (id) => {
+  const handleDeleteDeal = async (id) => {
     setDeals(deals.filter((d) => d.id !== id));
+
+    // Delete from Firestore if it's a real deal
+    if (id && !id.startsWith('default-')) {
+      try {
+        await deleteDeal(id);
+      } catch (error) {
+        console.error('Error deleting deal:', error);
+      }
+    }
   };
 
-  const deleteAffiliateLink = (id) => {
+  const handleDeleteAffiliateLink = async (id) => {
     setAffiliateLinks(affiliateLinks.filter((a) => a.id !== id));
+
+    // Delete from Firestore if it's a real link
+    if (id && !id.startsWith('default-')) {
+      try {
+        await deleteAffiliateLink(id);
+      } catch (error) {
+        console.error('Error deleting affiliate link:', error);
+      }
+    }
   };
 
   return (
@@ -253,7 +313,7 @@ export default function Monetization() {
                     <div className="flex-between gap-sm mb-3">
                       <h4 className="text-sm font-semibold">{deal.brand}</h4>
                       <button
-                        onClick={() => deleteDeal(deal.id)}
+                        onClick={() => handleDeleteDeal(deal.id)}
                         className="btn-ghost btn-small text-muted hover:text-negative"
                       >
                         <Trash2 size={16} />
@@ -375,7 +435,7 @@ export default function Monetization() {
                   </td>
                   <td>
                     <button
-                      onClick={() => deleteAffiliateLink(link.id)}
+                      onClick={() => handleDeleteAffiliateLink(link.id)}
                       className="btn-ghost text-muted hover:text-negative"
                     >
                       <Trash2 size={18} />

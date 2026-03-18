@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useAppData } from '../firebase/useAppData';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -58,50 +59,101 @@ export default function AccountHealth() {
   const [activeTab, setActiveTab] = useState('overview');
   const [shadowbanCheck, setShadowbanCheck] = useState(null);
   const [expandedPlaybook, setExpandedPlaybook] = useState(null);
+  const [symptoms, setSymptoms] = useState([
+    { id: 1, name: 'Reach Drop', checked: false, severity: 'critical' },
+    { id: 2, name: 'Hashtag Performance', checked: false, severity: 'critical' },
+    { id: 3, name: 'Explore Page Removal', checked: true, severity: 'high' },
+    { id: 4, name: 'Engagement Drop', checked: false, severity: 'high' },
+    { id: 5, name: 'New Follower Plateau', checked: true, severity: 'medium' },
+    { id: 6, name: 'Shadowban Timer', checked: false, severity: 'medium' },
+  ]);
 
-  const healthScore = 78;
+  // Load profile data and calculate health score dynamically
+  const { data: profileData = {} } = useAppData('profile', {});
+  const { data: accountHealthData, updateData: updateAccountHealth } = useAppData('accountHealth', {});
+
+  const healthScore = useMemo(() => {
+    let score = 0;
+
+    // Bio check (+10)
+    if (profileData.bio && profileData.bio.length > 0) score += 10;
+
+    // Profile picture (+10)
+    if (profileData.profilePic) score += 10;
+
+    // Posts regularly (+15)
+    if (profileData.postsCount && profileData.postsCount > 10) score += 15;
+
+    // Business account (+10)
+    if (profileData.isBusinessAccount) score += 10;
+
+    // Engagement rate > 3% (+15)
+    if (profileData.engagementRate && profileData.engagementRate > 3) score += 15;
+
+    // Verified (+10)
+    if (profileData.isVerified) score += 10;
+
+    // Category set (+5)
+    if (profileData.category) score += 5;
+
+    // Active/recently synced (+10)
+    if (profileData.lastSynced) {
+      const lastSyncTime = new Date(profileData.lastSynced).getTime();
+      const now = new Date().getTime();
+      const daysDiff = (now - lastSyncTime) / (1000 * 60 * 60 * 24);
+      if (daysDiff < 7) score += 10;
+    }
+
+    // Follower/following ratio healthy (+15)
+    if (profileData.followers && profileData.following) {
+      const ratio = profileData.followers / (profileData.following || 1);
+      if (ratio > 0.5) score += 15;
+    }
+
+    return Math.min(100, score);
+  }, [profileData]);
 
   const shadowbanSymptoms = [
     {
       id: 1,
       name: 'Reach Drop',
       description: 'Sudden 50%+ decrease in reach',
-      checked: false,
+      checked: symptoms[0].checked,
       severity: 'critical',
     },
     {
       id: 2,
       name: 'Hashtag Performance',
       description: 'Posts not appearing on hashtag pages',
-      checked: false,
+      checked: symptoms[1].checked,
       severity: 'critical',
     },
     {
       id: 3,
       name: 'Explore Page Removal',
       description: "Haven't appeared on Explore in 2+ weeks",
-      checked: true,
+      checked: symptoms[2].checked,
       severity: 'high',
     },
     {
       id: 4,
       name: 'Engagement Drop',
       description: '70%+ decrease in likes/comments',
-      checked: false,
+      checked: symptoms[3].checked,
       severity: 'high',
     },
     {
       id: 5,
       name: 'New Follower Plateau',
       description: 'No new followers despite engagement',
-      checked: true,
+      checked: symptoms[4].checked,
       severity: 'medium',
     },
     {
       id: 6,
       name: 'Shadowban Timer',
       description: "You've used action limits recently",
-      checked: false,
+      checked: symptoms[5].checked,
       severity: 'medium',
     },
   ];
@@ -421,8 +473,14 @@ export default function AccountHealth() {
                   <input
                     type="checkbox"
                     checked={symptom.checked}
+                    onChange={(e) => {
+                      const updated = symptoms.map((s) =>
+                        s.id === symptom.id ? { ...s, checked: e.target.checked } : s
+                      );
+                      setSymptoms(updated);
+                      updateAccountHealth({ symptoms: updated });
+                    }}
                     className="symptom-checkbox"
-                    readOnly
                   />
                   <div className="flex-1">
                     <p className="text-primary font-semibold text-sm">{symptom.name}</p>

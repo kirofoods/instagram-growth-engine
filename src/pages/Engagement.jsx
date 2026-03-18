@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Heart,
   MessageCircle,
@@ -25,18 +25,53 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useDocument } from '../firebase/useFirestore';
+import { useFirebase } from '../firebase/FirebaseContext';
+import { doc, setDoc } from 'firebase/firestore';
 import '../styles/Engagement.css';
 
+const defaultEngagementTargets = {
+  comments: { current: 0, target: 30 },
+  dms: { current: 0, target: 10 },
+  stories: { current: 0, target: 15 },
+  accountsEngaged: { current: 0, target: 50 },
+};
+
 export default function Engagement() {
+  const { data: engagementData } = useDocument('settings', 'engagement');
+  const { db } = useFirebase();
   const [activeTab, setActiveTab] = useState('targets');
   const [expandedStrategy, setExpandedStrategy] = useState(null);
 
-  const [engagementTargets, setEngagementTargets] = useState({
-    comments: { current: 18, target: 30 },
-    dms: { current: 7, target: 10 },
-    stories: { current: 12, target: 15 },
-    accountsEngaged: { current: 42, target: 50 },
-  });
+  const [engagementTargets, setEngagementTargets] = useState(defaultEngagementTargets);
+
+  useEffect(() => {
+    if (engagementData) {
+      setEngagementTargets(engagementData.targets || defaultEngagementTargets);
+    }
+  }, [engagementData]);
+
+  const saveTargets = async (targets) => {
+    if (db) {
+      try {
+        await setDoc(doc(db, 'settings', 'engagement'), { targets }, { merge: true });
+      } catch (err) {
+        console.error('Failed to save engagement targets:', err);
+      }
+    }
+  };
+
+  const updateTarget = (key, field, value) => {
+    const updated = {
+      ...engagementTargets,
+      [key]: {
+        ...engagementTargets[key],
+        [field]: value,
+      },
+    };
+    setEngagementTargets(updated);
+    saveTargets(updated);
+  };
 
   const [strategies] = useState([
     {
@@ -321,6 +356,78 @@ export default function Engagement() {
           </button>
         ))}
       </div>
+
+      {/* Targets Tab */}
+      {activeTab === 'targets' && (
+        <div className="section">
+          <h2 className="section-title">Daily Engagement Targets</h2>
+          <p className="text-secondary mb-6">Adjust your daily engagement goals. These targets help you stay consistent with your growth strategy.</p>
+
+          <div className="grid grid-2 gap-6">
+            {Object.entries(engagementTargets).map(([key, value]) => {
+              const labels = {
+                comments: { label: 'Comments Given', icon: MessageCircle },
+                dms: { label: 'DMs Sent', icon: Share2 },
+                stories: { label: 'Stories Replied', icon: Eye },
+                accountsEngaged: { label: 'Accounts Engaged', icon: Users },
+              };
+
+              const Icon = labels[key].icon;
+
+              return (
+                <div key={key} className="card">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Icon className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+                    <label className="font-medium text-primary">{labels[key].label}</label>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm text-secondary block mb-2">Current: {value.current}</label>
+                      <input
+                        type="number"
+                        value={value.current}
+                        onChange={(e) => updateTarget(key, 'current', parseInt(e.target.value) || 0)}
+                        min="0"
+                        className="w-full px-3 py-2 bg-secondary border border-tertiary rounded text-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-secondary block mb-2">Target: {value.target}</label>
+                      <input
+                        type="number"
+                        value={value.target}
+                        onChange={(e) => updateTarget(key, 'target', parseInt(e.target.value) || 1)}
+                        min="1"
+                        className="w-full px-3 py-2 bg-secondary border border-tertiary rounded text-primary"
+                      />
+                    </div>
+
+                    <div className="pt-2 border-t border-tertiary">
+                      <div className="flex-between text-sm">
+                        <span className="text-secondary">Progress</span>
+                        <span className="text-primary font-semibold">{Math.round((value.current / value.target) * 100)}%</span>
+                      </div>
+                      <div className="eng-progress-bar mt-2">
+                        <div
+                          className="eng-progress-fill"
+                          style={{
+                            width: `${Math.min((value.current / value.target) * 100, 100)}%`,
+                            background: (value.current / value.target) >= 1
+                              ? 'linear-gradient(90deg, var(--status-success) 0%, #34D399 100%)'
+                              : 'linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end))',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Strategies Tab */}
       {activeTab === 'strategies' && (

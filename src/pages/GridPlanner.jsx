@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid3x3, Eye, EyeOff, Lightbulb, RefreshCw, Copy } from 'lucide-react';
+import { useDocument, useUpdateDocument } from '../firebase/useFirestore';
 import '../styles/GridPlanner.css';
 
 export default function GridPlanner() {
   const [gridSize, setGridSize] = useState('3x3');
   const [previewMode, setPreviewMode] = useState(false);
   const [selectedPattern, setSelectedPattern] = useState('default');
+  const [aestheticScore, setAestheticScore] = useState(78);
+
+  // Firestore integration
+  const { data: gridSettings } = useDocument('settings', 'gridPlanner');
+  const { updateDocument } = useUpdateDocument('settings');
 
   const mockPosts = [
     { id: 1, type: 'reel', color: 'var(--color-primary)', title: 'Reel 1' },
@@ -19,7 +25,62 @@ export default function GridPlanner() {
     { id: 9, type: 'carousel', color: 'var(--color-secondary)', title: 'Carousel 3' },
   ];
 
-  const extractedColors = mockPosts.slice(0, 6).map((post) => post.color);
+  // Load settings from Firestore on mount
+  useEffect(() => {
+    if (gridSettings) {
+      setGridSize(gridSettings.gridSize || '3x3');
+      setSelectedPattern(gridSettings.selectedPattern || 'default');
+      setAestheticScore(gridSettings.aestheticScore || 78);
+    }
+  }, [gridSettings]);
+
+  // Calculate aesthetic score dynamically
+  const calculateAestheticScore = () => {
+    const colors = mockPosts.map(p => p.color);
+    const uniqueColors = new Set(colors).size;
+    const contentTypes = mockPosts.map(p => p.type);
+    const uniqueTypes = new Set(contentTypes).size;
+
+    // Color variety: best at 4-6 unique colors
+    let colorScore = 0;
+    if (uniqueColors >= 4 && uniqueColors <= 6) {
+      colorScore = 40;
+    } else if (uniqueColors >= 3 && uniqueColors <= 7) {
+      colorScore = 35;
+    } else if (uniqueColors >= 2) {
+      colorScore = 20;
+    }
+
+    // Content variety: best with 2-3 content types distributed well
+    let typeScore = 0;
+    if (uniqueTypes === 3) {
+      const typeCounts = {};
+      contentTypes.forEach(type => {
+        typeCounts[type] = (typeCounts[type] || 0) + 1;
+      });
+      const counts = Object.values(typeCounts);
+      const isBalanced = Math.max(...counts) - Math.min(...counts) <= 2;
+      typeScore = isBalanced ? 40 : 35;
+    } else if (uniqueTypes === 2) {
+      typeScore = 30;
+    } else {
+      typeScore = 20;
+    }
+
+    // Pattern bonus
+    let patternBonus = 0;
+    if (selectedPattern !== 'default') {
+      patternBonus = 10;
+    }
+
+    return Math.min(100, colorScore + typeScore + patternBonus);
+  };
+
+  // Update aesthetic score based on grid changes
+  useEffect(() => {
+    const newScore = calculateAestheticScore();
+    setAestheticScore(newScore);
+  }, [selectedPattern]);
 
   const patterns = {
     default: 'Default Mix',
@@ -28,7 +89,41 @@ export default function GridPlanner() {
     gradient: 'Gradient Fade',
   };
 
-  const aestheticScore = 78;
+  const getGridCount = () => {
+    switch (gridSize) {
+      case '4x4':
+        return 16;
+      case '6x6':
+        return 36;
+      default:
+        return 9;
+    }
+  };
+
+  const handleGridSizeChange = (size) => {
+    setGridSize(size);
+    saveGridSettings(size, selectedPattern);
+  };
+
+  const handlePatternChange = (pattern) => {
+    setSelectedPattern(pattern);
+    saveGridSettings(gridSize, pattern);
+  };
+
+  const saveGridSettings = async (size, pattern) => {
+    try {
+      const score = calculateAestheticScore();
+      await updateDocument('gridPlanner', {
+        gridSize: size,
+        selectedPattern: pattern,
+        aestheticScore: score,
+      });
+    } catch (error) {
+      console.error('Error saving grid settings:', error);
+    }
+  };
+
+  const extractedColors = mockPosts.slice(0, 6).map((post) => post.color);
 
   const tips = [
     {
@@ -82,10 +177,22 @@ export default function GridPlanner() {
             </div>
 
             {/* Grid Display */}
-            <div className="grid-display">
-              {Array.from({ length: 9 }).map((_, idx) => {
+            <div className="grid-display" style={{ gridTemplateColumns: `repeat(${gridSize.split('x')[0]}, 1fr)` }}>
+              {Array.from({ length: getGridCount() }).map((_, idx) => {
                 const post = mockPosts[idx];
                 const isPreviewSlot = previewMode && idx === 0;
+
+                // Apply pattern coloring
+                let displayColor = post?.color || 'var(--bg-tertiary)';
+                if (selectedPattern === 'checkerboard') {
+                  displayColor = idx % 2 === 0 ? '#E1306C' : '#833AB4';
+                } else if (selectedPattern === 'rowThemes') {
+                  const colors = ['#E1306C', '#833AB4', '#FD1D1D'];
+                  displayColor = colors[Math.floor(idx / parseInt(gridSize.split('x')[0]))];
+                } else if (selectedPattern === 'gradient') {
+                  const alpha = 0.3 + (idx / getGridCount()) * 0.7;
+                  displayColor = `rgba(225, 48, 108, ${alpha})`;
+                }
 
                 return (
                   <div
@@ -94,7 +201,7 @@ export default function GridPlanner() {
                     style={{
                       backgroundColor: isPreviewSlot
                         ? 'rgba(100, 200, 255, 0.2)'
-                        : post?.color || 'var(--bg-tertiary)',
+                        : displayColor,
                       borderColor: isPreviewSlot ? '#64c8ff' : 'var(--border-primary)',
                     }}
                   >
@@ -117,10 +224,10 @@ export default function GridPlanner() {
 
             {/* Grid Size Selector */}
             <div className="grid-size-selector">
-              {Object.keys(patterns).map((size) => (
+              {['3x3', '4x4', '6x6'].map((size) => (
                 <button
                   key={size}
-                  onClick={() => setGridSize(size)}
+                  onClick={() => handleGridSizeChange(size)}
                   className={`grid-size-btn ${gridSize === size ? 'active' : ''}`}
                 >
                   {size}
@@ -207,7 +314,7 @@ export default function GridPlanner() {
           {Object.entries(patterns).map(([key, name]) => (
             <button
               key={key}
-              onClick={() => setSelectedPattern(key)}
+              onClick={() => handlePatternChange(key)}
               className={`pattern-card ${selectedPattern === key ? 'active' : ''}`}
             >
               <div className="pattern-name">{name}</div>

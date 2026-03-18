@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAppCollection } from '../firebase/useAppData';
 import {
   MessageCircle,
   Copy,
@@ -29,6 +30,14 @@ import '../styles/DmFunnels.css';
 
 export default function DmFunnels() {
   const [activeTab, setActiveTab] = useState('sequences');
+  const [showNewSequenceForm, setShowNewSequenceForm] = useState(false);
+  const [newSequenceName, setNewSequenceName] = useState('');
+  const [newSequenceTrigger, setNewSequenceTrigger] = useState('');
+  const [newSequenceMessages, setNewSequenceMessages] = useState(['']);
+
+  // Load DM templates from Firestore
+  const { items: savedTemplates, addItem: addTemplate, updateItem: updateTemplate } = useAppCollection('dmTemplates');
+
   const [sequences, setSequences] = useState([
     {
       id: 1,
@@ -68,6 +77,44 @@ export default function DmFunnels() {
       sent: 156,
     },
   ]);
+
+  const handleSaveNewSequence = async () => {
+    if (!newSequenceName || !newSequenceTrigger) return;
+
+    const newSequence = {
+      name: newSequenceName,
+      triggerKeyword: newSequenceTrigger,
+      messages: newSequenceMessages.filter((m) => m.length > 0),
+      isActive: true,
+      conversions: 0,
+      sent: 0,
+      steps: newSequenceMessages.map((msg, idx) => ({
+        id: idx + 1,
+        title: `Message ${idx + 1}`,
+        message: msg,
+        delay: idx * 2,
+        condition: idx === 0 ? 'First message' : `After ${idx * 2} days`,
+      })),
+    };
+
+    // Save to Firestore
+    try {
+      await addTemplate({
+        type: 'sequence',
+        name: newSequenceName,
+        trigger: newSequenceTrigger,
+        steps: newSequence.steps,
+      });
+
+      setSequences([...sequences, { ...newSequence, id: sequences.length + 1 }]);
+      setShowNewSequenceForm(false);
+      setNewSequenceName('');
+      setNewSequenceTrigger('');
+      setNewSequenceMessages(['']);
+    } catch (err) {
+      console.error('Error saving template:', err);
+    }
+  };
 
   const [campaigns, setCampaigns] = useState([
     {
@@ -249,12 +296,83 @@ export default function DmFunnels() {
         ))}
       </div>
 
+      {/* New Sequence Form */}
+      {showNewSequenceForm && (
+        <div className="card card-gradient mb-8">
+          <h3 className="text-lg font-semibold mb-4">Create New DM Sequence</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Funnel Name</label>
+              <input
+                type="text"
+                value={newSequenceName}
+                onChange={(e) => setNewSequenceName(e.target.value)}
+                className="w-full rounded-md p-2 text-sm focus:outline-none"
+                placeholder="e.g., Welcome Sequence"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Trigger Keyword</label>
+              <input
+                type="text"
+                value={newSequenceTrigger}
+                onChange={(e) => setNewSequenceTrigger(e.target.value)}
+                className="w-full rounded-md p-2 text-sm focus:outline-none"
+                placeholder="e.g., 'start' or specific keyword to trigger sequence"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Sequence Messages</label>
+              {newSequenceMessages.map((msg, idx) => (
+                <textarea
+                  key={idx}
+                  value={msg}
+                  onChange={(e) => {
+                    const updated = [...newSequenceMessages];
+                    updated[idx] = e.target.value;
+                    setNewSequenceMessages(updated);
+                  }}
+                  className="w-full rounded-md p-2 text-sm focus:outline-none resize-none mb-2 h-20"
+                  placeholder={`Message ${idx + 1}...`}
+                />
+              ))}
+              <button
+                onClick={() => setNewSequenceMessages([...newSequenceMessages, ''])}
+                className="btn btn-secondary btn-small mt-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Message
+              </button>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={handleSaveNewSequence} className="btn btn-primary flex-1">
+                Save Sequence
+              </button>
+              <button
+                onClick={() => {
+                  setShowNewSequenceForm(false);
+                  setNewSequenceName('');
+                  setNewSequenceTrigger('');
+                  setNewSequenceMessages(['']);
+                }}
+                className="btn btn-secondary flex-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sequences Tab */}
       {activeTab === 'sequences' && (
         <div className="section">
           <div className="flex-between mb-6">
             <h2 className="section-title">DM Sequences</h2>
-            <button className="btn btn-primary">
+            <button
+              onClick={() => setShowNewSequenceForm(true)}
+              className="btn btn-primary"
+            >
               <Plus className="w-5 h-5" />
               New Sequence
             </button>
