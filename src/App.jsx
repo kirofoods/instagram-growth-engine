@@ -27,6 +27,7 @@ import Settings from './pages/Settings';
 import Guide from './pages/Guide';
 import TrendScanner from './pages/TrendScanner';
 import CompetitorAnalysis from './pages/CompetitorAnalysis';
+import ViralReels from './pages/ViralReels';
 import './App.css';
 
 const App = () => {
@@ -82,6 +83,7 @@ const App = () => {
               <Route path="/guide" element={<Guide />} />
               <Route path="/trend-scanner" element={<TrendScanner />} />
               <Route path="/competitor-analysis" element={<CompetitorAnalysis />} />
+              <Route path="/viral-reels" element={<ViralReels />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </ErrorBoundary>

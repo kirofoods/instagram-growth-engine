@@ -24,6 +24,7 @@ import {
   MoreVertical,
   X,
   Swords,
+  Play,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -45,6 +46,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
       items: [
         { path: '/content-studio', label: 'Content Studio', icon: Pencil },
         { path: '/viral-lab', label: 'Viral Lab', icon: Zap },
+        { path: '/viral-reels', label: 'Viral Reels', icon: Play },
         { path: '/calendar', label: 'Calendar', icon: Calendar },
         { path: '/grid-planner', label: 'Grid Planner', icon: Grid3x3 },
       ],
