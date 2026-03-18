@@ -562,6 +562,20 @@
   height: 40px;
 }
 
+/* Spin Animation */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Responsive Design */
 
 /* Tablet: 1024px and below */

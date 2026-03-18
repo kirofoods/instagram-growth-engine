@@ -24,6 +24,7 @@ import {
 import { useAppData } from '../firebase/useAppData';
 import { useTheme } from '../utils/ThemeContext';
 import { syncInstagramProfile } from '../services/profileSync';
+import { autoSyncProfile } from '../services/autoSync';
 import '../styles/Settings.css';
 
 const defaultSettings = {
@@ -121,6 +122,10 @@ export default function Settings() {
 
   const saveProfile = () => {
     saveSettings({ profile });
+    // Save handle to localStorage for autoSync service
+    if (profile.handle) {
+      localStorage.setItem('kirogram-handle', profile.handle.replace('@', ''));
+    }
     setSavedMessage('Profile saved and synced across devices!');
     setTimeout(() => setSavedMessage(''), 3000);
   };
@@ -142,10 +147,24 @@ export default function Settings() {
     setSyncSuccess('');
 
     try {
-      const syncedData = await syncInstagramProfile(
-        profile.handle.replace('@', ''),
-        apifyToken
-      );
+      // Save handle to localStorage for autoSync service
+      localStorage.setItem('kirogram-handle', profile.handle.replace('@', ''));
+
+      let syncedData;
+      try {
+        // Try primary sync method
+        syncedData = await syncInstagramProfile(
+          profile.handle.replace('@', ''),
+          apifyToken
+        );
+      } catch (primaryErr) {
+        console.warn('[Settings] Primary sync failed, trying fallback:', primaryErr.message);
+        // Fallback to autoSync if primary fails
+        syncedData = await autoSyncProfile();
+        if (!syncedData) {
+          throw new Error('Both sync methods failed. Check your API token and try again.');
+        }
+      }
 
       // Update local state
       setProfile(prev => ({

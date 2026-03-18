@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LineChart,
@@ -25,14 +25,22 @@ import {
   Lightbulb,
   Calendar,
   Loader,
+  RefreshCw,
 } from 'lucide-react';
 import { useDocument, useCollection } from '../firebase/useFirestore';
+import { useFirebase } from '../firebase/FirebaseContext';
+import { doc, setDoc } from 'firebase/firestore';
+import { autoSyncProfile } from '../services/autoSync';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
   const [chartDays, setChartDays] = useState(30);
   const [insightIndex, setInsightIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState({});
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Firebase context
+  const { db } = useFirebase();
 
   // Firestore data hooks
   const { data: profileData, loading: profileLoading } = useDocument('settings', 'profile');
@@ -146,12 +154,58 @@ export default function Dashboard() {
   const hasProfileData = profileData && profileData.followers !== undefined;
   const hasGrowthData = growthDataFirestore && growthDataFirestore.length > 0;
 
+  // Auto-sync on app open
+  useEffect(() => {
+    const runAutoSync = async () => {
+      const syncedData = await autoSyncProfile();
+      if (syncedData && db) {
+        try {
+          await setDoc(doc(db, 'settings', 'profile'), syncedData, { merge: true });
+          console.log('[Dashboard] Auto-synced and saved to Firestore');
+        } catch (err) {
+          console.error('[Dashboard] Failed to save auto-sync:', err);
+        }
+      }
+    };
+    runAutoSync();
+  }, [db]);
+
+  // Manual refresh handler
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    localStorage.removeItem('kirogram-last-sync'); // Bypass cooldown
+    const syncedData = await autoSyncProfile();
+    if (syncedData && db) {
+      try {
+        await setDoc(doc(db, 'settings', 'profile'), syncedData, { merge: true });
+      } catch (err) {
+        console.error('Sync failed:', err);
+      }
+    }
+    setIsSyncing(false);
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-max-width">
         {/* Welcome Section */}
         <div className="dashboard-section">
-          <h1 className="dashboard-heading">Welcome back! 👋</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h1 className="dashboard-heading">Welcome back! 👋</h1>
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className="btn btn-ghost"
+              title="Refresh Instagram data"
+              style={{ padding: '8px' }}
+            >
+              <RefreshCw
+                size={20}
+                className={isSyncing ? 'spin' : ''}
+                style={isSyncing ? { animation: 'spin 1s linear infinite' } : {}}
+              />
+            </button>
+          </div>
           {hasProfileData && hasGrowthData ? (
             <p className="dashboard-subheading">
               Phase 1: 0 → 1K | Growth Velocity: +{metrics.growthVelocity} followers/day
