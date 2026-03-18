@@ -1,4 +1,84 @@
+/* ============================================
+   LIGHT THEME - DEFAULT (Professional & Clean)
+   ============================================ */
 :root {
+  /* Primary Colors - Instagram Gradient */
+  --color-primary-start: #fa7e1e;
+  --color-primary-end: #d92e7f;
+  --color-primary: #E1306C;
+  --color-secondary: #833AB4;
+
+  /* Premium Accent Colors */
+  --color-accent-cyan: #06B6D4;
+  --color-accent-violet: #A855F7;
+  --color-accent-emerald: #10B981;
+
+  /* Light Theme - Soft, Professional, Clean */
+  --bg-primary: #f8f9fc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-glass-hover: rgba(255, 255, 255, 0.95);
+
+  /* Text Colors - WCAG AA Compliant */
+  --text-primary: #1a1a2e;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-muted: #cbd5e1;
+
+  /* Borders & Dividers */
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-tertiary: #94a3b8;
+  --border-glow: rgba(225, 48, 108, 0.15);
+  --border-glow-hover: rgba(225, 48, 108, 0.25);
+
+  /* Status Colors */
+  --status-success: #10b981;
+  --status-warning: #f59e0b;
+  --status-error: #ef4444;
+  --status-info: #3b82f6;
+
+  /* Shadows - Light & Subtle */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.15);
+
+  /* Glow Effects */
+  --glow-primary: 0 4px 16px rgba(225, 48, 108, 0.15);
+  --glow-primary-strong: 0 8px 24px rgba(225, 48, 108, 0.25);
+  --glow-secondary: 0 4px 16px rgba(131, 58, 180, 0.12);
+  --glow-accent: 0 4px 12px rgba(6, 182, 212, 0.12);
+
+  /* Spacing - 4px Base Grid */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* Transitions - Buttery Smooth */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   DARK THEME
+   ============================================ */
+[data-theme="dark"] {
   /* Primary Colors - Instagram Gradient */
   --color-primary-start: #E1306C;
   --color-primary-end: #833AB4;
@@ -49,27 +129,6 @@
   --glow-primary-strong: 0 0 30px rgba(225, 48, 108, 0.5);
   --glow-secondary: 0 0 20px rgba(131, 58, 180, 0.2);
   --glow-accent: 0 0 15px rgba(6, 182, 212, 0.2);
-
-  /* Spacing - 4px Base Grid */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
-
-  /* Transitions - Buttery Smooth */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -99,6 +158,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* Light theme background gradient */
+:root body {
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(225, 48, 108, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(131, 58, 180, 0.03) 0%, transparent 50%);
 }
 
 ::-webkit-scrollbar {
@@ -181,7 +248,7 @@ a:hover {
 }
 
 /* ============================================
-   CARD COMPONENTS - GLASS MORPHISM
+   CARD COMPONENTS - GLASS MORPHISM & CLEAN
    ============================================ */
 .card {
   background: var(--bg-glass);
@@ -189,9 +256,18 @@ a:hover {
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   transition: all var(--transition-base);
-  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
+}
+
+/* Light mode: clean white cards with subtle shadow */
+:root .card {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Dark mode: glass morphism effect */
+[data-theme="dark"] .card {
+  backdrop-filter: blur(10px);
 }
 
 .card::before {
@@ -347,6 +423,15 @@ a:hover {
   background: var(--bg-glass);
   color: var(--text-primary);
   border: 1.5px solid var(--border-secondary);
+}
+
+/* Light mode: no blur effect needed */
+:root .btn-secondary {
+  backdrop-filter: none;
+}
+
+/* Dark mode: glass effect */
+[data-theme="dark"] .btn-secondary {
   backdrop-filter: blur(8px);
 }
 
@@ -411,8 +496,22 @@ select {
   font-family: inherit;
   font-size: 0.875rem;
   transition: all var(--transition-fast);
-  backdrop-filter: blur(8px);
   position: relative;
+}
+
+/* Light mode: no blur needed */
+:root input,
+:root textarea,
+:root select {
+  backdrop-filter: none;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Dark mode: glass effect */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  backdrop-filter: blur(8px);
 }
 
 input::placeholder,
@@ -447,8 +546,18 @@ textarea {
   border-bottom: 1px solid var(--border-primary);
   gap: 0;
   background: var(--bg-glass);
-  backdrop-filter: blur(8px);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* Light mode: no blur */
+:root .tab-group {
+  backdrop-filter: none;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Dark mode: glass effect */
+[data-theme="dark"] .tab-group {
+  backdrop-filter: blur(8px);
 }
 
 .tab {
@@ -633,8 +742,18 @@ textarea {
 
 .data-table thead {
   background: var(--bg-glass);
-  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-secondary);
+}
+
+/* Light mode */
+:root .data-table thead {
+  backdrop-filter: none;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Dark mode */
+[data-theme="dark"] .data-table thead {
+  backdrop-filter: blur(8px);
 }
 
 .data-table th {
@@ -678,9 +797,18 @@ textarea {
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  backdrop-filter: blur(10px);
   overflow: hidden;
   transition: all var(--transition-base);
+}
+
+/* Light mode: subtle shadow instead of blur */
+:root .metric-card {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Dark mode: glass effect */
+[data-theme="dark"] .metric-card {
+  backdrop-filter: blur(10px);
 }
 
 .metric-card::before {

@@ -20,6 +20,7 @@ import {
   CloudOff,
 } from 'lucide-react';
 import { useAppData } from '../firebase/useAppData';
+import { useTheme } from '../utils/ThemeContext';
 import '../styles/Settings.css';
 
 const defaultSettings = {
@@ -41,17 +42,16 @@ const defaultSettings = {
 
 export default function Settings() {
   const { data: settings, updateData: saveSettings, loading: syncLoading, synced } = useAppData('settings', defaultSettings);
+  const { theme, setTheme: setThemeMode } = useTheme();
 
   const [profile, setProfile] = useState(defaultSettings.profile);
   const [notifications, setNotifications] = useState(defaultSettings.notifications);
-  const [theme, setTheme] = useState('dark');
 
   // Sync from Firestore when data arrives
   useEffect(() => {
     if (settings && settings.profile) {
       setProfile(settings.profile);
       setNotifications(settings.notifications || defaultSettings.notifications);
-      setTheme(settings.theme || 'dark');
     }
   }, [settings]);
 
@@ -352,18 +352,36 @@ export default function Settings() {
           <h2 className="section-title">Theme</h2>
         </div>
 
-        <div className="flex gap-3 mb-4">
-          {['dark', 'light'].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTheme(t)}
-              className={`btn ${theme === t ? 'btn-primary' : 'btn-secondary'}`}
-            >
-              {t === 'dark' ? 'Dark Mode' : 'Light Mode'}
-            </button>
-          ))}
+        <div className="theme-toggle-container">
+          <div className="theme-description">
+            <p className="text-secondary text-sm mb-3">
+              {theme === 'light'
+                ? 'Currently using Light Mode — clean, professional, and easy on the eyes'
+                : 'Currently using Dark Mode — premium design optimized for reduced eye strain'}
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            {[
+              { key: 'light', label: 'Light Mode', icon: Sun },
+              { key: 'dark', label: 'Dark Mode', icon: Moon },
+            ].map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setThemeMode(key)}
+                className={`theme-button ${theme === key ? 'active' : ''}`}
+                title={`Switch to ${label}`}
+              >
+                <Icon size={20} />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-        <p className="text-secondary text-sm">Dark mode is recommended for reduced eye strain</p>
+
+        <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+          <p className="text-xs text-tertiary">Theme preference is saved automatically and synced across your devices</p>
+        </div>
       </section>
 
       {/* Data Management */}
