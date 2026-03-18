@@ -160,13 +160,36 @@ export default function Dashboard() {
 
         {/* Empty State - Show when no data exists */}
         {!hasProfileData && !isLoading && (
-          <div className="dashboard-empty-state">
-            <div className="dashboard-empty-state-icon">📊</div>
-            <h3>No data yet</h3>
-            <p>Connect your Instagram profile in Settings to see your real metrics here</p>
-            <Link to="/settings" className="btn-primary">
-              Connect Profile
-            </Link>
+          <div className="dashboard-onboarding">
+            <div className="onboarding-hero">
+              <div className="onboarding-icon">🚀</div>
+              <h2>Welcome to KiroGram</h2>
+              <p>Your AI-powered Instagram growth engine. Connect your profile to unlock all features.</p>
+              <Link to="/settings" className="btn-primary btn-lg">Connect Instagram Profile</Link>
+            </div>
+
+            <div className="onboarding-features">
+              <div className="feature-card">
+                <span className="feature-icon">📊</span>
+                <h4>Real-time Analytics</h4>
+                <p>Track followers, engagement, and growth velocity</p>
+              </div>
+              <div className="feature-card">
+                <span className="feature-icon">🎯</span>
+                <h4>0 → 1M Roadmap</h4>
+                <p>Phase-based growth strategy with milestones</p>
+              </div>
+              <div className="feature-card">
+                <span className="feature-icon">🔥</span>
+                <h4>Viral Content Lab</h4>
+                <p>AI-powered hooks, captions, and hashtags</p>
+              </div>
+              <div className="feature-card">
+                <span className="feature-icon">📈</span>
+                <h4>Smart Scheduling</h4>
+                <p>Optimal posting times and content calendar</p>
+              </div>
+            </div>
           </div>
         )}
 
