@@ -341,13 +341,13 @@ const ContentStudio = () => {
           </div>
         )}
 
-        {activeTab === 'captions' && generatedCaptions.length > 0 && (
+        {activeTab === 'captions' && generatedCaptions?.length > 0 && (
           <div className="card cs-results">
             <div className="card-header">
               <h2>Generated Captions</h2>
             </div>
             <div className="flex-col">
-              {generatedCaptions.map((caption, idx) => (
+              {generatedCaptions?.map((caption, idx) => (
                 <div key={idx} className="result-item">
                   <p>{caption}</p>
                   <div className="flex-between">
@@ -488,15 +488,15 @@ const ContentStudio = () => {
           </div>
         )}
 
-        {activeTab === 'carousel' && carouselSlides.length > 0 && (
+        {activeTab === 'carousel' && carouselSlides?.length > 0 && (
           <div className="card cs-results">
             <div className="card-header">
               <h2>Slide Outline</h2>
             </div>
             <div className="flex-col">
-              {carouselSlides.map((slide) => (
+              {carouselSlides?.map((slide) => (
                 <div key={slide.num} className="slide-card">
-                  <p className="text-muted cs-small">Slide {slide.num} of {carouselSlides.length}</p>
+                  <p className="text-muted cs-small">Slide {slide.num} of {carouselSlides?.length}</p>
                   <p>{slide.content}</p>
                 </div>
               ))}
@@ -535,13 +535,13 @@ const ContentStudio = () => {
           </div>
         )}
 
-        {activeTab === 'reels' && reelsScript.length > 0 && (
+        {activeTab === 'reels' && reelsScript?.length > 0 && (
           <div className="card cs-results">
             <div className="card-header">
               <h2>Script (21 seconds)</h2>
             </div>
             <div className="flex-col">
-              {reelsScript.map((segment, idx) => (
+              {reelsScript?.map((segment, idx) => (
                 <div key={idx} className="slide-card">
                   <p className="text-muted cs-small">{segment.time}</p>
                   <p>{segment.content}</p>
