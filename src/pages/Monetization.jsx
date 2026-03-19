@@ -20,25 +20,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useCollection, useAddDocument, useUpdateDocument, useDeleteDocument } from '../firebase/useFirestore';
 import '../styles/Monetization.css';
 
-const defaultDeals = [
-  { brand: 'FashionBrand Co', amount: 5000, status: 'active', deliverables: '3 Posts + 1 Story', deadline: '2026-04-15', description: 'Spring collection promotion' },
-  { brand: 'TechGear Inc', amount: 3500, status: 'negotiating', deliverables: '2 Reels + 5 Stories', deadline: '2026-04-30', description: 'Product launch campaign' },
-  { brand: 'BeveragePure', amount: 2000, status: 'pitched', deliverables: '4 Posts', deadline: '2026-05-10', description: 'Summer campaign' },
-  { brand: 'SkinCare Luxe', amount: 4200, status: 'completed', deliverables: '5 Posts + 1 Reel', deadline: '2026-03-10', description: 'Monthly sponsorship' },
-];
+const defaultDeals = [];
 
-const defaultAffiliateLinks = [
-  { program: 'Amazon Associates', url: 'amazon.com/ref=123', clicks: 3421, conversions: 87, commission: 145.30, status: 'active', created: '2025-10-15' },
-  { program: 'Shein Affiliate', url: 'shein.com/aff/456', clicks: 2150, conversions: 43, commission: 289.50, status: 'active', created: '2025-11-20' },
-  { program: 'Audible', url: 'audible.com/ref/789', clicks: 890, conversions: 12, commission: 84.00, status: 'active', created: '2025-12-01' },
-  { program: 'Coursera', url: 'coursera.com/aff/321', clicks: 456, conversions: 3, commission: 12.50, status: 'expired', created: '2025-08-10' },
-];
+const defaultAffiliateLinks = [];
 
-const defaultProducts = [
-  { name: 'Instagram Growth Masterclass', price: 49.99, status: 'planning', projectedRevenue: 5000, launchDate: '2026-04-01' },
-  { name: 'Content Calender Template Bundle', price: 29.99, status: 'launched', projectedRevenue: 8000, launchDate: '2026-02-15' },
-  { name: 'Engagement Hacks E-book', price: 9.99, status: 'planning', projectedRevenue: 2000, launchDate: '2026-05-01' },
-];
+const defaultProducts = [];
 
 export default function Monetization() {
   // Firestore collections

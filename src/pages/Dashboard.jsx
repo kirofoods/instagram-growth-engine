@@ -26,9 +26,7 @@ import {
   Calendar,
   Loader,
 } from 'lucide-react';
-import { doc, updateDoc } from 'firebase/firestore';
 import { useDocument, useCollection } from '../firebase/useFirestore';
-import { useFirebase } from '../firebase/FirebaseContext';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
@@ -36,8 +34,7 @@ export default function Dashboard() {
   const [insightIndex, setInsightIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState({});
 
-  // Firestore context and hooks
-  const { db } = useFirebase();
+  // Firestore data hooks
   const { data: profileData, loading: profileLoading } = useDocument('settings', 'profile');
   const { data: growthDataFirestore, loading: growthLoading } = useCollection('growthData');
   const { data: tasksData, loading: tasksLoading } = useCollection('tasks');
@@ -66,7 +63,7 @@ export default function Dashboard() {
     }));
   }, [growthDataFirestore, chartDays]);
 
-  // Calculate metrics — use profileData as primary, chartData as supplement
+  // Calculate metrics — profileData is primary, chartData supplements
   const metrics = useMemo(() => {
     const followers = Number(profileData?.followers) || 0;
     const engagementRate = Number(profileData?.engagementRate) || 0;
@@ -126,20 +123,11 @@ export default function Dashboard() {
   }, [insightsData]);
 
   // Handle task completion
-  const toggleTask = async (taskId) => {
-    const newCompleted = !completedTasks[taskId];
+  const toggleTask = (taskId) => {
     setCompletedTasks((prev) => ({
       ...prev,
-      [taskId]: newCompleted,
+      [taskId]: !prev[taskId],
     }));
-    // Persist to Firestore
-    if (db) {
-      try {
-        await updateDoc(doc(db, 'tasks', taskId), { completed: newCompleted });
-      } catch (e) {
-        console.error('Failed to save task:', e);
-      }
-    }
   };
 
   const completedCount = Object.values(completedTasks).filter(Boolean).length;

@@ -44,11 +44,7 @@ export default function Strategy() {
     }
   }, [profileData]);
 
-  const [competitors, setCompetitors] = useState([
-    { name: 'competitor1', followers: 180000, engagementRate: 3.8, postingFreq: 5, contentMix: 'Mixed', growthRate: 2.1 },
-    { name: 'competitor2', followers: 165000, engagementRate: 5.2, postingFreq: 6, contentMix: 'Reels Heavy', growthRate: 3.2 },
-    { name: 'competitor3', followers: 142000, engagementRate: 4.5, postingFreq: 4, contentMix: 'Balanced', growthRate: 1.8 },
-  ]);
+  const [competitors, setCompetitors] = useState([]);
 
   const [newCompetitor, setNewCompetitor] = useState('');
 
@@ -62,20 +58,9 @@ export default function Strategy() {
     { day: 'Sunday', task: 'Plan next week campaigns & review analytics', category: 'Planning', completed: false },
   ]);
 
-  const [experiments, setExperiments] = useState([
-    { id: 1, name: 'Posting at 8 PM vs 6 PM', hypothesis: 'Posts at 8 PM get 25% more engagement', result: true, conclusion: 'Confirmed: 8 PM has higher engagement' },
-    { id: 2, name: 'Hashtag Strategy: Niche vs Broad', hypothesis: 'Niche hashtags reduce reach but improve quality', result: true, conclusion: 'Mix of both works best' },
-    { id: 3, name: 'Reel lengths: 15s vs 45s', hypothesis: '45s Reels perform better than 15s', result: false, conclusion: '30s Reels actually perform best' },
-    { id: 4, name: 'Caption length: Short vs Long', hypothesis: 'Long captions (200+ words) reduce engagement', result: true, conclusion: 'Keep captions under 150 words' },
-  ]);
+  const [experiments, setExperiments] = useState([]);
 
-  const [trendData, setTrendData] = useState([
-    { topic: 'Sustainable Fashion', trend: 'Rising', posts: 2400, engagement: 8.5 },
-    { topic: 'Vintage Clothing', trend: 'Stable', posts: 1800, engagement: 7.2 },
-    { topic: 'Minimalist Style', trend: 'Rising', posts: 1200, engagement: 9.1 },
-    { topic: 'Y2K Fashion', trend: 'Declining', posts: 3200, engagement: 6.8 },
-    { topic: 'Thrift Hauls', trend: 'Rising', posts: 950, engagement: 8.9 },
-  ]);
+  const [trendData, setTrendData] = useState([]);
 
   const [showAudit, setShowAudit] = useState(false);
   const [auditReport, setAuditReport] = useState(null);

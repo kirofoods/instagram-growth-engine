@@ -38,45 +38,7 @@ export default function DmFunnels() {
   // Load DM templates from Firestore
   const { items: savedTemplates, addItem: addTemplate, updateItem: updateTemplate } = useAppCollection('dmTemplates');
 
-  const [sequences, setSequences] = useState([
-    {
-      id: 1,
-      name: 'Welcome & Value Flow',
-      steps: [
-        {
-          id: 1,
-          title: 'Welcome Message',
-          message: 'Hey {{name}}! 👋 Thanks for reaching out. I create content about {{niche}}...',
-          delay: 0,
-          condition: 'First message received',
-        },
-        {
-          id: 2,
-          title: 'Value Drop',
-          message: 'Here\'s my best resource on {{topic}}. This helped 5000+ creators...',
-          delay: 2,
-          condition: 'If no response in 24h',
-        },
-        {
-          id: 3,
-          title: 'Offer',
-          message: 'I\'m building a community of growth hackers. Free access to {{offer}}...',
-          delay: 5,
-          condition: 'If still engaged',
-        },
-        {
-          id: 4,
-          title: 'Follow-up',
-          message: 'Last thing - I\'m doing a limited cohort. Spots filling up fast...',
-          delay: 8,
-          condition: 'Final check-in',
-        },
-      ],
-      isActive: true,
-      conversions: 32,
-      sent: 156,
-    },
-  ]);
+  const [sequences, setSequences] = useState([]);
 
   const handleSaveNewSequence = async () => {
     if (!newSequenceName || !newSequenceTrigger) return;
@@ -116,65 +78,9 @@ export default function DmFunnels() {
     }
   };
 
-  const [campaigns, setCampaigns] = useState([
-    {
-      id: 1,
-      name: '5-Step Email Building Guide',
-      keyword: 'email marketing',
-      autoResponse: 'Thanks! Sending your free guide now 📧',
-      freebie: 'Email-Marketing-5-Steps.pdf',
-      status: 'active',
-      metrics: { triggers: 342, responses: 298, conversions: 67 },
-    },
-    {
-      id: 2,
-      name: 'Reel Template Bundle',
-      keyword: 'reel templates',
-      autoResponse: 'Grab your templates! Check your DMs for the link 🎬',
-      freebie: 'Reel-Templates-Figma.zip',
-      status: 'active',
-      metrics: { triggers: 418, responses: 365, conversions: 94 },
-    },
-    {
-      id: 3,
-      name: 'Engagement Pod Invite',
-      keyword: 'engagement pod',
-      autoResponse: 'Join our engagement pod! Sending details now...',
-      freebie: 'Pod-Invite-Link',
-      status: 'paused',
-      metrics: { triggers: 156, responses: 128, conversions: 31 },
-    },
-  ]);
+  const [campaigns, setCampaigns] = useState([]);
 
-  const [leadMagnets, setLeadMagnets] = useState([
-    {
-      id: 1,
-      name: 'Email Building 5-Step Guide',
-      type: 'PDF Guide',
-      downloads: 1243,
-      conversionRate: 19.6,
-      campaigns: ['Email Guide Campaign'],
-      value: '$47',
-    },
-    {
-      id: 2,
-      name: 'Viral Reel Templates (Figma)',
-      type: 'Figma File',
-      downloads: 892,
-      conversionRate: 22.5,
-      campaigns: ['Reel Template Campaign'],
-      value: '$97',
-    },
-    {
-      id: 3,
-      name: 'DM Template Swipe File',
-      type: 'Google Sheet',
-      downloads: 567,
-      conversionRate: 18.3,
-      campaigns: ['DM Swipes Campaign'],
-      value: '$27',
-    },
-  ]);
+  const [leadMagnets, setLeadMagnets] = useState([]);
 
   const funnelData = [
     { step: 'Profile', value: 10000, rate: '100%' },

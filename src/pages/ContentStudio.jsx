@@ -120,9 +120,7 @@ const ContentStudio = () => {
   const [captionLength, setCaptionLength] = useState('medium');
   const [includeCTA, setIncludeCTA] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [generatedCaptions, setGeneratedCaptions] = useState(
-    mockGenerations.captions[0]?.captions || []
-  );
+  const [generatedCaptions, setGeneratedCaptions] = useState(null);
 
   // Load insights for data-driven recommendations
   const { engine: insightsEngine, hasData } = useInsights();
@@ -135,7 +133,7 @@ const ContentStudio = () => {
 
   const [hashtagNiche, setHashtagNiche] = useState('fitness coaching');
   const [hashtagCount, setHashtagCount] = useState(20);
-  const [generatedHashtags, setGeneratedHashtags] = useState(mockGenerations.hashtags[0]?.hashtags || null);
+  const [generatedHashtags, setGeneratedHashtags] = useState(null);
 
   const [carouselTopic, setCarouselTopic] = useState('How to build a morning routine');
   const [carouselTemplate, setCarouselTemplate] = useState('10Steps');

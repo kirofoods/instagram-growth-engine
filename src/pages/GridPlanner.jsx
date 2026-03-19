@@ -13,17 +13,15 @@ export default function GridPlanner() {
   const { data: gridSettings } = useDocument('settings', 'gridPlanner');
   const { updateDocument } = useUpdateDocument('settings');
 
-  const mockPosts = [
-    { id: 1, type: 'reel', color: 'var(--color-primary)', title: 'Reel 1' },
-    { id: 2, type: 'carousel', color: 'var(--color-secondary)', title: 'Carousel 1' },
-    { id: 3, type: 'single', color: 'var(--status-error)', title: 'Single 1' },
-    { id: 4, type: 'carousel', color: 'var(--color-primary-start)', title: 'Carousel 2' },
-    { id: 5, type: 'reel', color: 'var(--status-warning)', title: 'Reel 2' },
-    { id: 6, type: 'single', color: 'var(--color-secondary)', title: 'Single 2' },
-    { id: 7, type: 'reel', color: 'var(--color-primary)', title: 'Reel 3' },
-    { id: 8, type: 'single', color: 'var(--status-error)', title: 'Single 3' },
-    { id: 9, type: 'carousel', color: 'var(--color-secondary)', title: 'Carousel 3' },
-  ];
+  const [posts, setPosts] = useState(
+    Array.from({ length: 9 }, (_, i) => ({
+      id: i + 1,
+      type: 'empty',
+      color: 'var(--bg-tertiary)',
+      title: 'Tap to add',
+    }))
+  );
+  const mockPosts = posts;
 
   // Load settings from Firestore on mount
   useEffect(() => {

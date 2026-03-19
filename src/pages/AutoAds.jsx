@@ -160,8 +160,8 @@ export default function AutoAds() {
         ageRange: p.targetDemographic || '18-45',
         genderSplit: '55% Female, 45% Male',
         interests: `${p.category}, ${p.name}, Online Shopping India`,
-        estimatedReach: 180000 + Math.floor(Math.random() * 120000),
-        estimatedCPM: 70 + Math.floor(Math.random() * 40),
+        estimatedReach: 200000,
+        estimatedCPM: 85,
       },
       {
         id: 'lookalike',
@@ -170,8 +170,8 @@ export default function AutoAds() {
         ageRange: '20-50',
         genderSplit: '50% Female, 50% Male',
         interests: `${p.category} Buyers, Premium Shoppers, D2C Brands`,
-        estimatedReach: 120000 + Math.floor(Math.random() * 100000),
-        estimatedCPM: 80 + Math.floor(Math.random() * 30),
+        estimatedReach: 165000,
+        estimatedCPM: 90,
       },
       {
         id: 'retargeting',
@@ -180,8 +180,8 @@ export default function AutoAds() {
         ageRange: '18-55',
         genderSplit: '60% Female, 40% Male',
         interests: 'Previous Visitors, Cart Abandoners, Page Viewers',
-        estimatedReach: 25000 + Math.floor(Math.random() * 30000),
-        estimatedCPM: 35 + Math.floor(Math.random() * 20),
+        estimatedReach: 40000,
+        estimatedCPM: 45,
       },
     ];
   };
