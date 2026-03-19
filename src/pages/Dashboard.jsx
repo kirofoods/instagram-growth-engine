@@ -63,23 +63,24 @@ export default function Dashboard() {
     }));
   }, [growthDataFirestore, chartDays]);
 
-  // Calculate metrics — profileData is primary, chartData supplements
+  // Calculate metrics — profileData is the primary source for followers/ER
+  // chartData supplements with growth trends when available
   const metrics = useMemo(() => {
-    const followers = Number(profileData?.followers) || 0;
+    const currentFollowers = Number(profileData?.followers) || 0;
     const engagementRate = Number(profileData?.engagementRate) || 0;
     const postsCount = Number(profileData?.postsCount) || 0;
 
     let followerChange = 0;
     let growthVelocity = 0;
     if (chartData && chartData.length > 1) {
-      const latest = chartData[chartData.length - 1]?.followers || followers;
-      const earliest = chartData[0]?.followers || followers;
+      const latest = chartData[chartData.length - 1]?.followers || currentFollowers;
+      const earliest = chartData[0]?.followers || currentFollowers;
       followerChange = latest - earliest;
       growthVelocity = (followerChange / chartData.length).toFixed(1);
     }
 
     return {
-      currentFollowers: followers,
+      currentFollowers,
       followerChange,
       engagementRate,
       postsThisWeek: Number(profileData?.postsThisWeek) || 0,
