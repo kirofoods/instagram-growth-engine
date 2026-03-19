@@ -1577,3 +1577,16 @@ textarea {
   justify-content: center;
   font-weight: 700;
 }
+
+.ai-recommended-dot {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.ai-provider-btn.active .ai-recommended-dot {
+  background: white;
+}

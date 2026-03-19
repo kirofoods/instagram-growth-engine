@@ -557,7 +557,7 @@ const ViralReels = () => {
         <div className="reels-section">
           <h2>Viral Hook Templates (20+)</h2>
           <p className="section-subtitle">Copy any hook and customize for your content. Organized by pattern type.</p>
-          <AIProviderSelector />
+          <AIProviderSelector featureId="viral-reels" />
 
           {hookTemplates.map((category) => (
             <div key={category.category} className="hooks-category">

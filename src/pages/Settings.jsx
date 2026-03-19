@@ -406,6 +406,9 @@ export default function Settings() {
           Choose which AI model powers content generation across KiroGram
         </p>
         <AIProviderSelector />
+        <p className="text-xs text-tertiary" style={{ marginTop: '0.5rem' }}>
+          Each feature has a recommended AI provider (green dot). Claude is recommended for creative tasks, ChatGPT for data-driven tasks. You can override per feature.
+        </p>
       </section>
 
       {/* API Keys */}

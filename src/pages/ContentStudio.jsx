@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useInsights } from '../services/useInsights';
 import AIProviderSelector from '../components/AIProviderSelector';
-import { generateContent } from '../services/aiProvider';
+import { generateContent, getFeatureProvider } from '../services/aiProvider';
 import '../styles/ContentStudio.css';
 
 const tones = ['Witty', 'Professional', 'Casual', 'Inspirational', 'Educational'];
@@ -151,7 +151,7 @@ const ContentStudio = () => {
       const lengthMap = { short: '100 characters', medium: '200-250 characters', long: '500+ characters' };
       const prompt = `Generate 3 Instagram captions about "${captionTopic}" in a ${captionTone} tone. Each caption should be ${lengthMap[captionLength]}, include a hook, body, and ${includeCTA ? 'a strong CTA' : 'no CTA'}. Format as numbered list (1. 2. 3.)`;
 
-      const result = await generateContent(prompt);
+      const result = await generateContent(prompt, { provider: getFeatureProvider('content-studio') });
       setGeneratedCaptions(result.split('\n').filter(line => line.trim()));
     } catch (err) {
       setGeneratedCaptions([`Error: ${err.message}`]);
@@ -287,7 +287,7 @@ const ContentStudio = () => {
             <div className="card-header">
               <h2>Generate Captions</h2>
             </div>
-            <AIProviderSelector />
+            <AIProviderSelector featureId="content-studio" />
             <div className="flex-col">
               <div>
                 <label className="input-label">Topic / Subject</label>

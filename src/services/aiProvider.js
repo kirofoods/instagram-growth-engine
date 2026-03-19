@@ -21,12 +21,55 @@ const PROVIDERS = {
   },
 };
 
+// Optimal AI provider per feature based on model strengths
+export const FEATURE_DEFAULTS = {
+  'content-studio': 'claude',      // Claude: better natural copy, tone matching
+  'viral-reels': 'claude',         // Claude: creative punchy hooks
+  'dm-funnels': 'claude',          // Claude: conversational flow design
+  'strategy': 'claude',            // Claude: analytical reasoning
+  'competitor-analysis': 'claude', // Claude: comparative analysis
+  'seo-suite': 'chatgpt',         // ChatGPT: stronger SEO/keyword data
+  'hashtags': 'chatgpt',          // ChatGPT: fast hashtag generation
+  'ads': 'chatgpt',               // ChatGPT: direct-response ad copy
+  'auto-ads': 'chatgpt',          // ChatGPT: ad creative optimization
+  'chatbot': 'chatgpt',           // ChatGPT: faster Q&A responses
+  'knowledge-base': 'chatgpt',    // ChatGPT: fast reference lookups
+  'viral-lab': 'claude',          // Claude: creative hook analysis
+  'calendar': 'claude',           // Claude: content planning
+  'grid-planner': 'claude',       // Claude: visual strategy
+  'account-health': 'claude',     // Claude: diagnostic analysis
+  'analytics': 'chatgpt',         // ChatGPT: data interpretation
+  'engagement': 'claude',         // Claude: community strategy
+  'monetization': 'chatgpt',      // ChatGPT: pricing/deal analysis
+  'trend-scanner': 'chatgpt',     // ChatGPT: trend pattern matching
+};
+
 export function getActiveProvider() {
   return localStorage.getItem('kirogram-ai-provider') || 'claude';
 }
 
 export function setActiveProvider(provider) {
   localStorage.setItem('kirogram-ai-provider', provider);
+}
+
+// Get the recommended provider for a specific feature
+export function getRecommendedProvider(featureId) {
+  return FEATURE_DEFAULTS[featureId] || 'claude';
+}
+
+// Get the active provider for a feature (user override takes priority)
+export function getFeatureProvider(featureId) {
+  if (!featureId) return getActiveProvider();
+  const userOverride = localStorage.getItem('kirogram-ai-provider-' + featureId);
+  if (userOverride) return userOverride;
+  return getRecommendedProvider(featureId);
+}
+
+// Set a per-feature provider override
+export function setFeatureProvider(featureId, provider) {
+  if (featureId) {
+    localStorage.setItem('kirogram-ai-provider-' + featureId, provider);
+  }
 }
 
 export function getProviderToken(provider) {
