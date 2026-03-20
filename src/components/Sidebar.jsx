@@ -76,6 +76,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
       title: 'Learn',
       items: [
         { path: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
+        { path: '/guide', label: 'App Guide', icon: BookOpen },
       ],
     },
   ];
